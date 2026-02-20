@@ -1,7 +1,5 @@
 
 import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer"
-import fs from "fs";
-import { executablePath } from "puppeteer";
 
 /*
 
@@ -29,8 +27,9 @@ export class BrowserRuntime {
                 '--disable-dev-shm-usage',
                 '--disable-gpu'
             ],
-            slowMo:200
+            timeout:60000,
         });
+
     }
 
     // Lanza una nueva página y la asocia con el ID proporcionado.
@@ -71,5 +70,9 @@ export class BrowserRuntime {
 
         await this.browser?.close();
         this.browser = undefined;
+    }
+
+    getBrowser(): Browser | undefined {
+        return this.browser;
     }
 }

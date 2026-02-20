@@ -1,17 +1,8 @@
-import { BrowserRuntime } from "./bridge/browserRuntime";
-import { EvaluationContext } from "./bridge/evaluationContext";
-import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer"
-
-const browserRuntime = new BrowserRuntime();
+import { HaxballHostSDK } from "./core/haxball_host_sdk";
 
 
-async function testing(): Promise<void> {
-    await browserRuntime.launch();
-    const page = await browserRuntime.launchPage("test");
-    await page.goto("https://www.haxball.com");
-    const title = await page.title();
-    console.log(title);
-    browserRuntime.dispose();
-}
 
-testing();
+const hbh:HaxballHostSDK = new HaxballHostSDK();
+
+// (desarrollo) probar el bridge, luego borrar.
+hbh.testBridge().catch(console.error);
