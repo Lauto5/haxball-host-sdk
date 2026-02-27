@@ -1,6 +1,9 @@
 import { BrowserRuntime } from "./browserRuntime";
 
 export class EvaluationContext {
+  evaluateOnPage(pageId: string, arg1: () => Promise<string>): unknown {
+    throw new Error("Method not implemented.");
+  }
   constructor(private runtime: BrowserRuntime) {}
 
   async evaluate<T>(

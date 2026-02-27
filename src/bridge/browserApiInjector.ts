@@ -179,175 +179,46 @@ interface IBrowserApiInjector {
     onTeamsLockChange(callback: (locked: boolean, byPlayer: Player) => void): void;
 }
 
-class BrowserApiInjector implements IBrowserApiInjector {
+type RpcRequest = (method: string, payload?: any) => Promise<any>;
 
-    private pageId: string;
-    private evaluationContext: EvaluationContext;
+// luego implementar la interfaz real
+class BrowserApiInjector {
 
-    constructor(pageId: string , evaluationContext: EvaluationContext) {
-        this.pageId = pageId;
-        this.evaluationContext = evaluationContext;
+    // aqui guardamos los listeners de cada evento, para luego poder llamarlos cuando el evento ocurra.
+    private listeners: Map<string, Function[]> = new Map();
+
+    constructor(private rpcCall: RpcRequest) {
     }
 
     // aun sin implementar, solo para probar la estructura, luego implementar correctamente cada metodo.
 
     HBInit(config: RoomConfig): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    sendChat(message: string, targetId?: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setPlayerAdmin(playerId: number, isAdmin: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    kickPlayer(playerId: number, reason: string, ban: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    clearBan(playerId: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    clearBans(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setScoreLimit(limit: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setTimeLimit(limitInMinutes: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setCustomStadium(stadiumFileContents: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setDefaultStadium(stadiumName: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setTeamsLock(locked: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setTeamColors(team: TeamId, angle: number, textColor: number, colors: number[]): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    startGame(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    stopGame(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    pauseGame(pauseState: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    getPlayer(): Promise<Player> {
-        throw new Error("Method not implemented.");
-    }
-    getPlayers(): Promise<Player[]> {
-        throw new Error("Method not implemented.");
-    }
-    getScores(): Promise<Scores> {
-        throw new Error("Method not implemented.");
-    }
-    getBallPosition(): Promise<{ x: number; y: number; }> {
-        throw new Error("Method not implemented.");
-    }
-    startRecording(): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    stopRecording(): Promise<Uint8Array> {
-        throw new Error("Method not implemented.");
-    }
-    setPassword(pass: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setRequireRecaptcha(required: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    recorderPlayers(playerIdList: number[], moveToTop: boolean): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    sendAnnouncement(msg: string, targetId?: number, color?: number, style?: string, sound?: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setKickRateLimit(min?: number, rate?: number, burst?: number): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setPlayerAvatar(playerId: number, avatar: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    setDiscProperties(discIndex: number, properties: DiscProperties): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    getDiscProperties(discIndex: number): Promise<DiscProperties> {
-        throw new Error("Method not implemented.");
-    }
-    setPlayerDiscProperties(playerId: number, properties: DiscProperties): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    getPlayerDiscProperties(playerId: number): Promise<DiscProperties> {
-        throw new Error("Method not implemented.");
-    }
-    getDiscCount(): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerJoin(callback: (player: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerLeave(callback: (player: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onTeamVictory(callback: (scores: Scores) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerChat(callback: (player: Player, message: string) => boolean | void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerBallKick(callback: (player: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onTeamGoal(callback: (teamId: TeamId) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onGameStart(callback: (byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onGameStop(callback: (byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onGamePause(callback: (byPlayer: Player) => void): void;
-    onGamePause(callback: (byPlayer: Player) => void): void;
-    onGamePause(callback: unknown): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerAdminChange(callback: (changedPlayer: Player, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerTeamChange(callback: (changedPlayer: Player, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerKicked(callback: (kickedPlayer: Player, reason: string, ban: boolean, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onGameTick(callback: () => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onGameUnpause(callback: (byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPositionsReset(callback: () => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onPlayerActivity(callback: (player: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onStadiumChange(callback: (newStadiumName: string, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onRoomLink(callback: (url: string) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onKickrateLimitSet(callback: (min: number, rate: number, burst: number, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
-    }
-    onTeamsLockChange(callback: (locked: boolean, byPlayer: Player) => void): void {
-        throw new Error("Method not implemented.");
+        return this.rpcCall("HBInit", {config});
     }
 
+    onPlayerJoin(callback: (player: Player) => void): void {
+        this.addListener("playerJoin", callback);
+    }
+
+    // Metodos privados.
+
+    private addListener(event: string, callback: Function): void {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, []);
+        }
+        this.listeners.get(event)!.push(callback);
+    }
+
+    __dispatchEvent(event: string, ...args: any[]): void {
+        const eventListeners = this.listeners.get(event);
+        if (eventListeners) {
+            for (const listener of eventListeners) {
+                try {
+                    listener(...args);
+                } catch (error) {
+                    console.error(`Error in event listener for ${event}:`, error);
+                }
+            }
+        }
+    }
 }

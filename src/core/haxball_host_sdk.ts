@@ -1,3 +1,4 @@
+import { Transport } from "../transport";
 import { Bridge } from "../bridge";
 import { ILogger, ConsoleLogger, SafeLogger } from "../logger";
 
@@ -15,12 +16,13 @@ export class HaxballHostSDK {
 
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
-    const bridge = new Bridge(this.rootLogger);
+    const transport = new Transport(this.rootLogger);
+    const bridge = new Bridge(this.rootLogger, transport);
+    // test de todo:
     await bridge.launchBrowser();
     await bridge.launchPage("testPage");
-    const title = await bridge.evaluateOnPage("testPage", () => document.title);
-    this.rootLogger.info(`Evaluated title: ${title}`);
-    //await bridge.dispose();
+    await bridge.testRPC();
+    await bridge.dispose();
   }
 
 }
