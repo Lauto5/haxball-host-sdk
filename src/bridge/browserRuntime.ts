@@ -27,7 +27,7 @@ export class BrowserRuntime {
                 '--disable-dev-shm-usage',
                 '--disable-gpu'
             ],
-            timeout:60000,
+            timeout: 60000,
         });
 
     }
@@ -50,6 +50,15 @@ export class BrowserRuntime {
             throw new Error(`Page '${id}' not found`);
         }
         return page;
+    }
+
+    async exposeFunction(
+        pageId: string,
+        name: string,
+        fn: (...args: any[]) => any
+    ) {
+        const page = this.getPage(pageId);
+        await page.exposeFunction(name, fn);
     }
 
     // Cierra la página asociada con el ID proporcionado y la elimina del mapa.
