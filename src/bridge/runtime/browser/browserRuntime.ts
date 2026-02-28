@@ -1,7 +1,7 @@
 
 import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer"
 import { IBrowserRuntime } from "./browserRuntime.interface";
-import { HostPage } from "./hostPage";
+import { HostPage } from "../pages/hostPage";
 
 export class BrowserRuntime implements IBrowserRuntime {
     
@@ -12,12 +12,13 @@ export class BrowserRuntime implements IBrowserRuntime {
         this.browser = browser;
     }
 
-    async launchPage(pageId: string): Promise<void> {
+    async launchPage(pageId: string, url:string): Promise<void> {
     if (this.pages.has(pageId)) {
       throw new Error(`Page ${pageId} already exists`);
     }
 
     const page: Page = await this.browser.newPage();
+    await page.goto(url);
     const hostPage = new HostPage(pageId, page);
 
     this.pages.set(pageId, hostPage);

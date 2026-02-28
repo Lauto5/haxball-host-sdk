@@ -18,7 +18,8 @@ export class HaxballHostSDK {
   async testBridge(): Promise<void> {
     const transport = new Transport(this.rootLogger);
     const bridge = new Bridge(this.rootLogger, transport);
-    bridge.launchBridge();
+    await bridge.launchBridge();
+    bridge.testRuntime();
     
   }
 
