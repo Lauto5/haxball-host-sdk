@@ -1,13 +1,6 @@
-import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer"
 
 export interface IBrowserRuntime {
-    launch(options?: Partial<LaunchOptions>): Promise<void>;
-
-    launchPage(id: string): Promise<Page>;
-
-    getPage(id: string): Page;
-
-    dispose(): Promise<void>;
-    
-    disposePage(id: string): Promise<void>;
+    launchPage(pageId: string): Promise<void>;
+    closePage(pageId:string): Promise<void>;
+    evaluate<T>(pageId:string, fn:(...args:any[]) => T , ...args:any[]):Promise<T>;
 }
