@@ -52,6 +52,32 @@ export class BrowserRuntime {
         return page;
     }
 
+    async existHBInit(pageId: string): Promise<void> {
+        const page = this.getPage(pageId);
+        
+        await page.waitForFunction(() => {
+            return typeof (window as unknown as {HBInit: (config: any) => any}).HBInit === "function";
+        })
+        const result = await page.mainFrame().evaluate(() => {
+            
+            const hbinit = (window as unknown as {HBInit: (config: any) => any}).HBInit;
+
+            if (typeof hbinit !== "function"){
+                return false;
+            }
+
+            return true;
+
+        })
+
+        // por ahora descubrimos como hallar el hbinit del navegador.. luego seguir 
+        // 28/02/2026 01:44 Am
+
+        console.log("Existe HBInit? : " , result);
+        
+
+    }
+
     async exposeFunction(
         pageId: string,
         name: string,
@@ -79,9 +105,5 @@ export class BrowserRuntime {
 
         await this.browser?.close();
         this.browser = undefined;
-    }
-
-    getBrowser(): Browser | undefined {
-        return this.browser;
     }
 }

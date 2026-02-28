@@ -1,13 +1,9 @@
-import { Transport } from "../transport";
+import { Transport } from "../../transport";
 import { RPCMessage } from "./rpcMessage";
+import { IRPCChannel , PendingEntry } from "./rpcchannel.interface";
 
-type PendingEntry = {
-  resolve: ((value: unknown) => void);
-  reject: ((reason?: unknown) => void);
-  timeout?: ReturnType<typeof setTimeout>;
-};
 
-export class RPCChannel {
+export class RPCChannel implements IRPCChannel {
   private pending = new Map<string, PendingEntry>();
   private handlers = new Map<string, (params: unknown[]) => unknown | Promise<unknown>>();
 
@@ -16,6 +12,7 @@ export class RPCChannel {
         this.handleIncoming(message);
     });
   }
+  
 
   // =========================
   // CLIENT SIDE (call)

@@ -21,8 +21,9 @@ export class HaxballHostSDK {
     // test de todo:
     await bridge.launchBrowser();
     await bridge.launchPage("testPage");
-    await bridge.testRPC();
-    await bridge.dispose();
+    bridge.existHBInit();
+    //await bridge.testRPC();
+    //await bridge.dispose();
   }
 
 }

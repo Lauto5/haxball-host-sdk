@@ -1,5 +1,5 @@
 
-import { RPCMessage } from "./bridge/rpcMessage";
+import { RPCMessage } from "./bridge/rpc/rpcMessage";
 import { ILogger } from "./logger";
 
 export class Transport {
