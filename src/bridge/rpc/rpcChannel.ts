@@ -1,3 +1,4 @@
+import { ILogger , ScopedLogger } from "../../logger";
 import { Transport } from "../../transport";
 import { RPCMessage } from "./rpcMessage";
 import { IRPCChannel , PendingEntry } from "./rpcchannel.interface";
@@ -7,10 +8,21 @@ export class RPCChannel implements IRPCChannel {
   private pending = new Map<string, PendingEntry>();
   private handlers = new Map<string, (params: unknown[]) => unknown | Promise<unknown>>();
 
-  constructor(private transport: Transport, private defaultTimeout = 10000) {
+  private logger: ILogger;
+
+  constructor(private transport: Transport, private defaultTimeout = 10000 , private rootLogger: ILogger) {
+    this.logger = new ScopedLogger(rootLogger,"RPC-Channel");
+
+    this.logger.debug("Iniciando RPC-Channel");
+
+    this.logger.debug("Vinculando Transport onMenssage....");
+
     this.transport.onMessage((message) => {
         this.handleIncoming(message);
     });
+
+    this.logger.debug("Vinculado con exito Transport onMenssage");
+
   }
   
 
@@ -19,6 +31,8 @@ export class RPCChannel implements IRPCChannel {
   // =========================
 
   call(method: string, params?: unknown[], timeoutMs?: number): Promise<any> {
+    this.logger.debug("Ejecutando call", {method,params,timeoutMs});
+    
     const id = Math.random().toString(36).substr(2, 9); // generar ID unico
 
     // tipo de message : request

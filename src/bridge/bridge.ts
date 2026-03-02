@@ -1,11 +1,11 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { RPCChannel } from "./rpc/rpcChannel";
 import { Transport } from "../transport";
-import { BrowserRuntime, RuntimeFactory } from "./runtime";
+import { Runtime, RuntimeFactory } from "./runtime";
 
 export class Bridge {
   private logger: ILogger;
-  private runtime?: BrowserRuntime;
+  private runtime?: Runtime;
   private transport: Transport;
   private rpcChannel?: RPCChannel;
 
@@ -17,7 +17,7 @@ export class Bridge {
   async launchBridge(rootLogger: ILogger){
     let runtimeFactory = new RuntimeFactory();
     this.runtime = await runtimeFactory.getRuntime(rootLogger);
-    this.rpcChannel = new RPCChannel(this.transport);
+    this.rpcChannel = new RPCChannel(this.transport ,10000, rootLogger);
   }
 
   public async testRuntime(): Promise<void> {

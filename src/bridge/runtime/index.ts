@@ -1,2 +1,2 @@
 export { RuntimeFactory } from "./factories/runtimeFactory";
-export {BrowserRuntime} from "./browser/browserRuntime";
+export {Runtime} from "./browser/runtime";
