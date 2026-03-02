@@ -2,21 +2,19 @@
 import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer"
 import { IBrowserRuntime } from "./browserRuntime.interface";
 import { HostPage } from "../pages/hostPage";
+import { BrowserProvider } from "../providers/browserProvider";
 
 export class BrowserRuntime implements IBrowserRuntime {
-    
-    private browser:Browser;
+
+    private browser: Browser;
     private pages = new Map<string, HostPage>();
 
-    constructor(browser:Browser) {
-        this.browser = browser;
-    }
+    constructor(browser:Browser){this.browser = browser};
 
     async launchPage(pageId: string, url:string): Promise<void> {
     if (this.pages.has(pageId)) {
       throw new Error(`Page ${pageId} already exists`);
     }
-
     const page: Page = await this.browser.newPage();
     await page.goto(url);
     const hostPage = new HostPage(pageId, page);

@@ -13,9 +13,9 @@
     "moduleResolution": "node",
     //"ignoreDeprecations": "6.0",
     "allowSyntheticDefaultImports": true,
-    "baseUrl":"./",
+    "baseUrl":".",
     "paths": {
-      "@/*": ["src/*"]
+      "#/*": ["src/*"]
     },
   },
   "include": ["src"],

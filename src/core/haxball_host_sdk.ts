@@ -10,15 +10,15 @@ export class HaxballHostSDK {
     private rootLogger: ILogger
 
     constructor(options?: SDKOptions) {
-        const baseLogger = options?.logger ?? new ConsoleLogger()
-        this.rootLogger = new SafeLogger(baseLogger)
+        const baseLogger = options?.logger ?? new ConsoleLogger(3);
+        this.rootLogger = new SafeLogger(baseLogger);
   }
 
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
     const transport = new Transport(this.rootLogger);
     const bridge = new Bridge(this.rootLogger, transport);
-    await bridge.launchBridge();
+    await bridge.launchBridge(this.rootLogger);
     bridge.testRuntime();
     
   }

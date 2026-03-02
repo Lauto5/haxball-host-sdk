@@ -8,6 +8,12 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "lint": "eslint . --ext .ts"
   },
+  "imports": {
+    "#/*": {
+      "development": "./src/*.ts",
+      "default": "./dist/*"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

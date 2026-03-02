@@ -1,13 +1,10 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { RPCChannel } from "./rpc/rpcChannel";
 import { Transport } from "../transport";
-import { BrowserProvider } from "./runtime/providers/browserProvider";
-import { Browser } from "puppeteer-core";
-import { BrowserRuntime } from "./runtime";
+import { BrowserRuntime, RuntimeFactory } from "./runtime";
 
 export class Bridge {
   private logger: ILogger;
-  private browser?: Browser;
   private runtime?: BrowserRuntime;
   private transport: Transport;
   private rpcChannel?: RPCChannel;
@@ -15,13 +12,11 @@ export class Bridge {
   constructor(rootLogger: ILogger, transport: Transport) {
     this.logger = new ScopedLogger(rootLogger, "Bridge");
     this.transport = transport;
-    
-    
   }
 
-  async launchBridge(){
-    this.browser = await BrowserProvider.getBrowser();
-    this.runtime = new BrowserRuntime(this.browser);
+  async launchBridge(rootLogger: ILogger){
+    let runtimeFactory = new RuntimeFactory();
+    this.runtime = await runtimeFactory.getRuntime(rootLogger);
     this.rpcChannel = new RPCChannel(this.transport);
   }
 
