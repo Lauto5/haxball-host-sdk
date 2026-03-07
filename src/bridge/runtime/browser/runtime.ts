@@ -67,45 +67,7 @@ export class Runtime implements IRuntime {
         if (this.pages.has(pageId)) {
             throw new Error(`Page ${pageId} already exists`);
         }
-        this.logger.debug("🛠 Lanzando pagina nueva...");
-
-        const page: Page = await this.browser.newPage();
-
-        this.logger.debug("🛠 pagina nueva lanzada con exito.");
-
-        this.logger.debug("🛠 pagina nueva navegando en url...", { url: url });
         
-        await page.goto(url);
-        
-        await page.waitForFunction(()=> typeof (window as any).HBInit ==="function");
-
-        const com1 = await page.evaluate(() => typeof (window as any).HBInit === "function");
-        
-        this.logger.debug("🛠 existe hbinit?...", { result:com1 });
-        
-        const environment = new BrowserEnvironmentBuilder();
-
-        await page.evaluate(environment.build());
-        
-        await page.waitForFunction(() => (window as any).__hb__runtime !== undefined);
-        
-        const com2 = await page.evaluate(() => (window as any).__hb__runtime !== undefined);
-        
-        this.logger.debug("🛠 existe el entorno?...", { result:com2 });
-
-        const hostPage = new HostPage(pageId, page);
-        
-        page.on("console", msg => this.logger.debug("MENSAJE DEL BROW :", msg.text()));
-
-        await page.evaluate((config) => (window as any).__hb__runtime.init(config), config);
-        
-        const com3 = await page.evaluate(() => (window as any).__hb__runtime.room !== null);
-        
-        this.logger.debug("🛠 existe el room?...", { result: com3 });
-
-        this.pages.set(pageId, hostPage);
-        
-        this.logger.debug("🛠 pagina nueva navegacion correcta.", { url: url });
     }
 
     async closePage(pageId: string): Promise<void> {
