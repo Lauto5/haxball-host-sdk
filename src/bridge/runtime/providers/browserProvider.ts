@@ -16,7 +16,6 @@ export class BrowserProvider {
           "--disable-dev-shm-usage",
           "--disable-gpu"
         ],
-        timeout: 60000
       });
     }
 

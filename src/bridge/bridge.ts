@@ -1,7 +1,8 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { RPCChannel } from "./rpc/rpcChannel";
-import { Transport } from "../transport";
+import { Transport } from "./transport/transport";
 import { Runtime, RuntimeFactory } from "./runtime";
+import { RoomConfig } from "../types/haxball";
 
 export class Bridge {
   private logger: ILogger;
@@ -20,44 +21,40 @@ export class Bridge {
     this.rpcChannel = new RPCChannel(this.transport ,10000, rootLogger);
   }
 
-  public async testRuntime(): Promise<void> {
-  if (!this.runtime) {
-    throw new Error("Runtime not initialized. Call launchBridge() first.");
+  // metodo de test
+  async launchRoom(){
+    if (!this.runtime){
+      throw new Error("runtime not init");
+    }
+
+      let con: RoomConfig = {
+          roomName: "NODEJS",
+          playerName:"hoosts",
+          maxPlayers: 12,
+          public:true,
+          noPlayer: true,
+          token:"thr1.AAAAAGmsCwOJLF3RVHTfZQ.o-Hfwmncrj4"
+    }
+    
+      //this.runtime.launchPage("RoomTest", "https://www.haxball.com/headless", con);
+      this.runtime.testLaunchPAge();
+
   }
 
-  const testPageId = "test-page";
-
-  this.logger.info("Starting BrowserRuntime test...");
-
-  try {
-    // 1️⃣ Lanzar página
-    await this.runtime.launchPage(testPageId, "https://haxball.com");
-    this.logger.info(`Page ${testPageId} launched`);
-
-    // 2️⃣ Evaluar algo simple
-    const pageTitle = await this.runtime.evaluate(
-      testPageId,
-      () => document.title
-    );
-    this.logger.info(`Evaluation result: page title = "${pageTitle}"`);
-
-    // 3️⃣ Evaluar con argumento
-    const sum = await this.runtime.evaluate(
-      testPageId,
-      (a: number, b: number) => a + b,
-      5,
-      7
-    );
-    this.logger.info(`Evaluation result with args: 5 + 7 = ${sum}`);
-
-    // 4️⃣ Cerrar página
-    await this.runtime.closePage(testPageId);
-    this.logger.info(`Page ${testPageId} closed`);
-
-    this.logger.info("BrowserRuntime test completed successfully ✅");
-  } catch (error: any) {
-    this.logger.error("BrowserRuntime test failed", error);
-    throw error;
+  // metodo de test
+  public registrarMetodo(method:string,handler: (params: unknown[]) => unknown | Promise<unknown>):void{
+    if (!this.rpcChannel){
+      throw new Error("Rpc-Channel not initialized. Call launchBridge() first");
+    }
+    this.rpcChannel.registerHandler(method,handler);
   }
-}
+
+  // metodo de test
+  public llamar(method: string, params?: unknown[], timeoutMs?: number): Promise<unknown>{
+    if (!this.rpcChannel){
+      throw new Error("Rpc-Channel not initialized. Call launchBridge() first");
+    }
+    let result = this.rpcChannel.call(method,params,timeoutMs);
+    return result;
+  }
 }

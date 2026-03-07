@@ -1,3 +1,4 @@
+
 interface RoomConfig {
     roomName?: string;
     playerName: string;

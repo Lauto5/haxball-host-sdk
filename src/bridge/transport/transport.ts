@@ -1,19 +1,20 @@
 
-import { RPCMessage } from "./bridge/rpc/rpcMessage";
-import { ILogger } from "./logger";
+import { RPCMessage } from "../rpc/rpcMessage";
+import { ILogger, ScopedLogger } from "../../logger";
+import { ITransport } from "./transport.interface";
 
-export class Transport {
+export class Transport implements ITransport {
 
     private logger: ILogger;
     private handler?:(message: RPCMessage) => void;
 
     constructor(logger: ILogger) {
-        this.logger = logger;
+        this.logger = new ScopedLogger(logger,"Transport");
     }
 
     send(message: RPCMessage): void {
         // implementar transporte real, por ejemplo usando postMessage o WebSocket
-        this.logger.info("Sending message:", message);
+        this.logger.debug("Sending message:", message);
         setTimeout(() => {
             this.handler?.(message);
         }, 100); // simular retraso

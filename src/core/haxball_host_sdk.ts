@@ -1,5 +1,4 @@
-import { Transport } from "../transport";
-import { Bridge } from "../bridge";
+import { Bridge , Transport} from "../bridge";
 import { ILogger, ConsoleLogger, SafeLogger } from "../logger";
 
 interface SDKOptions {
@@ -19,8 +18,8 @@ export class HaxballHostSDK {
     const transport = new Transport(this.rootLogger);
     const bridge = new Bridge(this.rootLogger, transport);
     await bridge.launchBridge(this.rootLogger);
-    bridge.testRuntime();
-    
+    await bridge.launchRoom();
+
   }
 
 }
