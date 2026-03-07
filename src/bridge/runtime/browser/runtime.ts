@@ -59,7 +59,8 @@ export class Runtime implements IRuntime {
         
     }
 
-    async launchPage(
+  async launchPage(
+        rootLogger:ILogger,
         pageId: string,
         url: string,
         config:RoomConfig,
@@ -67,7 +68,16 @@ export class Runtime implements IRuntime {
         if (this.pages.has(pageId)) {
             throw new Error(`Page ${pageId} already exists`);
         }
-        
+      
+      const page = await this.browser.newPage();
+      
+      const hostPage: HostPage = new HostPage(rootLogger, pageId, page);
+    
+      await hostPage.injectEnvironmentBuilder();
+    
+      
+    
+      
     }
 
     async closePage(pageId: string): Promise<void> {
