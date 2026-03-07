@@ -18,7 +18,7 @@ export class HaxballHostSDK {
     const transport = new Transport(this.rootLogger);
     const bridge = new Bridge(this.rootLogger, transport);
     await bridge.launchBridge(this.rootLogger);
-    await bridge.launchRoom();
+    await bridge.launchRoom(this.rootLogger);
 
   }
 

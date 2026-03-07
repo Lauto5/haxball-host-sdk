@@ -1,5 +1,5 @@
 import { RoomConfig } from "../../../types/haxball";
-
+/* 
 export class BrowserEnvironmentBuilder {
     buildteste() {
         return () => {
@@ -37,3 +37,4 @@ export class BrowserEnvironmentBuilder {
   }
     
 }
+*/

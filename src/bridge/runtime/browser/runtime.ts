@@ -2,7 +2,6 @@ import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPage } from "../pages/hostPage";
 import { ILogger, ScopedLogger } from "../../../logger";
-import { BrowserEnvironmentBuilder } from "../APIInjector/browserEnvironmentBuilder";
 import { RoomConfig } from "../../../types/haxball";
 
 export class Runtime implements IRuntime {
@@ -17,7 +16,8 @@ export class Runtime implements IRuntime {
     }
     
     // entoces si funciona, pero debemos buscar como sitematizar el entorno de adentro.
-    async testLaunchPAge() {
+  /*
+  async testLaunchPAge() {
         const page: Page = await this.browser.newPage();
         await page.goto("https://www.haxball.com/headless");
         await page.waitForFunction(() => typeof (window as any).HBInit === "function");
@@ -44,21 +44,9 @@ export class Runtime implements IRuntime {
             });
         })
         
-        /* 
-        await page.evaluate(() => {
-            (window as any).HBInit({
-                roomName: "NODEJS",
-                playerName:"hoosts",
-                maxPlayers: 12,
-                public:true,
-                noPlayer: true,
-                token:"thr1.AAAAAGmsEHRtVD_n8qcq_g.5BbjMIQzk6Q"
-            });
-        });
-        */
-        
     }
-
+*/
+    
   async launchPage(
         rootLogger:ILogger,
         pageId: string,
@@ -73,11 +61,13 @@ export class Runtime implements IRuntime {
       
       const hostPage: HostPage = new HostPage(rootLogger, pageId, page);
     
+    await hostPage.navigate(url);
+    
       await hostPage.injectEnvironmentBuilder();
     
-      
+    await hostPage.launchHost(config);
     
-      
+    this.logger.debug("SE LANZO LA PAGINA");
     }
 
     async closePage(pageId: string): Promise<void> {
@@ -91,20 +81,5 @@ export class Runtime implements IRuntime {
         this.pages.delete(pageId);
 
         this.logger.debug("🛠 pagina cerrada con exito.", { pageId: pageId });
-    }
-
-    async evaluate<T>(
-        pageId: string,
-        fn: (...args: any[]) => T | Promise<T>,
-        ...args: any[]
-    ): Promise<T> {
-        const hostPage = this.pages.get(pageId);
-        if (!hostPage) {
-            throw new Error(`Page ${pageId} not found`);
-        }
-
-        this.logger.debug("🛠 Evaluando Funcion...");
-
-        return hostPage.evaluate(fn, ...args);
     }
 }

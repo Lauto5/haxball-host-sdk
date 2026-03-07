@@ -22,22 +22,23 @@ export class Bridge {
   }
 
   // metodo de test
-  async launchRoom(){
+  async launchRoom(rootLogger: ILogger){
     if (!this.runtime){
       throw new Error("runtime not init");
     }
 
-      let con: RoomConfig = {
+      let config: RoomConfig = {
           roomName: "NODEJS",
           playerName:"hoosts",
-          maxPlayers: 12,
+          maxPlayers: 10,
           public:true,
           noPlayer: true,
-          token:"thr1.AAAAAGmsCwOJLF3RVHTfZQ.o-Hfwmncrj4"
-    }
+          token:"thr1.AAAAAGmsmOIyKNAUCg4kTA.W7h8WdBiZMQ"
+      }
     
-      //this.runtime.launchPage("RoomTest", "https://www.haxball.com/headless", con);
-      this.runtime.testLaunchPAge();
+      let url = "https://www.haxball.com/headless"
+    
+      this.runtime.launchPage(rootLogger, "node-js-test", url, config);
 
   }
 

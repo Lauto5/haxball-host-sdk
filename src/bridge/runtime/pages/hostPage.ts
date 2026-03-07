@@ -13,6 +13,15 @@ export class HostPage implements IHostPage {
   ) {
     this.logger = new ScopedLogger(rootLogger, "HostPage");
   }
+  
+  async navigate(url: string): Promise<void>{
+    if (!this.page) {
+      throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
+    }
+    await this.page.goto(url);
+    
+    await this.page.waitForFunction(() => typeof (window as any).HBInit === "function");
+  }
 
   async injectEnvironmentBuilder(): Promise<void> {
     if (!this.page) {
@@ -21,6 +30,10 @@ export class HostPage implements IHostPage {
     const environment = new HostEnvironmentBuilder();
    
     this.page.evaluate(environment.build());
+    
+    await this.page.waitForFunction(() => (window as any).__headless !== undefined);
+    
+    this.connectLoger();
     
   }
   
@@ -31,7 +44,7 @@ export class HostPage implements IHostPage {
         throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
       }
       await this.page.evaluate((conf:RoomConfig) => {
-        return (window as any).__headless.init(conf);
+        (window as any).__headless.init(conf);
       },config)
       
     } catch (error: any) {
@@ -58,21 +71,12 @@ export class HostPage implements IHostPage {
       );
     }
   }
-    
-  async evaluate<T>(
-    fn: (...args: any[]) => T | Promise<T>,
-    ...args: any[]
-  ): Promise<T> {
-    try {
-      return await this.page.evaluate(fn, ...args);
-    } catch (error: any) {
-      throw new Error(
-        `[HostPage][${this.id}] ${error?.message ?? error}`
-      );
-    }
-  }
 
   async close(): Promise<void> {
     await this.page.close();
+  }
+  
+  private connectLoger(): void{
+    this.page.on("console", msg => this.logger.debug("", msg.text()));
   }
 }
