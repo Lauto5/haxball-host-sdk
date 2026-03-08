@@ -28,41 +28,25 @@ export class Bridge {
     }
 
     let config: RoomConfig = {
-      roomName: "Haxball-host-sdk-1",
+      roomName: "Haxball-host-sdk-WOW",
       playerName: "Lauto5",
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
-    }
-    
-    let config2: RoomConfig = {
-      roomName: "Haxball-host-sdk-2",
-      playerName: "Lauto5",
-      maxPlayers: 10,
-      public: true,
-      noPlayer: true,
-      token: "thr1.AAAAAGmtgOKBjMbnCEwBvA.SR-va5bsJcI"
+      token: "asdasddas"
+      
     }
     
     let url = "https://www.haxball.com/headless"
     
     let pageId1 = "testRoom"
     
-    let pageId2 = "testRoom2"
-    
     await this.runtime.launchPage(rootLogger, pageId1, url, config);
-    
-    await this.runtime.launchPage(rootLogger, pageId2, url, config2);
     
     await this.runtime.execute(pageId1, "setDefaultStadium", ["Huge"]);
     
-    await this.runtime.execute(pageId2, "setDefaultStadium", ["Small"]);
-    
-    const result1 = await this.runtime.execute(pageId2, "getPlayerList");
-    
-    this.logger.debug("probando getPlayerList en la pagina 2 : ", { resultado: result1 });
-    
+    // ***LEER IMPORTANTE***
+    // luego ver como podemos implementar la comunicacion de los eventos del runtime con el bridge.
     
 
   }

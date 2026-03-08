@@ -49,6 +49,8 @@ export class HostPage implements IHostPage {
     this.logger.debug("Environment injection completed", { pageId: this.id });
 
     this.connectLogger();
+    
+    this.emitEvent();
   }
 
   async launchHost(config: RoomConfig): Promise<void> {
@@ -61,6 +63,10 @@ export class HostPage implements IHostPage {
     await this.page.evaluate((conf: RoomConfig) => {
       (window as any).__headless.init(conf);
     }, config);
+    
+    await this.page.evaluate(() => {
+      (window as any).__headless.subscribeEvents();
+    });
 
     this.logger.debug("Host launch completed successfully", {
       pageId: this.id,
@@ -89,8 +95,13 @@ export class HostPage implements IHostPage {
       pageId: this.id,
     });
   }
+  
+  private async emitEvent(): Promise<void> {
+    await this.page.exposeFunction("emit" ,(evenData:any)=>{this.logger.info("esto me llego: ",evenData)});
+  }
 
   private connectLogger(): void {
     this.page.on("console", (msg) => this.logger.info("", msg.text()));
   }
+  
 }

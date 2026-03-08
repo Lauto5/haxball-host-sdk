@@ -7,6 +7,6 @@ export interface RoomConfig {
     maxPlayers: number;
     public: boolean;
     geo?: Geo;
-    token: string;
+    token?: string;
     noPlayer: boolean;
 }
