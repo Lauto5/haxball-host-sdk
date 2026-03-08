@@ -18,9 +18,14 @@ export class HostPage implements IHostPage {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
-    await this.page.goto(url);
     
+    this.logger.debug("Page navigating to ", { url: url , pageId: this.id});
+    
+    await this.page.goto(url);
     await this.page.waitForFunction(() => typeof (window as any).HBInit === "function");
+    
+    this.logger.debug("Page navigation to url completed successfully", {url: url , pageId: this.id});
+    
   }
 
   async injectEnvironmentBuilder(): Promise<void> {
@@ -29,9 +34,12 @@ export class HostPage implements IHostPage {
     }
     const environment = new HostEnvironmentBuilder();
    
-    this.page.evaluate(environment.build());
+    this.logger.debug("Injecting environment into page",{pageId: this.id});
     
+    this.page.evaluate(environment.build());
     await this.page.waitForFunction(() => (window as any).__headless !== undefined);
+    
+    this.logger.debug("Environment injection into page completed successfully ",{pageId: this.id});
     
     this.connectLoger();
     
@@ -43,9 +51,14 @@ export class HostPage implements IHostPage {
       if (!this.page) {
         throw new Error("Page not initialized");
       }
+      
+      this.logger.debug("Launching host",{pageId: this.id});
+      
       await this.page.evaluate((conf:RoomConfig) => {
         (window as any).__headless.init(conf);
-      },config)
+      }, config)
+      
+      this.logger.debug("Host launch completed successfully",{pageId: this.id});
       
     } catch (error: any) {
       throw new Error(
@@ -73,10 +86,12 @@ export class HostPage implements IHostPage {
   }
 
   async close(): Promise<void> {
+    this.logger.debug("closing page",{pageId: this.id});
     await this.page.close();
+    this.logger.debug("page closed completed successfully",{pageId: this.id});
   }
   
   private connectLoger(): void{
-    this.page.on("console", msg => this.logger.debug("", msg.text()));
+    this.page.on("console", msg => this.logger.info("", msg.text()));
   }
 }
