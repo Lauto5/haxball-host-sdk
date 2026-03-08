@@ -20,24 +20,23 @@ export class Runtime implements IRuntime {
     url: string,
     config: RoomConfig,
   ): Promise<void> {
+    if (this.pages.has(pageId)) {
+      throw new Error(`Page ${pageId} already exists`);
+    }
+
+    const page = await this.browser.newPage();
+    const hostPage = new HostPage(rootLogger, pageId, page);
+
     try {
-      if (this.pages.has(pageId)) {
-        throw new Error(`Page ${pageId} already exists`);
-      }
-
-      const page = await this.browser.newPage();
-
-      const hostPage: HostPage = new HostPage(rootLogger, pageId, page);
-
       await hostPage.navigate(url);
-
       await hostPage.injectEnvironmentBuilder();
-
       await hostPage.launchHost(config);
+
+      this.pages.set(pageId, hostPage);
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("", { error: error.name, message: error.message });
-      }
+      await page.close().catch(() => {});
+      this.logger.error("Failed to launch page");
+      throw error;
     }
   }
 
@@ -51,7 +50,7 @@ export class Runtime implements IRuntime {
       this.pages.delete(pageId);
     } catch (error) {
       if (error instanceof Error) {
-        this.logger.error("", { error: error.name, message: error.message });
+        this.logger.error("Failed to close page");
       }
     }
   }
