@@ -60,9 +60,15 @@ export class HostPage implements IHostPage {
 
     this.logger.debug("Launching host", { pageId: this.id });
 
-    await this.page.evaluate((conf: RoomConfig) => {
-      (window as any).__headless.init(conf);
+    const response = await this.page.evaluate((conf: RoomConfig) => {
+      const result = (window as any).__headless.init(conf);
+      return result;
+      
     }, config);
+    
+    this.logger.debug("RESPONSE", { response: response });
+    
+    this.logger.debug("room initialized ", { room: config.roomName });
     
     await this.page.evaluate(() => {
       (window as any).__headless.subscribeEvents();

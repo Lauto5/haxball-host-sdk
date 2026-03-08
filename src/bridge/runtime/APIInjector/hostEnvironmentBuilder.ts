@@ -6,18 +6,19 @@ export class HostEnvironmentBuilder {
       (window as any).__headless = {
         room: null,
 
-        waitForRoom(room: any, timeout = 5000): Promise<any> {
+        async waitForRoom(room: any, timeout = 10000): Promise<any> {
           return new Promise((resolve, reject) => {
             let finished = false;
 
             room.onRoomLink = function (link: any) {
+              console.log("ON ROOM LINK");
               finished = true;
               resolve(link);
             };
 
             setTimeout(() => {
               if (!finished) {
-                reject("timeout");
+                reject(new Error("Token is invalid"));
               }
             }, timeout);
           });
@@ -31,14 +32,12 @@ export class HostEnvironmentBuilder {
           this.room = (window as any).HBInit(config);
 
           try {
-            const link = await this.await(this.room);
-
-            console.log("Room ", config.roomName, " initialized successfully");
-
-            return { success: true, link };
+            const link = await this.waitForRoom(this.room);
+            console.log(link);
+            return { success: true, link: link };
+            
           } catch (error) {
-            console.log("Token invalid");
-            return { success: false };
+            return { success: false, error:error};
           }
         },
 
