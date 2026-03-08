@@ -66,7 +66,9 @@ export class HostPage implements IHostPage {
       
     }, config);
     
-    this.logger.debug("RESPONSE", { response: response });
+    if (!response.success) {
+      throw new Error("Token is invalid");
+    }
     
     this.logger.debug("room initialized ", { room: config.roomName });
     

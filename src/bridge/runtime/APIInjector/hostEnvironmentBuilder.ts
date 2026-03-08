@@ -6,12 +6,11 @@ export class HostEnvironmentBuilder {
       (window as any).__headless = {
         room: null,
 
-        async waitForRoom(room: any, timeout = 10000): Promise<any> {
+        async waitForRoom(room: any, timeout = 8000): Promise<any> {
           return new Promise((resolve, reject) => {
             let finished = false;
 
             room.onRoomLink = function (link: any) {
-              console.log("ON ROOM LINK");
               finished = true;
               resolve(link);
             };
@@ -33,11 +32,13 @@ export class HostEnvironmentBuilder {
 
           try {
             const link = await this.waitForRoom(this.room);
-            console.log(link);
             return { success: true, link: link };
             
           } catch (error) {
-            return { success: false, error:error};
+            
+            return { success: false };  
+            
+            
           }
         },
 

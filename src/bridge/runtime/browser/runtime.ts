@@ -34,9 +34,10 @@ export class Runtime implements IRuntime {
 
       this.pages.set(pageId, hostPage);
     } catch (error) {
-      await page.close().catch(() => {});
-      this.logger.error("Failed to launch page");
-      throw error;
+      await page.close().catch(() => { });
+      
+      this.logger.error("Failed to launch host", error);
+      process.exit(1);
     }
   }
   
