@@ -39,19 +39,34 @@ export class Runtime implements IRuntime {
       throw error;
     }
   }
+  
+  async execute(pageId: string, method: string, args: any[]): Promise<any>{
+    const hostPage = this.pages.get(pageId);
+    if (!hostPage) {
+      throw new Error(`Page ${pageId} not found`);
+    }
+    try {
+      let result = await hostPage.execute(method, args);
+      return result;
+    } catch (error) {
+      await hostPage.close().catch(() => {});
+      this.logger.error("Failed to execute method");
+      throw error;
+    }
+  }
 
   async closePage(pageId: string): Promise<void> {
-    try {
-      const hostPage = this.pages.get(pageId);
-      if (!hostPage) {
-        throw new Error(`Page ${pageId} not found`);
-      }
+    const hostPage = this.pages.get(pageId);
+    if (!hostPage) {
+      throw new Error(`Page ${pageId} not found`);
+    }
+    
+    try { 
       await hostPage.close();
       this.pages.delete(pageId);
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Failed to close page");
-      }
+      this.logger.error("Failed to closed page");
+      throw error;
     }
   }
 }

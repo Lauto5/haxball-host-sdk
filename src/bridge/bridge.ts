@@ -36,9 +36,15 @@ export class Bridge {
           token:"thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
       }
     
-      let url = "https://www.haxball.com/headless"
+    let url = "https://www.haxball.com/headless"
     
-      this.runtime.launchPage(rootLogger, "node-js-test", url, config);
+    let pageId = "testRoom"
+    
+    await this.runtime.launchPage(rootLogger, pageId, url, config);
+    
+    await this.runtime.execute(pageId, "setDefaultStadium", ["Huge"]);
+    
+    
 
   }
 
