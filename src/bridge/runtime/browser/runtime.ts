@@ -40,13 +40,13 @@ export class Runtime implements IRuntime {
     }
   }
   
-  async execute(pageId: string, method: string, args: any[]): Promise<any>{
+  async execute(pageId: string, method: string, args?: any[]): Promise<any>{
     const hostPage = this.pages.get(pageId);
     if (!hostPage) {
       throw new Error(`Page ${pageId} not found`);
     }
     try {
-      let result = await hostPage.execute(method, args);
+      let result = await hostPage.execute(method, args? args:[]);
       return result;
     } catch (error) {
       await hostPage.close().catch(() => {});

@@ -22,28 +22,28 @@ export class Bridge {
   }
 
   // metodo de test
-  async launchRoom(rootLogger: ILogger){
-    if (!this.runtime){
+  async launchRoom(rootLogger: ILogger) {
+    if (!this.runtime) {
       throw new Error("runtime not init");
     }
 
-      let config: RoomConfig = {
-          roomName: "Haxball-host-sdk-1",
-          playerName:"Lauto5",
-          maxPlayers: 10,
-          public:true,
-          noPlayer: true,
-          token:"thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
-      }
+    let config: RoomConfig = {
+      roomName: "Haxball-host-sdk-1",
+      playerName: "Lauto5",
+      maxPlayers: 10,
+      public: true,
+      noPlayer: true,
+      token: "thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
+    }
     
-      let config2: RoomConfig = {
-          roomName: "Haxball-host-sdk-2",
-          playerName:"Lauto5",
-          maxPlayers: 10,
-          public:true,
-          noPlayer: true,
-          token:"thr1.AAAAAGmtgOKBjMbnCEwBvA.SR-va5bsJcI"
-      }
+    let config2: RoomConfig = {
+      roomName: "Haxball-host-sdk-2",
+      playerName: "Lauto5",
+      maxPlayers: 10,
+      public: true,
+      noPlayer: true,
+      token: "thr1.AAAAAGmtgOKBjMbnCEwBvA.SR-va5bsJcI"
+    }
     
     let url = "https://www.haxball.com/headless"
     
@@ -58,6 +58,10 @@ export class Bridge {
     await this.runtime.execute(pageId1, "setDefaultStadium", ["Huge"]);
     
     await this.runtime.execute(pageId2, "setDefaultStadium", ["Small"]);
+    
+    const result1 = await this.runtime.execute(pageId2, "getPlayerList");
+    
+    this.logger.debug("probando getPlayerList en la pagina 2 : ", { resultado: result1 });
     
     
 

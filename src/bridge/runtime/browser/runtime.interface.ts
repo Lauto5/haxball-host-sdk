@@ -9,7 +9,7 @@ export interface IRuntime {
     config: RoomConfig,
   ): Promise<void>;
 
-  execute(pageId: string, method: string, args: any[]): Promise<any>;
+  execute(pageId: string, method: string, args?: any[]): Promise<any>;
 
   closePage(pageId: string): Promise<void>;
 }
