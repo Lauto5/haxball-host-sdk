@@ -28,21 +28,36 @@ export class Bridge {
     }
 
       let config: RoomConfig = {
-          roomName: "NODEJS",
-          playerName:"hoosts",
+          roomName: "Haxball-host-sdk-1",
+          playerName:"Lauto5",
           maxPlayers: 10,
           public:true,
           noPlayer: true,
           token:"thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
       }
     
+      let config2: RoomConfig = {
+          roomName: "Haxball-host-sdk-2",
+          playerName:"Lauto5",
+          maxPlayers: 10,
+          public:true,
+          noPlayer: true,
+          token:"thr1.AAAAAGmtgOKBjMbnCEwBvA.SR-va5bsJcI"
+      }
+    
     let url = "https://www.haxball.com/headless"
     
-    let pageId = "testRoom"
+    let pageId1 = "testRoom"
     
-    await this.runtime.launchPage(rootLogger, pageId, url, config);
+    let pageId2 = "testRoom2"
     
-    await this.runtime.execute(pageId, "setDefaultStadium", ["Huge"]);
+    await this.runtime.launchPage(rootLogger, pageId1, url, config);
+    
+    await this.runtime.launchPage(rootLogger, pageId2, url, config2);
+    
+    await this.runtime.execute(pageId1, "setDefaultStadium", ["Huge"]);
+    
+    await this.runtime.execute(pageId2, "setDefaultStadium", ["Small"]);
     
     
 
