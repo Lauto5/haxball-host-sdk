@@ -33,7 +33,7 @@ export class Bridge {
           maxPlayers: 10,
           public:true,
           noPlayer: true,
-          token:"thr1.AAAAAGmsmOIyKNAUCg4kTA.W7h8WdBiZMQ"
+          token:"thr1.AAAAAGmtaADOH1ipEuBraQ.PO6lrKDRg9Q"
       }
     
       let url = "https://www.haxball.com/headless"

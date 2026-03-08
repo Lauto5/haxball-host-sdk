@@ -1,5 +1,4 @@
 import { RoomConfig } from "../../../types/haxball";
-import {headless} from "../types/headless.types";
 
 export class HostEnvironmentBuilder {
   build() { 
@@ -11,16 +10,11 @@ export class HostEnvironmentBuilder {
         init(config: RoomConfig): void{
           try {
             if (this.room !== null) {
-              throw new Error("El room ya esta iniciado");
+              throw new Error("Room already initialized");
             }
-         
-            
-            console.log("inicializando Room");
-            
+            console.log("initializing the room ", config.roomName);
             this.room = (window as any).HBInit(config);
-            
-            console.log("el room es : ", this.room);
-            
+            console.log("Room ", config.roomName, " initialized successfully");
           } catch (e) {
             throw e;
           }
@@ -29,7 +23,7 @@ export class HostEnvironmentBuilder {
         
         
         exec(method: string, args: any[]): any{
-          if (!this.room) throw new Error("room not initialized");
+          if (!this.room) throw new Error("Room not initialized");
           const fn = this.room[method];
           if (typeof fn !== "function") {
               throw new Error(method + "not found");

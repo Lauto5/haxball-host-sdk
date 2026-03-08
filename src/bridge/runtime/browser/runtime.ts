@@ -15,38 +15,6 @@ export class Runtime implements IRuntime {
         this.browser = browser;
     }
     
-    // entoces si funciona, pero debemos buscar como sitematizar el entorno de adentro.
-  /*
-  async testLaunchPAge() {
-        const page: Page = await this.browser.newPage();
-        await page.goto("https://www.haxball.com/headless");
-        await page.waitForFunction(() => typeof (window as any).HBInit === "function");
-        
-        const environment = new BrowserEnvironmentBuilder();
-        
-        await page.evaluate(environment.build());
-        
-        await page.waitForFunction(() => (window as any).__hb__runtime !== undefined);
-        
-        page.on("console", msg => this.logger.debug("MENSAJE DEL BROW :", msg.text()));
-        
-        await page.evaluate(() => {
-            console.log(typeof (window as any).__hb__runtime.init !== undefined);
-            console.log((window as any).__hb__runtime);
-            (window as any).__hb__runtime.saludar();
-            (window as any).__hb__runtime.init({
-                roomName: "NODEJS",
-                playerName:"hoosts",
-                maxPlayers: 12,
-                public:true,
-                noPlayer: true,
-                token:"thr1.AAAAAGmsRl28qo3_oxw2_g.YkAP63O89bM"
-            });
-        })
-        
-    }
-*/
-    
   async launchPage(
         rootLogger:ILogger,
         pageId: string,
@@ -61,13 +29,13 @@ export class Runtime implements IRuntime {
       
       const hostPage: HostPage = new HostPage(rootLogger, pageId, page);
     
-    await hostPage.navigate(url);
+      await hostPage.navigate(url);
     
       await hostPage.injectEnvironmentBuilder();
     
-    await hostPage.launchHost(config);
+      await hostPage.launchHost(config);
     
-    this.logger.debug("SE LANZO LA PAGINA");
+      this.logger.debug("SE LANZO LA PAGINA");
     }
 
     async closePage(pageId: string): Promise<void> {

@@ -16,7 +16,7 @@ export class HostPage implements IHostPage {
   
   async navigate(url: string): Promise<void>{
     if (!this.page) {
-      throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
+      throw new Error("Page not initialized");
     }
     await this.page.goto(url);
     
@@ -25,7 +25,7 @@ export class HostPage implements IHostPage {
 
   async injectEnvironmentBuilder(): Promise<void> {
     if (!this.page) {
-      throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
+      throw new Error("Page not initialized");
     }
     const environment = new HostEnvironmentBuilder();
    
@@ -41,7 +41,7 @@ export class HostPage implements IHostPage {
     
     try {
       if (!this.page) {
-        throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
+        throw new Error("Page not initialized");
       }
       await this.page.evaluate((conf:RoomConfig) => {
         (window as any).__headless.init(conf);
@@ -58,7 +58,7 @@ export class HostPage implements IHostPage {
     
     try {
       if (!this.page) {
-        throw new Error("Debes inicializar la Page antes de inyectar el entorno.");
+        throw new Error("Page not initialized");
       }
       const result = await this.page.evaluate((method:string, args: any[]) => {
         return (window as any).__headless.exec(method, args);
