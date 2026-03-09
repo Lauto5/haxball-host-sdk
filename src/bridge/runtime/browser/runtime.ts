@@ -3,6 +3,7 @@ import { IRuntime } from "./runtime.interface";
 import { HostPage } from "../pages/hostPage";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
+import { EventResponse } from "../events/eventResponse.interface";
 
 export class Runtime implements IRuntime {
   private logger: ILogger;
@@ -30,12 +31,14 @@ export class Runtime implements IRuntime {
     try {
       await hostPage.navigate(url);
       await hostPage.injectEnvironmentBuilder();
+      hostPage.on((data: EventResponse) => {
+        this.execute(data.id, "startGame");
+      });
       await hostPage.launchHost(config);
 
       this.pages.set(pageId, hostPage);
     } catch (error) {
       await page.close().catch(() => { });
-      
       this.logger.error("Failed to launch host", error);
       process.exit(1);
     }

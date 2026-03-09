@@ -33,7 +33,7 @@ export class Bridge {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1..JWvJ5aE6lr0"
+      token: "thr1.AAAAAGmuqigH7OoW-LATlw.f7fcZdhIv0Q"
       
     }
     

@@ -3,14 +3,19 @@ import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../types/haxball";
+import { EventResponse } from "../events/eventResponse.interface";
+import { BrowserEventResponse } from "../events/browserEventResponse.interface";
+import { EventEmitter } from "events";
 
 export class HostPage implements IHostPage {
   private logger: ILogger;
+  private eventEmitter: EventEmitter;
   constructor(
     rootLogger: ILogger,
     private readonly id: string,
     private readonly page: Page,
   ) {
+    this.eventEmitter = new EventEmitter();
     this.logger = new ScopedLogger(rootLogger, "HostPage");
   }
 
@@ -49,8 +54,8 @@ export class HostPage implements IHostPage {
     this.logger.debug("Environment injection completed", { pageId: this.id });
 
     this.connectLogger();
-    
-    this.emitEvent();
+
+    this.suscribeEvents();
   }
 
   async launchHost(config: RoomConfig): Promise<void> {
@@ -63,15 +68,14 @@ export class HostPage implements IHostPage {
     const response = await this.page.evaluate((conf: RoomConfig) => {
       const result = (window as any).__headless.init(conf);
       return result;
-      
     }, config);
-    
+
     if (!response.success) {
       throw new Error("Token is invalid");
     }
-    
+
     this.logger.debug("room initialized ", { room: config.roomName });
-    
+
     await this.page.evaluate(() => {
       (window as any).__headless.subscribeEvents();
     });
@@ -103,13 +107,30 @@ export class HostPage implements IHostPage {
       pageId: this.id,
     });
   }
+
+  on(callback: (data: EventResponse) => void): void {
+    this.eventEmitter.on("onEvent", callback);
+  }
   
-  private async emitEvent(): Promise<void> {
-    await this.page.exposeFunction("emit" ,(evenData:any)=>{this.logger.info("esto me llego: ",evenData)});
+  private async suscribeEvents(): Promise<void> {
+    await this.page.exposeFunction(
+      "emit",
+      (browserEvent: any) => {
+
+        const eventResponse: EventResponse = {
+          id: this.id,
+          method: browserEvent.method,
+          response: browserEvent.response,
+        };
+
+        this.logger.debug("Event received:", {id:eventResponse.id, method:eventResponse.method});
+        
+        this.eventEmitter.emit("onEvent", eventResponse);
+      },
+    );
   }
 
   private connectLogger(): void {
     this.page.on("console", (msg) => this.logger.info("", msg.text()));
   }
-  
 }

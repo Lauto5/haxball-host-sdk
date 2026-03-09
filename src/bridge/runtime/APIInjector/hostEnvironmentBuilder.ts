@@ -33,12 +33,8 @@ export class HostEnvironmentBuilder {
           try {
             const link = await this.waitForRoom(this.room);
             return { success: true, link: link };
-            
           } catch (error) {
-            
-            return { success: false };  
-            
-            
+            return { success: false };
           }
         },
 
@@ -54,13 +50,26 @@ export class HostEnvironmentBuilder {
         subscribeEvents(): void {
           if (!this.room) throw new Error("Room not initialized");
 
-          this.room.onPlayerJoin = function (player: any) {
-            this.emit("onPlayerJoin", player);
+          this.room.onPlayerJoin = (player: any) => {
+            this.emitEvent("onPlayerJoin", player);
+          };
+
+          this.room.onRoomLink = (link: string) => {
+            this.emitEvent("onRoomLink", link);
           };
         },
 
-        emit(method: string, response: any[]): any {
-          return { method: method, response: response };
+        emitEvent(method: string, response: any[]): void {
+          if (typeof (window as any).emit === "function") {
+            try {
+              (window as any).emit({
+                method: method,
+                response: response,
+              });
+            } catch (error) {
+              throw new Error("Error in emitEvent");
+            }
+          }
         },
       };
     };
