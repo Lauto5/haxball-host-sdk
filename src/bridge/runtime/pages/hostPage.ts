@@ -115,7 +115,7 @@ export class HostPage implements IHostPage {
   private async suscribeEvents(): Promise<void> {
     await this.page.exposeFunction(
       "emit",
-      (browserEvent: any) => {
+      (browserEvent: BrowserEventResponse) => {
 
         const eventResponse: EventResponse = {
           id: this.id,
