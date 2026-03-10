@@ -1,25 +1,22 @@
 import { ILogger, ScopedLogger } from "../logger";
-import { RPCChannel } from "./rpc/rpcChannel";
 import { ITransport } from "./transport/transport.interface";
 import { Runtime, RuntimeFactory } from "./runtime";
 import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
+import { IBox } from "./box/box.interface";
 
 export class Bridge implements IBridge {
   private logger: ILogger;
   private runtime?: Runtime;
-  private transport: ITransport;
-  private rpcChannel?: RPCChannel;
+  private boxs = new Map<string, IBox>();
 
-  constructor(rootLogger: ILogger, transport: ITransport) {
-    this.logger = new ScopedLogger(rootLogger, "Bridge");
-    this.transport = transport;
+  constructor(rootLogger: ILogger) {
+    this.logger = new ScopedLogger(rootLogger, "Bridge")
   }
 
   async launchBridge(rootLogger: ILogger){
     let runtimeFactory = new RuntimeFactory();
     this.runtime = await runtimeFactory.getRuntime(rootLogger);
-    this.rpcChannel = new RPCChannel(this.transport ,10000, rootLogger);
   }
 
   setupTransport(transport: ITransport): void{
@@ -49,27 +46,6 @@ export class Bridge implements IBridge {
     await this.runtime.launchPage(rootLogger, pageId1, url, config);
     
     await this.runtime.execute(pageId1, "setDefaultStadium", ["Huge"]);
-    
-    // ***LEER IMPORTANTE***
-    // luego ver como podemos implementar la comunicacion de los eventos del runtime con el bridge.
-    
 
-  }
-
-  // metodo de test
-  public registrarMetodo(method:string,handler: (params: unknown[]) => unknown | Promise<unknown>):void{
-    if (!this.rpcChannel){
-      throw new Error("Rpc-Channel not initialized. Call launchBridge() first");
-    }
-    this.rpcChannel.registerHandler(method,handler);
-  }
-
-  // metodo de test
-  public llamar(method: string, params?: unknown[], timeoutMs?: number): Promise<unknown>{
-    if (!this.rpcChannel){
-      throw new Error("Rpc-Channel not initialized. Call launchBridge() first");
-    }
-    let result = this.rpcChannel.call(method,params,timeoutMs);
-    return result;
   }
 }
