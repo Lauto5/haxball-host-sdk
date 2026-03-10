@@ -31,9 +31,12 @@ export class Runtime implements IRuntime {
     try {
       await hostPage.navigate(url);
       await hostPage.injectEnvironmentBuilder();
+      
       hostPage.on((data: EventResponse) => {
-        this.execute(data.id, "startGame");
+        
+        
       });
+      
       await hostPage.launchHost(config);
 
       this.pages.set(pageId, hostPage);
@@ -55,7 +58,7 @@ export class Runtime implements IRuntime {
     } catch (error) {
       await hostPage.close().catch(() => {});
       this.logger.error("Failed to execute method");
-      throw error;
+      process.exit(1);
     }
   }
 

@@ -1,16 +1,17 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { RPCChannel } from "./rpc/rpcChannel";
-import { Transport } from "./transport/transport";
+import { ITransport } from "./transport/transport.interface";
 import { Runtime, RuntimeFactory } from "./runtime";
 import { RoomConfig } from "../types/haxball";
+import { IBridge } from "./bridge.interface";
 
-export class Bridge {
+export class Bridge implements IBridge {
   private logger: ILogger;
   private runtime?: Runtime;
-  private transport: Transport;
+  private transport: ITransport;
   private rpcChannel?: RPCChannel;
 
-  constructor(rootLogger: ILogger, transport: Transport) {
+  constructor(rootLogger: ILogger, transport: ITransport) {
     this.logger = new ScopedLogger(rootLogger, "Bridge");
     this.transport = transport;
   }
@@ -21,6 +22,10 @@ export class Bridge {
     this.rpcChannel = new RPCChannel(this.transport ,10000, rootLogger);
   }
 
+  setupTransport(transport: ITransport): void{
+    
+  }
+  
   // metodo de test
   async launchRoom(rootLogger: ILogger) {
     if (!this.runtime) {

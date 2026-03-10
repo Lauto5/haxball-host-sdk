@@ -89,6 +89,7 @@ export class HostPage implements IHostPage {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
+    this.logger.debug("Execute method..", {id:this.id,method:method , args:args});
     const result = await this.page.evaluate(
       (method: string, args: any[]) => {
         return (window as any).__headless.exec(method, args);
