@@ -6,6 +6,6 @@ export interface IBridge {
   
   launchBridge(rootLogger: ILogger): Promise<void>;
   setupTransport(transport: ITransport): void;
-  connectRPC(handle:IRPCChannel): void;
+  launchBox(): void;
   
 }
