@@ -5,21 +5,23 @@ import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { IBox } from "./box/box.interface";
 
-export class Bridge implements IBridge {
+export class Bridge implements IBridge{
   private logger: ILogger;
   private runtime?: Runtime;
   private boxs = new Map<string, IBox>();
+  private transport?: ITransport;
 
   constructor(rootLogger: ILogger) {
     this.logger = new ScopedLogger(rootLogger, "Bridge")
   }
 
-  async launchBridge(rootLogger: ILogger){
+  async launchBridge(rootLogger: ILogger, transport: ITransport){
     let runtimeFactory = new RuntimeFactory();
     this.runtime = await runtimeFactory.getRuntime(rootLogger);
+    this.transport = transport;
   }
-
-  setupTransport(transport: ITransport): void{
+  
+  launchBox(roomConfig: RoomConfig): void{
     
   }
   
@@ -35,7 +37,7 @@ export class Bridge implements IBridge {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGmuqigH7OoW-LATlw.f7fcZdhIv0Q"
+      token: "thr1.AAAAAGm7iQYywafcbyZRXA.Vs5GFWGUnIc"
       
     }
     

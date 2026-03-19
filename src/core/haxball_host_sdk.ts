@@ -16,8 +16,8 @@ export class HaxballHostSDK {
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
     const transport = new Transport(this.rootLogger);
-    const bridge = new Bridge(this.rootLogger, transport);
-    await bridge.launchBridge(this.rootLogger);
+    const bridge = new Bridge(this.rootLogger);
+    await bridge.launchBridge(this.rootLogger, transport);
     await bridge.launchRoom(this.rootLogger);
 
   }
