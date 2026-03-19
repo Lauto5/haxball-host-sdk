@@ -51,18 +51,19 @@ export class HostEnvironmentBuilder {
           if (!this.room) throw new Error("Room not initialized");
 
           this.room.onPlayerJoin = (player: any) => {
-            this.emitEvent("onPlayerJoin", player);
+            this.emitEvent("event", "onPlayerJoin", player);
           };
 
           this.room.onRoomLink = (link: string) => {
-            this.emitEvent("onRoomLink", link);
+            this.emitEvent("event", "onRoomLink", link);
           };
         },
 
-        emitEvent(method: string, response: any[]): void {
+        emitEvent(typeResponse: string, method: string, response: any[]): void {
           if (typeof (window as any).emit === "function") {
             try {
               (window as any).emit({
+                typeResponse: typeResponse,
                 method: method,
                 response: response,
               });

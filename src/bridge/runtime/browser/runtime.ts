@@ -36,8 +36,8 @@ export class Runtime implements IRuntime {
       await hostPage.navigate(url);
       await hostPage.injectEnvironmentBuilder();
       
-      hostPage.on((data: EventResponse) => {
-        this.eventEmitter.emit("onEvent", data);
+      hostPage.on((data: Response) => {
+        this.eventEmitter.emit("onEmit", data);
       });
       
       await hostPage.launchHost(config);
@@ -67,7 +67,7 @@ export class Runtime implements IRuntime {
 
 
   on(callback:(data: Response) => void): void{
-    this.eventEmitter.on("onEvent", callback);
+    this.eventEmitter.on("onEmit", callback);
   }
 
   async closePage(pageId: string): Promise<void> {
