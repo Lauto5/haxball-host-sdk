@@ -3,16 +3,20 @@ import { IRuntime } from "./runtime.interface";
 import { HostPage } from "../pages/hostPage";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
-import { EventResponse } from "../events/eventResponse.interface";
+import { Response } from "../responses/responses.interface";
+import { EventEmitter } from "events";
+
 
 export class Runtime implements IRuntime {
   private logger: ILogger;
   private browser: Browser;
   private pages = new Map<string, HostPage>();
+  private eventEmitter: EventEmitter;
 
   constructor(browser: Browser, rootLogger: ILogger) {
     this.logger = new ScopedLogger(rootLogger, "Runtime");
     this.browser = browser;
+    this.eventEmitter = new EventEmitter();
   }
 
   async launchPage(
@@ -33,8 +37,7 @@ export class Runtime implements IRuntime {
       await hostPage.injectEnvironmentBuilder();
       
       hostPage.on((data: EventResponse) => {
-        
-        
+        this.eventEmitter.emit("onEvent", data);
       });
       
       await hostPage.launchHost(config);
@@ -60,6 +63,11 @@ export class Runtime implements IRuntime {
       this.logger.error("Failed to execute method");
       process.exit(1);
     }
+  }
+
+
+  on(callback:(data: Response) => void): void{
+    this.eventEmitter.on("onEvent", callback);
   }
 
   async closePage(pageId: string): Promise<void> {

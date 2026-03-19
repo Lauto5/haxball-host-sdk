@@ -1,5 +1,6 @@
 import { ILogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
+import { Response } from "../responses/responses.interface";
 
 export interface IRuntime {
   launchPage(
@@ -11,5 +12,9 @@ export interface IRuntime {
 
   execute(pageId: string, method: string, args?: any[]): Promise<any>;
 
+  on(callback:(data: Response) => void): void;
+
   closePage(pageId: string): Promise<void>;
+
+
 }

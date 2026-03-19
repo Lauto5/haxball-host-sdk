@@ -3,9 +3,9 @@ import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../types/haxball";
-import { EventResponse } from "../events/eventResponse.interface";
-import { BrowserEventResponse } from "../events/browserEventResponse.interface";
+import { BrowserEvent } from "../events/browserEvent.interface";
 import { EventEmitter } from "events";
+import { Response } from "../responses/responses.interface";
 
 export class HostPage implements IHostPage {
   private logger: ILogger;
@@ -109,22 +109,23 @@ export class HostPage implements IHostPage {
     });
   }
 
-  on(callback: (data: EventResponse) => void): void {
+  on(callback: (data: Response) => void): void {
     this.eventEmitter.on("onEvent", callback);
   }
   
   private async suscribeEvents(): Promise<void> {
     await this.page.exposeFunction(
       "emit",
-      (browserEvent: BrowserEventResponse) => {
+      (browserEvent: BrowserEvent) => {
 
-        const eventResponse: EventResponse = {
+        const eventResponse: Response = {
           id: this.id,
+          typeResponse: "event",
           method: browserEvent.method,
           response: browserEvent.response,
         };
 
-        this.logger.debug("Event received:", {id:eventResponse.id, method:eventResponse.method});
+        this.logger.debug("Event received:", {id:eventResponse.id , type:eventResponse.typeResponse, method:eventResponse.method});
         
         this.eventEmitter.emit("onEvent", eventResponse);
       },
