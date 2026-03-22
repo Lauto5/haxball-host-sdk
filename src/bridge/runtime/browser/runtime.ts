@@ -3,19 +3,26 @@ import { IRuntime } from "./runtime.interface";
 import { HostPage } from "../pages/hostPage";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
-import { Response } from "../responses/responses.interface";
+import { Response } from "../responses/eventResponse.interface";
 import { EventEmitter } from "events";
 
 
 export class Runtime implements IRuntime {
+  
   private logger: ILogger;
+  
   private browser: Browser;
+  
   private pages = new Map<string, HostPage>();
+  
   private eventEmitter: EventEmitter;
 
   constructor(browser: Browser, rootLogger: ILogger) {
+    
     this.logger = new ScopedLogger(rootLogger, "Runtime");
+    
     this.browser = browser;
+    
     this.eventEmitter = new EventEmitter();
   }
 
@@ -25,63 +32,98 @@ export class Runtime implements IRuntime {
     url: string,
     config: RoomConfig,
   ): Promise<void> {
+    
     if (this.pages.has(pageId)) {
+      
       throw new Error(`Page ${pageId} already exists`);
+      
     }
 
     const page = await this.browser.newPage();
+    
     const hostPage = new HostPage(rootLogger, pageId, page);
-
+    
     try {
+      
       await hostPage.navigate(url);
+      
       await hostPage.injectEnvironmentBuilder();
       
       hostPage.on((data: Response) => {
+        
         this.eventEmitter.emit("onEmit", data);
+        
       });
       
       await hostPage.launchHost(config);
 
       this.pages.set(pageId, hostPage);
+      
     } catch (error) {
+      
       await page.close().catch(() => { });
+      
       this.logger.error("Failed to launch host", error);
+      
       process.exit(1);
     }
   }
   
   async execute(pageId: string, method: string, args?: any[]): Promise<any>{
+    
     const hostPage = this.pages.get(pageId);
+    
     if (!hostPage) {
+      
       throw new Error(`Page ${pageId} not found`);
+      
     }
+    
     try {
-      let result = await hostPage.execute(method, args? args:[]);
+      
+      let result = await hostPage.execute(method, args ? args : []);
+      
       return result;
+      
     } catch (error) {
-      await hostPage.close().catch(() => {});
+      
+      await hostPage.close().catch(() => { });
+      
       this.logger.error("Failed to execute method");
+      
       process.exit(1);
     }
   }
 
 
   on(callback:(data: Response) => void): void{
+    
     this.eventEmitter.on("onEmit", callback);
+    
   }
 
   async closePage(pageId: string): Promise<void> {
+    
     const hostPage = this.pages.get(pageId);
+    
     if (!hostPage) {
+      
       throw new Error(`Page ${pageId} not found`);
+      
     }
     
     try { 
+      
       await hostPage.close();
+      
       this.pages.delete(pageId);
+      
     } catch (error) {
+      
       this.logger.error("Failed to closed page");
+      
       throw error;
+      
     }
   }
 }

@@ -5,22 +5,28 @@ import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { IBox } from "./box/box.interface";
 
-// haxball-host-sdk => transport => bridge [modulo bridge] <= runtime <= hostpages <= api real de haxball
-// transport (llama a getAllPlayers) => bridge => box-rpchannel => bridge => runtime => hostpage => api real de haxball
 export class Bridge implements IBridge{
+  
   private logger: ILogger;
+  
   private runtime?: Runtime;
-  // como deberia hacer las boxs?
+  
   private boxs = new Map<string, IBox>();
+  
   private transport?: ITransport;
 
   constructor(rootLogger: ILogger) {
-    this.logger = new ScopedLogger(rootLogger, "Bridge")
+    
+    this.logger = new ScopedLogger(rootLogger, "Bridge");
+    
   }
 
   async launchBridge(rootLogger: ILogger, transport: ITransport){
+    
     let runtimeFactory = new RuntimeFactory();
+    
     this.runtime = await runtimeFactory.getRuntime(rootLogger);
+    
     this.transport = transport;
   }
   

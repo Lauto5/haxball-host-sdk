@@ -1,5 +1,5 @@
 import { RoomConfig } from "#/types/haxball";
-import { Response } from "../responses/responses.interface";
+import { Response } from "../responses/eventResponse.interface";
 
 export interface IHostPage {
   navigate(url: string): Promise<void>;
