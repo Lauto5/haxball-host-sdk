@@ -1,4 +1,19 @@
 
+export function chooseBrowserConfig(system: 'linux' | 'windows' | 'mac' | 'unknown', executablePath?: string): BrowserConfigPuppeteer {
+  switch (system) {
+    case 'linux':
+      BrowserConfigPuppeteerLinux.executablePath = executablePath;
+      return BrowserConfigPuppeteerLinux;
+    case 'windows':
+    case 'mac':
+      BrowserConfigPuppeteerDesktop.executablePath = executablePath;
+      return BrowserConfigPuppeteerDesktop;
+    default:
+      BrowserConfigPuppeteerDesktop.executablePath = executablePath;
+      return BrowserConfigPuppeteerDesktop;
+  }
+}
+
 // Tipos base
 export interface BrowserConfigPuppeteer {
   headless: "shell" | boolean;
@@ -7,7 +22,7 @@ export interface BrowserConfigPuppeteer {
 }
 
 // --- Configuración para Entornos Linux ---
-export const BrowserConfigPuppeteerLinux: BrowserConfigPuppeteer = {
+const BrowserConfigPuppeteerLinux: BrowserConfigPuppeteer = {
   headless: "shell",
   args: [
     '--no-sandbox',
@@ -21,7 +36,7 @@ export const BrowserConfigPuppeteerLinux: BrowserConfigPuppeteer = {
 };
 
 // --- Configuración para Entornos de Escritorio (Windows/Mac) ---
-export const BrowserConfigPuppeteerDesktop: BrowserConfigPuppeteer = {
+const BrowserConfigPuppeteerDesktop: BrowserConfigPuppeteer = {
   headless: "shell",
   args: [
     '--disable-gpu',

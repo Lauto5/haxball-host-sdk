@@ -1,16 +1,19 @@
-import { BrowserProvider } from "../providers/browserProvider";
-import { Runtime } from "../runtimeBrowser/runtime";
+import { RuntimePuppeteer } from "../runtimeBrowser/runtimePupperteer";
 import { ILogger } from "../../../logger"
+import { puppeteerBrowser } from "../browser/puppeteerBrowser"
+import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
+import { IRuntime } from "../runtimeBrowser/runtime.interface";
 
 export class RuntimeFactory {
   
-  async getRuntime(rootLoger: ILogger) {
-        
-    const browser = await BrowserProvider.getBrowser();
-        
-    const runtime = new Runtime(browser, rootLoger);
-        
-    return runtime;
+  async getRuntimePuppeteer(rootLogger: ILogger, system: 'linux' | 'windows' | 'mac' | 'unknown', executablePath?: string): Promise<IRuntime> {
     
-    }
+    const browserConfig: BrowserConfigPuppeteer = chooseBrowserConfig(system, executablePath);
+    
+    const browser = await puppeteerBrowser(browserConfig);
+    
+    return new RuntimePuppeteer(browser, rootLogger);
+    
+  }
+  
 }

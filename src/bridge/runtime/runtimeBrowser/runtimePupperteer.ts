@@ -8,7 +8,7 @@ import { EventResponse } from "../responses/eventResponse.interface";
 import { EventEmitter } from "events";
 
 
-export class Runtime implements IRuntime {
+export class RuntimePuppeteer implements IRuntime {
   
   private logger: ILogger;
   

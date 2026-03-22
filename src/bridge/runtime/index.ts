@@ -1,3 +1,3 @@
 export { RuntimeFactory } from "./factories/runtimeFactory";
-export { Runtime } from "./runtimeBrowser/runtime";
+export { RuntimePuppeteer } from "./runtimeBrowser/runtimePupperteer";
 export { EventResponse } from "./responses/eventResponse.interface";

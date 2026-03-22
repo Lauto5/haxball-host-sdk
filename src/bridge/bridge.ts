@@ -1,16 +1,17 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { ITransport } from "./transport/transport.interface";
-import { EventResponse, Runtime, RuntimeFactory } from "./runtime";
+import { EventResponse, RuntimeFactory } from "./runtime";
 import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { IBox } from "./box/box.interface";
 import { IRuntime } from "./runtime/runtimeBrowser/runtime.interface";
+import { BridgeLaunchConfig } from "../types/haxball";
 
 export class Bridge implements IBridge{
   
   private logger: ILogger;
   
-  private runtime?: Runtime;
+  private runtime?: IRuntime;
   
   private boxs = new Map<string, IBox>();
   
@@ -22,11 +23,11 @@ export class Bridge implements IBridge{
     
   }
 
-  async launchBridge(rootLogger: ILogger, transport: ITransport){
+  async launchBridge(rootLogger: ILogger, transport: ITransport, bridgeLaunchConfig: BridgeLaunchConfig){
     
     let runtimeFactory = new RuntimeFactory();
     
-    this.runtime = await runtimeFactory.getRuntime(rootLogger);
+    this.runtime = await runtimeFactory.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig.system, bridgeLaunchConfig.executablePath);
     
     if (this.runtime) {
       

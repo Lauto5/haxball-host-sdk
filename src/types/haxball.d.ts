@@ -1,4 +1,9 @@
 export { };
+  
+export interface BridgeLaunchConfig {
+    system: 'linux' | 'windows' | 'mac' | 'unknown';
+    executablePath?: string;
+}
     
 export interface RoomConfig {
     roomName: string;
