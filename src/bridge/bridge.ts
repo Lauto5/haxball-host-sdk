@@ -27,7 +27,7 @@ export class Bridge implements IBridge{
     
     let runtimeFactory = new RuntimeFactory();
     
-    this.runtime = await runtimeFactory.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig.system, bridgeLaunchConfig.executablePath);
+    this.runtime = await runtimeFactory.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig);
     
     if (this.runtime) {
       
@@ -53,28 +53,14 @@ export class Bridge implements IBridge{
   }
   
   // metodo de test
-  async launchRoom(rootLogger: ILogger) {
+  async launchRoom(rootLogger: ILogger, roomConfig: RoomConfig, urlPath: string) {
     if (!this.runtime) {
       throw new Error("runtime not init");
     }
-
-    let config: RoomConfig = {
-      roomName: "Haxball-host-sdk-WOW",
-      playerName: "Lauto5",
-      maxPlayers: 10,
-      public: true,
-      noPlayer: true,
-      token: "thr1.AAAAAGnAGy9EegTHZnVBMA.NuJdDYDnUf0"
-      
-    }
     
-    let url = "https://www.haxball.com/headless"
+    await this.runtime.launchPage(rootLogger, roomConfig.roomName, urlPath, roomConfig);
     
-    let pageId1 = "testRoom"
-    
-    await this.runtime.launchPage(rootLogger, pageId1, url, config);
-    
-    await this.runtime.execute(pageId1, "setDefaultStadium", ["Huge"]);
+    await this.runtime.execute(roomConfig.roomName, "setDefaultStadium", ["Huge"]);
 
   }
 }

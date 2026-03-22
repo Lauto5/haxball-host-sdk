@@ -3,12 +3,14 @@ import { ILogger } from "../../../logger"
 import { puppeteerBrowser } from "../browser/puppeteerBrowser"
 import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
 import { IRuntime } from "../runtimeBrowser/runtime.interface";
+import { BridgeLaunchConfig } from "../../../types/haxball";
+
 
 export class RuntimeFactory {
   
-  async getRuntimePuppeteer(rootLogger: ILogger, system: 'linux' | 'windows' | 'mac' | 'unknown', executablePath?: string): Promise<IRuntime> {
+  async getRuntimePuppeteer(rootLogger: ILogger, bridgeLaunchConfig: BridgeLaunchConfig): Promise<IRuntime> {
     
-    const browserConfig: BrowserConfigPuppeteer = chooseBrowserConfig(system, executablePath);
+    const browserConfig: BrowserConfigPuppeteer = chooseBrowserConfig(bridgeLaunchConfig.system, bridgeLaunchConfig.executablePath);
     
     const browser = await puppeteerBrowser(browserConfig);
     
