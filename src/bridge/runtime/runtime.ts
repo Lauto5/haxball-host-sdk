@@ -1,9 +1,10 @@
-import puppeteer, { Browser, Page, LaunchOptions } from "puppeteer";
+import { Browser} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
-import { HostPage } from "../pages/hostPage";
-import { ILogger, ScopedLogger } from "../../../logger";
-import { RoomConfig } from "../../../types/haxball";
-import { Response } from "../responses/eventResponse.interface";
+import { HostPage } from "./pages/hostPage";
+import { IHostPage } from "./pages/hostPage.interface";
+import { ILogger, ScopedLogger } from "../../logger";
+import { RoomConfig } from "../../types/haxball";
+import { EventResponse } from "./responses/eventResponse.interface";
 import { EventEmitter } from "events";
 
 
@@ -13,7 +14,7 @@ export class Runtime implements IRuntime {
   
   private browser: Browser;
   
-  private pages = new Map<string, HostPage>();
+  private pages = new Map<string, IHostPage>();
   
   private eventEmitter: EventEmitter;
 
@@ -49,11 +50,7 @@ export class Runtime implements IRuntime {
       
       await hostPage.injectEnvironmentBuilder();
       
-      hostPage.on((data: Response) => {
-        
-        this.eventEmitter.emit("onEmit", data);
-        
-      });
+      this.suscribeToPageEvents(hostPage);
       
       await hostPage.launchHost(config);
 
@@ -92,7 +89,9 @@ export class Runtime implements IRuntime {
       this.logger.error("Failed to execute method");
       
       process.exit(1);
+      
     }
+    
   }
 
 
@@ -126,4 +125,15 @@ export class Runtime implements IRuntime {
       
     }
   }
+  
+  private suscribeToPageEvents(hostPage: IHostPage): void {
+    
+    hostPage.on((data: EventResponse) => {
+      
+      this.eventEmitter.emit("onEmit", data);
+      
+    });
+    
+  }
+  
 }

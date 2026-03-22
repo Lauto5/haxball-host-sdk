@@ -154,7 +154,7 @@ export class HostPage implements IHostPage {
     
   }
 
-  on(callback: (data: Response) => void): void {
+  on(callback: (data: EventResponse) => void): void {
     
     this.eventEmitter.on("onEmit", callback);
     
