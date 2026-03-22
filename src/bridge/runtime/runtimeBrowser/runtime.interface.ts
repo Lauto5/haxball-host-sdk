@@ -1,6 +1,6 @@
-import { ILogger } from "../../logger";
-import { RoomConfig } from "../../types/haxball";
-import { EventResponse } from "./responses/eventResponse.interface";
+import { ILogger } from "../../../logger";
+import { RoomConfig } from "../../../types/haxball";
+import { EventResponse } from "../responses/eventResponse.interface";
 
 export interface IRuntime {
   launchPage(

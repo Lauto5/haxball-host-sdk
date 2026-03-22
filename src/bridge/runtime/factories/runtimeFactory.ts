@@ -1,5 +1,5 @@
 import { BrowserProvider } from "../providers/browserProvider";
-import { Runtime } from "../runtime";
+import { Runtime } from "../runtimeBrowser/runtime";
 import { ILogger } from "../../../logger"
 
 export class RuntimeFactory {

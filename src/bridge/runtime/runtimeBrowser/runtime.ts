@@ -1,10 +1,10 @@
 import { Browser} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
-import { HostPage } from "./pages/hostPage";
-import { IHostPage } from "./pages/hostPage.interface";
-import { ILogger, ScopedLogger } from "../../logger";
-import { RoomConfig } from "../../types/haxball";
-import { EventResponse } from "./responses/eventResponse.interface";
+import { HostPage } from "../pages/hostPage";
+import { IHostPage } from "../pages/hostPage.interface";
+import { ILogger, ScopedLogger } from "../../../logger";
+import { RoomConfig } from "../../../types/haxball";
+import { EventResponse } from "../responses/eventResponse.interface";
 import { EventEmitter } from "events";
 
 

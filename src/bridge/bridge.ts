@@ -4,7 +4,7 @@ import { EventResponse, Runtime, RuntimeFactory } from "./runtime";
 import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { IBox } from "./box/box.interface";
-import { IRuntime } from "./runtime/runtime.interface";
+import { IRuntime } from "./runtime/runtimeBrowser/runtime.interface";
 
 export class Bridge implements IBridge{
   
@@ -63,7 +63,7 @@ export class Bridge implements IBridge{
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGm7iQYywafcbyZRXA.Vs5GFWGUnIc"
+      token: "thr1.AAAAAGnAGy9EegTHZnVBMA.NuJdDYDnUf0"
       
     }
     

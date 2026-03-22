@@ -12,7 +12,7 @@ export class BrowserProvider {
       
       this.instance = await puppeteer.launch({
         
-        headless: true,
+        headless: "shell",
         
         executablePath: "/usr/bin/chromium-browser",
         
