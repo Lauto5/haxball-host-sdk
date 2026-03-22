@@ -1,9 +1,10 @@
 import { ILogger, ScopedLogger } from "../logger";
 import { ITransport } from "./transport/transport.interface";
-import { Runtime, RuntimeFactory } from "./runtime";
+import { EventResponse, Runtime, RuntimeFactory } from "./runtime";
 import { RoomConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { IBox } from "./box/box.interface";
+import { IRuntime } from "./runtime/runtime.interface";
 
 export class Bridge implements IBridge{
   
@@ -27,10 +28,26 @@ export class Bridge implements IBridge{
     
     this.runtime = await runtimeFactory.getRuntime(rootLogger);
     
+    if (this.runtime) {
+      
+      this.reciveEvents(this.runtime);
+    
+    }
+    
     this.transport = transport;
   }
   
   launchBox(roomConfig: RoomConfig): void{
+    
+  }
+  
+  private reciveEvents(runtime: IRuntime) {
+    
+    runtime.on((data: EventResponse) => {
+      
+      this.logger.debug("event", { id: data.id, method: data.method, response: data.response })
+      
+    });
     
   }
   

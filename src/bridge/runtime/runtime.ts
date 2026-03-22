@@ -95,7 +95,7 @@ export class Runtime implements IRuntime {
   }
 
 
-  on(callback:(data: Response) => void): void{
+  on(callback:(data: EventResponse) => void): void{
     
     this.eventEmitter.on("onEmit", callback);
     

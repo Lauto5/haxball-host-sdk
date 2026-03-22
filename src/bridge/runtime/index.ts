@@ -1,2 +1,3 @@
 export { RuntimeFactory } from "./factories/runtimeFactory";
-export {Runtime} from "./browser/runtime";
+export { Runtime } from "./runtime";
+export { EventResponse } from "./responses/eventResponse.interface";

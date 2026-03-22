@@ -1,6 +1,6 @@
-import { ILogger } from "../../../logger";
-import { RoomConfig } from "../../../types/haxball";
-import { Response } from "../responses/eventResponse.interface";
+import { ILogger } from "../../logger";
+import { RoomConfig } from "../../types/haxball";
+import { EventResponse } from "./responses/eventResponse.interface";
 
 export interface IRuntime {
   launchPage(
@@ -12,7 +12,7 @@ export interface IRuntime {
 
   execute(pageId: string, method: string, args?: any[]): Promise<any>;
 
-  on(callback:(data: Response) => void): void;
+  on(callback:(data: EventResponse) => void): void;
 
   closePage(pageId: string): Promise<void>;
 
