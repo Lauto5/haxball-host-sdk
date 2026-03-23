@@ -22,7 +22,7 @@ export class HaxballHostSDK {
     
     const bridge = new Bridge(this.rootLogger);
     
-    const setupConfig = new SetupConfig("/usr/bin/chromium-browser");
+    const setupConfig = new SetupConfig("puppeteer","/usr/bin/chromium-browser");
     
     const roomConfig: RoomConfig = {
       roomName: "Haxball-host-sdk",

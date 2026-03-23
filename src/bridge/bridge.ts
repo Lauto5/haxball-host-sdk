@@ -25,13 +25,13 @@ export class Bridge implements IBridge{
 
   async launchBridge(rootLogger: ILogger, transport: ITransport, bridgeLaunchConfig: BridgeLaunchConfig){
     
-    let runtimeFactory = new RuntimeFactory();
+    const runtimeFactory = new RuntimeFactory();
     
-    this.runtime = await runtimeFactory.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig);
+    this.runtime = await runtimeFactory.getRuntime(rootLogger, bridgeLaunchConfig);
     
     if (this.runtime) {
       
-      this.reciveEvents(this.runtime);
+      await this.reciveEvents(this.runtime);
     
     }
     
@@ -42,11 +42,20 @@ export class Bridge implements IBridge{
     
   }
   
-  private reciveEvents(runtime: IRuntime) {
+  private async reciveEvents(runtime: IRuntime) {
     
-    runtime.on((data: EventResponse) => {
+    runtime.on(async (data: EventResponse) => {
       
       this.logger.debug("event", { id: data.id, method: data.method, response: data.response })
+      
+      if (this.runtime) {
+        if( data.method === "onPlayerJoin") {
+          const result = await this.runtime.execute(data.id, "getPlayerList", []);
+          this.logger.debug("playerList", result);
+        }
+      }
+      
+      
       
     });
     
@@ -61,6 +70,10 @@ export class Bridge implements IBridge{
     await this.runtime.launchPage(rootLogger, roomConfig.roomName, urlPath, roomConfig);
     
     await this.runtime.execute(roomConfig.roomName, "setDefaultStadium", ["Huge"]);
+    
+    const scores = await this.runtime.execute(roomConfig.roomName, "getScores", []);
+    
+    this.logger.debug("scores", scores);
 
   }
 }

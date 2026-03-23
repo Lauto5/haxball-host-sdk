@@ -1,6 +1,6 @@
 import { Browser} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
-import { HostPage } from "../pages/hostPage";
+import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
@@ -42,7 +42,7 @@ export class RuntimePuppeteer implements IRuntime {
 
     const page = await this.browser.newPage();
     
-    const hostPage = new HostPage(rootLogger, pageId, page);
+    const hostPage = new HostPagePuppeteer(rootLogger, pageId, page);
     
     try {
       

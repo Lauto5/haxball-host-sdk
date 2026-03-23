@@ -7,7 +7,7 @@ import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
 import { EventResponse } from "../responses/eventResponse.interface";
 
-export class HostPage implements IHostPage {
+export class HostPagePuppeteer implements IHostPage {
   
   private logger: ILogger;
   

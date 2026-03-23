@@ -8,6 +8,18 @@ import { BridgeLaunchConfig } from "../../../types/haxball";
 
 export class RuntimeFactory {
   
+  async getRuntime(rootLogger: ILogger, bridgeLaunchConfig: BridgeLaunchConfig): Promise<IRuntime> {
+    
+    if (bridgeLaunchConfig.runtime === 'puppeteer') {
+      
+      return await this.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig);
+      
+    }
+    
+    throw new Error(`Unsupported runtime: ${bridgeLaunchConfig.runtime}`);
+    
+  }
+  
   async getRuntimePuppeteer(rootLogger: ILogger, bridgeLaunchConfig: BridgeLaunchConfig): Promise<IRuntime> {
     
     const browserConfig: BrowserConfigPuppeteer = chooseBrowserConfig(bridgeLaunchConfig.system, bridgeLaunchConfig.executablePath);
