@@ -8,5 +8,7 @@ export interface IBridge {
   
   launchBridge(rootLogger: ILogger, transport: ITransport, bridgeLaunchConfig: BridgeLaunchConfig): Promise<void>;
   launchBox(roomConfig: RoomConfig): void;
+  transportHandler(): void;
+  close(): void;
   
 }
