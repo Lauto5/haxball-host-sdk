@@ -1,6 +1,7 @@
 import { RoomConfig } from "../types/haxball";
 import { ILogger } from "../logger";
 import { BridgeLaunchConfig } from "../types/haxball";
+import {EventResponse} from "./runtime"
 
 export interface IBridge {
 
@@ -23,7 +24,6 @@ export interface IBridge {
   // =========================
 
   execute(boxId: string, method: string, args: unknown[]): Promise<unknown>;
-  on(boxId: string, event: string, callback: (data: unknown) => void): void;
-  off(boxId: string, event: string, callback: (data: unknown) => void): void;
+  on(callback: (data: EventResponse) => void): void;
 
 }

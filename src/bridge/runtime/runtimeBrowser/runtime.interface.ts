@@ -15,6 +15,8 @@ export interface IRuntime {
   on(callback:(data: EventResponse) => void): void;
 
   closePage(pageId: string): Promise<void>;
+  
+  close(): Promise<void>;
 
 
 }

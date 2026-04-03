@@ -126,6 +126,22 @@ export class RuntimePuppeteer implements IRuntime {
     }
   }
   
+  async close(): Promise<void> {
+    
+    this.pages.forEach(async (hostPage) => {
+      
+      await hostPage.close().catch(() => { });
+      
+    });
+    
+    this.pages.clear();
+    
+    this.browser.close().catch(() => { });
+    
+    this.logger.info("Runtime closed");
+    
+  }
+  
   private suscribeToPageEvents(hostPage: IHostPage): void {
     
     hostPage.on((data: EventResponse) => {
