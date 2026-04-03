@@ -9,8 +9,6 @@ import { RoomExecutor } from "./box/roomExecutor";
 import { IRoomExecutor } from "./box/roomExecutor.interface";
 import { EventEmitter } from "stream";
 
-const HAXBALL_URL = "https://www.haxball.com/headless";
-
 export class Bridge implements IBridge {
 
   private logger: ILogger;
@@ -60,7 +58,7 @@ export class Bridge implements IBridge {
   // ROOM MANAGEMENT
   // =========================
 
-  async launchBox(config: RoomConfig): Promise<string> {
+  async launchBox(config: RoomConfig, url:string): Promise<string> {
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
 
     const boxId = config.roomName;
@@ -69,7 +67,7 @@ export class Bridge implements IBridge {
       throw new Error(`Box "${boxId}" already exists`);
     }
 
-    await this.runtime.launchPage(this.logger, boxId, HAXBALL_URL, config);
+    await this.runtime.launchPage(this.logger, boxId, url, config);
     
     const box = new Box(boxId, this.roomExecutor);
 

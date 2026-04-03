@@ -1,5 +1,6 @@
 import { RoomConfig } from "#/types/haxball";
-import { Bridge , Transport} from "../bridge";
+import { launch } from "puppeteer";
+import { Bridge} from "../bridge";
 import { ILogger, ConsoleLogger, SafeLogger } from "../logger";
 import { SetupConfig } from "../setup";
 
@@ -18,8 +19,6 @@ export class HaxballHostSDK {
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
     
-    const transport = new Transport(this.rootLogger);
-    
     const bridge = new Bridge(this.rootLogger);
     
     const setupConfig = new SetupConfig("puppeteer","/usr/bin/chromium-browser");
@@ -30,12 +29,26 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnAbRAd5WO5SqWlKg.SPVvQq-wlKA"
+      token: "thr1.AAAAAGnPm7ekO3w7SYd_VQ.z40I5vxJbOo"
     }
     
-    await bridge.launchBridge(this.rootLogger, transport, setupConfig.getBrowserConfig());
+    await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
     
-    await bridge.launchRoom(this.rootLogger, roomConfig, setupConfig.getUrlPath());
+    bridge.on((data) => {
+      console.log(`Event: ${data.method}`, data.response);
+      if (data.method === "onPlayerJoin") {
+        const playerId = data.response.id;
+        console.log(`Player joined: ${playerId}`);
+        bridge.execute(data.id, "setPlayerTeam", [playerId, 1]);
+        bridge.execute(data.id, "setPlayerAdmin", [playerId, true]);
+        bridge.execute(data.id, "startGame", []);
+        
+      }
+    })
+    
+    const boxId = await bridge.launchBox(roomConfig, setupConfig.getUrlPath());
+    
+    await bridge.execute(boxId, "setDefaultStadium", ["Huge"]);
 
   }
 

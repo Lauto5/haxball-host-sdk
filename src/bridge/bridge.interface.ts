@@ -16,7 +16,7 @@ export interface IBridge {
   // ROOM MANAGEMENT
   // =========================
   
-  launchBox(config: RoomConfig): Promise<string>;   // retorna boxId
+  launchBox(config: RoomConfig, url:string): Promise<string>;   // retorna boxId
   closeBox(boxId: string): Promise<void>;
 
   // =========================

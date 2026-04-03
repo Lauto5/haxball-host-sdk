@@ -4,7 +4,7 @@ interface EventResponse {
   
   method: string;
   
-  response: any[];
+  response: any;
   
 }
 
