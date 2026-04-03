@@ -8,6 +8,6 @@ export class Box implements IBox {
   ) {}
 
   async execute(method: string, args: unknown[]): Promise<unknown> {
-    return this.executor.execute(method, args);
+    return this.executor.execute(this.id,method, args);
   }
 }

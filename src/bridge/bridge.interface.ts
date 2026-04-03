@@ -1,14 +1,29 @@
 import { RoomConfig } from "../types/haxball";
 import { ILogger } from "../logger";
-import { ITransport } from "./transport/transport.interface";
 import { BridgeLaunchConfig } from "../types/haxball";
 
-
 export interface IBridge {
+
+  // =========================
+  // LIFECYCLE
+  // =========================
   
-  launchBridge(rootLogger: ILogger, transport: ITransport, bridgeLaunchConfig: BridgeLaunchConfig): Promise<void>;
-  launchBox(roomConfig: RoomConfig): void;
-  transportHandler(): void;
-  close(): void;
+  init(rootLogger: ILogger, config: BridgeLaunchConfig): Promise<void>;
+  close(): Promise<void>;
+
+  // =========================
+  // ROOM MANAGEMENT
+  // =========================
   
+  launchBox(config: RoomConfig): Promise<string>;   // retorna boxId
+  closeBox(boxId: string): Promise<void>;
+
+  // =========================
+  // COMMUNICATION
+  // =========================
+
+  execute(boxId: string, method: string, args: unknown[]): Promise<unknown>;
+  on(boxId: string, event: string, callback: (data: unknown) => void): void;
+  off(boxId: string, event: string, callback: (data: unknown) => void): void;
+
 }

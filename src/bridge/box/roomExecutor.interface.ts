@@ -1,3 +1,3 @@
 export interface IRoomExecutor {
-  execute(method: string, args: unknown[]): Promise<unknown>;
+  execute(boxId: string, method: string, args: unknown[]): Promise<unknown>;
 }

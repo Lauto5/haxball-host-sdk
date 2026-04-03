@@ -4,11 +4,10 @@ import { IRuntime } from "../runtime";
 
 export class RoomExecutor implements IRoomExecutor {
   constructor(
-    private readonly runtime: IRuntime,
-    private readonly pageId: string,
+    private readonly runtime: IRuntime
   ) {}
 
-  execute(method: string, args: unknown[]): Promise<unknown> {
-    return this.runtime.execute(this.pageId, method, args as any[]);
+  execute(id: string, method: string, args: unknown[]): Promise<unknown> {
+    return this.runtime.execute(id, method, args as any[]);
   }
 }
