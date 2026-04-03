@@ -34,6 +34,8 @@ export class HaxballHostSDK {
     
     await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
     
+    // **LEER** PROXIMO TRATAR DE HACER QUE LOS EVENTOS SEA POR ROOM, ES DECIR QUE NO SE COMPARTA EL MISMO ON(), O VER COMO IMPLEMENTAR MEJOR.
+    
     bridge.on((data) => {
       console.log(`Event: ${data.method}`, data.response);
       if (data.method === "onPlayerJoin") {

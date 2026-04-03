@@ -13,13 +13,10 @@ export class Bridge implements IBridge {
 
   private logger: ILogger;
   private runtime?: IRuntime;
-  private boxes = new Map<string, IBox>();
-  private roomExecutor: IRoomExecutor;
   private eventEmitter: EventEmitter = new EventEmitter();
 
   constructor(rootLogger: ILogger) {
     this.logger = new ScopedLogger(rootLogger, "Bridge");
-    this.roomExecutor = new RoomExecutor()
   }
 
   // =========================
@@ -32,18 +29,11 @@ export class Bridge implements IBridge {
     
     this.runtime = await runtimeFactory.getRuntime(rootLogger, config);
     
-    this.roomExecutor.inject(this.runtime);
-    
     this.logger.debug("Bridge initialized");
     
   }
 
   async close(): Promise<void> {
-    // cierra todas las boxes activas
-    const closePromises = Array.from(this.boxes.keys()).map(boxId =>
-      this.closeBox(boxId)
-    );
-    await Promise.all(closePromises);
     
     if (this.runtime) {
       
@@ -58,18 +48,11 @@ export class Bridge implements IBridge {
   // ROOM MANAGEMENT
   // =========================
 
-  async launchBox(config: RoomConfig, url:string): Promise<string> {
+  async launchRoom(config: RoomConfig, url: string): Promise<void> {
+    
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
 
-    const boxId = config.roomName;
-
-    if (this.boxes.has(boxId)) {
-      throw new Error(`Box "${boxId}" already exists`);
-    }
-
-    await this.runtime.launchPage(this.logger, boxId, url, config);
-    
-    const box = new Box(boxId, this.roomExecutor);
+    await this.runtime.launchPage(this.logger, config.roomName, url, config);
 
     this.runtime.on((data: EventResponse) => {
       
@@ -77,25 +60,15 @@ export class Bridge implements IBridge {
       
     });
 
-    this.boxes.set(boxId, box);
-
-    this.logger.debug("Box launched", { boxId });
-
-    return boxId;
+    this.logger.debug("Room launched", { config.roomName });
     
   }
 
-  async closeBox(boxId: string): Promise<void> {
-    
-    const box = this.boxes.get(boxId);
-    
-    if (!box) throw new Error(`Box "${boxId}" not found`);
+  async closeRoom(id: string): Promise<void> {
 
-    await this.runtime!.closePage(boxId);
+    await this.runtime!.closePage(id);
     
-    this.boxes.delete(boxId);
-
-    this.logger.debug("Box closed", { boxId });
+    this.logger.debug("Room closed", { id });
     
   }
 
@@ -103,13 +76,9 @@ export class Bridge implements IBridge {
   // COMMUNICATION
   // =========================
 
-  async execute(boxId: string, method: string, args: unknown[]): Promise<unknown> {
+  async execute(id: string, method: string, args: unknown[]): Promise<unknown> {
     
-    const box = this.boxes.get(boxId);
-    
-    if (!box) throw new Error(`Box "${boxId}" not found`);
-    
-    return box.execute(method, args);
+    return this.runtime?.execute(id, method, args);
     
   }
   

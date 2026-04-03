@@ -16,14 +16,14 @@ export interface IBridge {
   // ROOM MANAGEMENT
   // =========================
   
-  launchBox(config: RoomConfig, url:string): Promise<string>;   // retorna boxId
-  closeBox(boxId: string): Promise<void>;
+  launchRoom(config: RoomConfig, url:string): Promise<void>;
+  closeRoom(id: string): Promise<void>;
 
   // =========================
   // COMMUNICATION
   // =========================
 
-  execute(boxId: string, method: string, args: unknown[]): Promise<unknown>;
+  execute(id: string, method: string, args: unknown[]): Promise<unknown>;
   on(callback: (data: EventResponse) => void): void;
 
 }
