@@ -98,7 +98,7 @@ export class HostPagePuppeteer implements IHostPage {
 
     if (!response.success) {
       
-      throw new Error(response.message);
+      throw new Error(`Room: ${config.roomName}, ${response.message}`)
       
     }
 
@@ -190,7 +190,7 @@ export class HostPagePuppeteer implements IHostPage {
 
   private connectLogger(): void {
     
-    this.page.on("console", (msg) => this.logger.info("", msg.text()));
+    this.page.on("console", (msg) => this.logger.debug("", msg.text()));
     
   }
 }

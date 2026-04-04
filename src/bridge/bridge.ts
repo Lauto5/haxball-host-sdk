@@ -55,7 +55,7 @@ export class Bridge implements IBridge {
       
     });
 
-    this.logger.debug("Room launched", { roomName: config.roomName });
+    this.logger.info("Room launched", { roomName: config.roomName });
     
   }
 
@@ -63,7 +63,7 @@ export class Bridge implements IBridge {
     
     await this.runtime!.closePage(id);
     
-    this.logger.debug("Room closed", { id });
+    this.logger.info("Room closed", { id });
     
   }
 

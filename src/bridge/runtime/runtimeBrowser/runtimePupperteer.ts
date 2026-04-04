@@ -86,7 +86,7 @@ export class RuntimePuppeteer implements IRuntime {
       
       await hostPage.close().catch(() => { });
       
-      this.logger.error("Failed to execute method");
+      this.logger.error("Failed to execute method", { id: pageId, method: method, args: args, error: error });
       
       process.exit(1);
       
@@ -119,7 +119,7 @@ export class RuntimePuppeteer implements IRuntime {
       
     } catch (error) {
       
-      this.logger.error("Failed to closed page");
+      this.logger.error("Failed to closed page", { id: pageId, error: error });
       
       throw error;
       
@@ -138,7 +138,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     this.browser.close().catch(() => { });
     
-    this.logger.info("Runtime closed");
+    this.logger.debug("Runtime closed");
     
   }
   
