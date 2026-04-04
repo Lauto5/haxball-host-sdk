@@ -51,11 +51,11 @@ export class HostEnvironmentBuilder {
             
             const link = await this.waitForRoom(this.room);
             
-            return { success: true, link: link };
+            return { success: true, message: "Room initialized successfully", data: link };
             
           } catch (error) {
             
-            return { success: false };
+            return { success: false, message: error instanceof Error ? error.message : String(error) };
             
           }
         },

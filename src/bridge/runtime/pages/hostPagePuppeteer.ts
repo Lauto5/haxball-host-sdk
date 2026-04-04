@@ -5,6 +5,8 @@ import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
+import { HostInitResponse } from "../responses/hostInitResponse.interface";
+
 
 export class HostPagePuppeteer implements IHostPage {
   
@@ -86,22 +88,21 @@ export class HostPagePuppeteer implements IHostPage {
 
     this.logger.debug("Launching host", { pageId: this.id });
 
-    const response = await this.page.evaluate((conf: RoomConfig) => {
+    const response: HostInitResponse = await this.page.evaluate((config: RoomConfig) => {
       
-      const result = (window as any).__headless.init(conf);
+      const result = (window as any).__headless.init(config);
       
       return result;
       
     }, config);
 
-    
     if (!response.success) {
       
-      throw new Error("Token is invalid");
+      throw new Error(response.message);
       
     }
 
-    this.logger.debug("room initialized ", { room: config.roomName });
+    this.logger.debug(response.message, { room: config.roomName, link: response.data });
 
     
     await this.page.evaluate(() => {
@@ -110,13 +111,13 @@ export class HostPagePuppeteer implements IHostPage {
       
     });
 
-    
     this.logger.debug("Host launch completed successfully", {
       pageId: this.id,
     });
+    
   }
 
-  async execute(method: string, args: any[]): Promise<any> {
+  async execute(method: string, args: any[]): Promise<BrowserResponse> {
     
     if (!this.page) {
       
@@ -136,8 +137,14 @@ export class HostPagePuppeteer implements IHostPage {
       method,
       args,
     );
+    
+    const response: BrowserResponse = {
+      id: this.id,
+      method,
+      response: result,
+    };
 
-    return result;
+    return response;
     
   }
 

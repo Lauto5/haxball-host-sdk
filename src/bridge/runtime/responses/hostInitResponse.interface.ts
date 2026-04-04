@@ -1,5 +1,6 @@
 
 export interface HostInitResponse {
   success: boolean;
-  url: string;
+  message: string;
+  data?: string;
 }

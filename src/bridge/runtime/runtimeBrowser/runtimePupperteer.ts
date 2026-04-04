@@ -1,10 +1,10 @@
-import { Browser} from "puppeteer";
+import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
-import { EventResponse } from "../responses/eventResponse.interface";
+import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
 
 
@@ -40,9 +40,9 @@ export class RuntimePuppeteer implements IRuntime {
       
     }
 
-    const page = await this.browser.newPage();
+    const page: Page = await this.browser.newPage();
     
-    const hostPage = new HostPagePuppeteer(rootLogger, pageId, page);
+    const hostPage: IHostPage = new HostPagePuppeteer(rootLogger, pageId, page);
     
     try {
       
@@ -66,9 +66,9 @@ export class RuntimePuppeteer implements IRuntime {
     }
   }
   
-  async execute(pageId: string, method: string, args?: any[]): Promise<any>{
+  async execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>{
     
-    const hostPage = this.pages.get(pageId);
+    const hostPage: IHostPage | undefined = this.pages.get(pageId);
     
     if (!hostPage) {
       
@@ -78,7 +78,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     try {
       
-      let result = await hostPage.execute(method, args ? args : []);
+      const result: BrowserResponse = await hostPage.execute(method, args ? args : []);
       
       return result;
       
@@ -95,7 +95,7 @@ export class RuntimePuppeteer implements IRuntime {
   }
 
 
-  on(callback:(data: EventResponse) => void): void{
+  on(callback:(data: BrowserResponse) => void): void{
     
     this.eventEmitter.on("onEmit", callback);
     
@@ -103,7 +103,7 @@ export class RuntimePuppeteer implements IRuntime {
 
   async closePage(pageId: string): Promise<void> {
     
-    const hostPage = this.pages.get(pageId);
+    const hostPage: IHostPage | undefined = this.pages.get(pageId);
     
     if (!hostPage) {
       
@@ -144,7 +144,7 @@ export class RuntimePuppeteer implements IRuntime {
   
   private suscribeToPageEvents(hostPage: IHostPage): void {
     
-    hostPage.on((data: EventResponse) => {
+    hostPage.on((data: BrowserResponse) => {
       
       this.eventEmitter.emit("onEmit", data);
       
