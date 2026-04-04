@@ -1,3 +1,8 @@
+
+<p align="center">
+  <img src="./HaxballHostSdk_Icono.png" width="120" />
+</p>
+
 # 📘 HaxBall-host-sdk
 
 **Infraestructura avanzada en Node.js para la gestión profesional de hosts de HaxBall.**
