@@ -1,5 +1,4 @@
 import { RoomConfig } from "#/types/haxball";
-import { launch } from "puppeteer";
 import { Bridge} from "../bridge";
 import { ILogger, ConsoleLogger, SafeLogger } from "../logger";
 import { SetupConfig } from "../setup";

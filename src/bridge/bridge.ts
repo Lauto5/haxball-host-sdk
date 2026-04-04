@@ -1,8 +1,7 @@
 import { ILogger, ScopedLogger } from "../logger";
-import { RuntimeFactory, EventResponse } from "./runtime";
+import { RuntimeFactory, BrowserResponse , IRuntime} from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
-import { IRuntime } from "./runtime/runtimeBrowser/runtime.interface";
 import { EventEmitter } from "stream";
 
 export class Bridge implements IBridge {
@@ -50,7 +49,7 @@ export class Bridge implements IBridge {
 
     await this.runtime.launchPage(this.logger, config.roomName, url, config);
 
-    this.runtime.on((data: EventResponse) => {
+    this.runtime.on((data: BrowserResponse) => {
       
       this.eventEmitter.emit("onEvent", data);
       
@@ -61,7 +60,7 @@ export class Bridge implements IBridge {
   }
 
   async closeRoom(id: string): Promise<void> {
-
+    
     await this.runtime!.closePage(id);
     
     this.logger.debug("Room closed", { id });
@@ -72,13 +71,17 @@ export class Bridge implements IBridge {
   // COMMUNICATION
   // =========================
 
-  async execute(id: string, method: string, args: unknown[]): Promise<unknown> {
+  async execute(id: string, method: string, args: unknown[]): Promise<BrowserResponse> {
     
-    return this.runtime?.execute(id, method, args);
+    if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
+    
+    const response:BrowserResponse = await this.runtime.execute(id, method, args)
+    
+    return response;
     
   }
   
-  on(callback: (data: EventResponse) => void): void {
+  on(callback: (data: BrowserResponse) => void): void {
     
     this.eventEmitter.on("onEvent", callback);
     
