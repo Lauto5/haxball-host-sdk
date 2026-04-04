@@ -1,6 +1,6 @@
 import { ILogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
-import { EventResponse } from "../responses/eventResponse.interface";
+import { BrowserResponse } from "../responses/browserResponse.interface";
 
 export interface IRuntime {
   launchPage(
@@ -10,9 +10,9 @@ export interface IRuntime {
     config: RoomConfig,
   ): Promise<void>;
 
-  execute(pageId: string, method: string, args?: any[]): Promise<any>;
+  execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>;
 
-  on(callback:(data: EventResponse) => void): void;
+  on(callback:(data: BrowserResponse) => void): void;
 
   closePage(pageId: string): Promise<void>;
   

@@ -5,7 +5,6 @@ import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
-import { EventResponse } from "../responses/eventResponse.interface";
 
 export class HostPagePuppeteer implements IHostPage {
   
@@ -154,7 +153,7 @@ export class HostPagePuppeteer implements IHostPage {
     
   }
 
-  on(callback: (data: EventResponse) => void): void {
+  on(callback: (data: BrowserResponse) => void): void {
     
     this.eventEmitter.on("onEmit", callback);
     
@@ -168,7 +167,7 @@ export class HostPagePuppeteer implements IHostPage {
       
       (browserReponse: BrowserResponse) => {
 
-        const eventResponse: EventResponse = {
+        const eventResponse: BrowserResponse = {
           id: this.id,
           method: browserReponse.method,
           response: browserReponse.response,

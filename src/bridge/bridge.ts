@@ -2,11 +2,7 @@ import { ILogger, ScopedLogger } from "../logger";
 import { RuntimeFactory, EventResponse } from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
-import { IBox } from "./box/box.interface";
 import { IRuntime } from "./runtime/runtimeBrowser/runtime.interface";
-import { Box } from "./box/box";
-import { RoomExecutor } from "./box/roomExecutor";
-import { IRoomExecutor } from "./box/roomExecutor.interface";
 import { EventEmitter } from "stream";
 
 export class Bridge implements IBridge {
@@ -60,7 +56,7 @@ export class Bridge implements IBridge {
       
     });
 
-    this.logger.debug("Room launched", { config.roomName });
+    this.logger.debug("Room launched", { roomName: config.roomName });
     
   }
 
@@ -87,6 +83,5 @@ export class Bridge implements IBridge {
     this.eventEmitter.on("onEvent", callback);
     
   }
-  
   
 }

@@ -1,11 +1,12 @@
 import { RoomConfig } from "#/types/haxball";
-import { EventResponse } from "../responses/eventResponse.interface";
+import { BrowserResponse } from "../responses/browserResponse.interface";
+
 
 export interface IHostPage {
   navigate(url: string): Promise<void>;
   injectEnvironmentBuilder(): Promise<void>;
   launchHost(config: RoomConfig): Promise<void>;
-  execute(method: string, args: any[]): Promise<any>;
-  on(callback: (data: EventResponse) => void): void;
+  execute(method: string, args: any[]): Promise<BrowserResponse>;
+  on(callback: (data: BrowserResponse) => void): void;
   close(): Promise<void>;
 }

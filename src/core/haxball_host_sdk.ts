@@ -29,28 +29,40 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnPm7ekO3w7SYd_VQ.z40I5vxJbOo"
+      token: "thr1.AAAAAGnPzXwL-vwigbrSXQ.uNksxVYJtSI"
+    }
+    
+    const roomConfig2: RoomConfig = {
+      roomName: "Haxball-host-sdk-2",
+      playerName: "Lauto5",
+      maxPlayers: 10,
+      public: true,
+      noPlayer: true,
+      token: "thr1.AAAAAGnPzmMX0vVfWErW8g.fqCwOWsLvnw"
     }
     
     await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
     
-    // **LEER** PROXIMO TRATAR DE HACER QUE LOS EVENTOS SEA POR ROOM, ES DECIR QUE NO SE COMPARTA EL MISMO ON(), O VER COMO IMPLEMENTAR MEJOR.
-    
     bridge.on((data) => {
+      
       console.log(`Event: ${data.method}`, data.response);
+      
       if (data.method === "onPlayerJoin") {
         const playerId = data.response.id;
         console.log(`Player joined: ${playerId}`);
         bridge.execute(data.id, "setPlayerTeam", [playerId, 1]);
         bridge.execute(data.id, "setPlayerAdmin", [playerId, true]);
-        bridge.execute(data.id, "startGame", []);
-        
+        bridge.execute(data.id, "startGame", []);  
       }
     })
     
-    const boxId = await bridge.launchBox(roomConfig, setupConfig.getUrlPath());
+    await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
     
-    await bridge.execute(boxId, "setDefaultStadium", ["Huge"]);
+    await bridge.launchRoom(roomConfig2, setupConfig.getUrlPath());
+    
+    await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
+    
+    await bridge.execute(roomConfig2.roomName, "setDefaultStadium", ["Huge"]);
 
   }
 

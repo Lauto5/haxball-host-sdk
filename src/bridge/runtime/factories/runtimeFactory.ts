@@ -4,6 +4,7 @@ import { puppeteerBrowser } from "../browser/puppeteerBrowser"
 import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
 import { IRuntime } from "../runtimeBrowser/runtime.interface";
 import { BridgeLaunchConfig } from "../../../types/haxball";
+import { Browser } from "puppeteer";
 
 
 export class RuntimeFactory {
@@ -24,7 +25,7 @@ export class RuntimeFactory {
     
     const browserConfig: BrowserConfigPuppeteer = chooseBrowserConfig(bridgeLaunchConfig.system, bridgeLaunchConfig.executablePath);
     
-    const browser = await puppeteerBrowser(browserConfig);
+    const browser:Browser = await puppeteerBrowser(browserConfig);
     
     return new RuntimePuppeteer(browser, rootLogger);
     
