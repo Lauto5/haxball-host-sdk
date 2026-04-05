@@ -6,6 +6,7 @@ import { EventEmitter } from "stream";
 
 export class Bridge implements IBridge {
 
+  url: string | undefined;
   private logger: ILogger;
   private runtime?: IRuntime;
   private eventEmitter: EventEmitter = new EventEmitter();
@@ -23,6 +24,12 @@ export class Bridge implements IBridge {
     const runtimeFactory = new RuntimeFactory();
     
     this.runtime = await runtimeFactory.getRuntime(rootLogger, config);
+    
+    this.runtime.on((data: BrowserResponse) => {
+      
+      this.eventEmitter.emit("onEvent", data);
+      
+    });
     
     this.logger.debug("Bridge initialized");
     
@@ -47,15 +54,25 @@ export class Bridge implements IBridge {
     
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
 
+    if (this.url === undefined) {
+      this.url = url;
+    }
+    
     await this.runtime.launchPage(this.logger, config.roomName, url, config);
 
-    this.runtime.on((data: BrowserResponse) => {
-      
-      this.eventEmitter.emit("onEvent", data);
-      
-    });
-
     this.logger.info("Room launched", { roomName: config.roomName });
+    
+  }
+  
+  async restartRoom(config: RoomConfig): Promise<void> {
+    
+    if (!this.runtime || this.url === undefined) throw new Error("Bridge not initialized. Call init() first.");
+    
+    await this.runtime.closePage(config.roomName);
+    
+    await this.launchRoom(config, this.url);
+    
+    this.logger.info('Room restart sucessfully : ', config.roomName);
     
   }
 

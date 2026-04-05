@@ -28,7 +28,7 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnRDZ8TY98yf_VN5A.-sw4Lo6uGl8"
+      token: "thr1.AAAAAGnShk7lMUVctQzZTg.UXhJxrcc_yQ"
     }
     
     const roomConfig2: RoomConfig = {
@@ -58,6 +58,12 @@ export class HaxballHostSDK {
     await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
     
     await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
+    
+    // esperar 20 segundos probar restartRoom:
+    
+    setTimeout(async () => {
+      await bridge.restartRoom(roomConfig);
+    }, 20000);
     
     /*
     
