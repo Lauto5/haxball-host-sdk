@@ -34,15 +34,6 @@ export class HaxballHostSDK {
       password: "meMata",
     }
     
-    const roomConfig2: RoomConfig = {
-      roomName: "Haxball-host-sdk-2",
-      playerName: "Lauto5",
-      maxPlayers: 10,
-      public: true,
-      noPlayer: true,
-      //token: ""//"thr1.AAAAAGnRDm7w-9CS_NsZVA.1Ec8p8Cg8PE"
-    }
-    
     await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
     
     bridge.on((data: BrowserResponse) => {
@@ -64,6 +55,8 @@ export class HaxballHostSDK {
       
     });
     
+    // *LEER* PROXIMO QUE HAGA ES TYPAR Y REORDENAR EL MODULO BRIDGE, AGREGAR COMENTARIOS NECESARIOS Y PENSAR SI HACE FALTA ALGO MAS.
+    
     await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
     
     await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
@@ -71,16 +64,6 @@ export class HaxballHostSDK {
     const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
 
     this.logger.info(urlRoom);
-    
-    // esperar 20 segundos probar restartRoom:
-    
-    /*
-    
-    await bridge.launchRoom(roomConfig2, setupConfig.getUrlPath());
-    
-    await bridge.execute(roomConfig2.roomName, "setDefaultStadium", ["Huge"]);
-
-    */
     
   }
 

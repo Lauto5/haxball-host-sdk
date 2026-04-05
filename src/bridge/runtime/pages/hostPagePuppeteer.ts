@@ -234,6 +234,10 @@ export class HostPagePuppeteer implements IHostPage {
       
       this.isActive = false;
       
+      this.logger.warn("Host is dead, closing page : ", this.id);
+      
+      this.close();
+      
       this.eventEmitter.emit("onDeath", this.id);
       
     }
