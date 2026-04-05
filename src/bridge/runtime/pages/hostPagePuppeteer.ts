@@ -250,6 +250,12 @@ export class HostPagePuppeteer implements IHostPage {
     
     return this.page.evaluate(() => {
       
+      if (!navigator.onLine) {
+        
+        return false;
+        
+      }
+      
       return (window as any).__headless.isAlive();
       
     });
