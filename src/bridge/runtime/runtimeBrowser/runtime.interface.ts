@@ -13,6 +13,8 @@ export interface IRuntime {
   execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>;
   
   getUrlHost(pageId: string): string;
+  
+  onHostDeath(callback: (pageId: string) => void): void;
 
   on(callback:(data: BrowserResponse) => void): void;
 

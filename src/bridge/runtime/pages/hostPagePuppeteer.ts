@@ -12,6 +12,8 @@ export class HostPagePuppeteer implements IHostPage {
   
   urlHost: string | undefined;
   
+  isActive: boolean = false;
+  
   private logger: ILogger;
   
   private eventEmitter: EventEmitter;
@@ -25,6 +27,17 @@ export class HostPagePuppeteer implements IHostPage {
     this.eventEmitter = new EventEmitter();
     
     this.logger = new ScopedLogger(rootLogger, "HostPage");
+    
+    setInterval(() => {
+      
+      if (!this.page || !this.isActive) {
+        return;
+      }
+      
+      this.handleAlive();
+      
+    }, 6000);
+    
     
   }
 
@@ -104,7 +117,6 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
     
-    this.urlHost = response.data;
 
     this.logger.debug(response.message, { room: config.roomName, link: response.data });
 
@@ -114,6 +126,10 @@ export class HostPagePuppeteer implements IHostPage {
       (window as any).__headless.subscribeEvents();
       
     });
+    
+    this.urlHost = response.data;
+    
+    this.isActive = true;
 
     this.logger.debug("Host launch completed successfully", {
       pageId: this.id,
@@ -184,7 +200,7 @@ export class HostPagePuppeteer implements IHostPage {
           response: browserReponse.response,
         };
 
-        this.logger.debug("environment received:", {id:eventResponse.id, method:eventResponse.method});
+        //this.logger.debug("environment received:", {id:eventResponse.id, method:eventResponse.method});
         
         this.eventEmitter.emit("onEmit", eventResponse);
       },
@@ -201,6 +217,42 @@ export class HostPagePuppeteer implements IHostPage {
     }
     
     throw new Error("urlHost is not defined");
+    
+  }
+  
+  onHostDeath(callback: (pageId: string) => void): void {
+    
+    this.eventEmitter.on("onDeath", callback);
+    
+  }
+  
+  async handleAlive(): Promise<void> {
+    
+    const isAlive = await this.isAlive();
+    
+    if (!isAlive) {
+      
+      this.isActive = false;
+      
+      this.eventEmitter.emit("onDeath", this.id);
+      
+    }
+    
+  }
+  
+  async isAlive(): Promise<boolean> {
+    
+    if (!this.page) {
+      
+      throw new Error("Page not initialized");
+      
+    }
+    
+    return this.page.evaluate(() => {
+      
+      return (window as any).__headless.isAlive();
+      
+    });
     
   }
 

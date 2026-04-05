@@ -25,6 +25,7 @@ export class RuntimePuppeteer implements IRuntime {
     this.browser = browser;
     
     this.eventEmitter = new EventEmitter();
+    
   }
 
   async launchPage(
@@ -51,6 +52,8 @@ export class RuntimePuppeteer implements IRuntime {
       await hostPage.injectEnvironmentBuilder();
       
       this.suscribeToPageEvents(hostPage);
+      
+      this.suscribeToPageDeath(hostPage, pageId);
       
       await hostPage.launchHost(config);
 
@@ -107,6 +110,13 @@ export class RuntimePuppeteer implements IRuntime {
     return hostPage.getUrlHost();
     
   }
+  
+  onHostDeath(callback: (pageId: string) => void): void {
+    
+    this.eventEmitter.on("onHostDeath", callback);
+    
+  }
+  
 
   on(callback:(data: BrowserResponse) => void): void{
     
@@ -160,6 +170,16 @@ export class RuntimePuppeteer implements IRuntime {
     hostPage.on((data: BrowserResponse) => {
       
       this.eventEmitter.emit("onEmit", data);
+      
+    });
+    
+  }
+  
+  private suscribeToPageDeath(hostPage: IHostPage, pageId: string): void {
+    
+    hostPage.onHostDeath(() => {
+      
+      this.eventEmitter.emit("onHostDeath", pageId);
       
     });
     

@@ -31,6 +31,12 @@ export class Bridge implements IBridge {
       
     });
     
+    this.runtime.onHostDeath((pageId: string) => {
+      
+      this.eventEmitter.emit("onHostDeath",pageId);
+      
+    })
+    
     this.logger.debug("Bridge initialized");
     
   }
@@ -81,6 +87,12 @@ export class Bridge implements IBridge {
     await this.runtime!.closePage(id);
     
     this.logger.info("Room closed", { id });
+    
+  }
+  
+  onRoomDeath(callback: (pageId: string) => void): void {
+    
+    this.eventEmitter.on("onHostDeath", callback);
     
   }
   

@@ -9,6 +9,10 @@ export class HostEnvironmentBuilder {
       (window as any).__headless = {
 
         room: null,
+        
+        lastGameTick: Date.now(),
+        
+        isGameTickActive: false,
 
         async waitForRoom(room: any, timeout = 8000): Promise<any> {
 
@@ -82,11 +86,17 @@ export class HostEnvironmentBuilder {
           
           this.room.onGameTick = () => {
 
+            this.lastGameTick = Date.now();
+            
             this.emitEvent("onGameTick", []);
 
           };
 
           this.room.onPlayerJoin = (player: any) => {
+            
+            if (!this.isGameTickActive) {
+              this.isGameTickActive = true;
+            }
 
             this.emitEvent("onPlayerJoin", player);
 
@@ -213,6 +223,14 @@ export class HostEnvironmentBuilder {
             }
           }
         },
+        
+        isAlive(): boolean {
+          if (!this.isGameTickActive) {
+            return true;
+          }
+          return Date.now() - this.lastGameTick < 6000;
+        },
+        
       };
     };
   }

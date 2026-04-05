@@ -1,6 +1,6 @@
 import { RoomConfig } from "#/types/haxball";
 import { Bridge, BrowserResponse} from "../bridge";
-import { ILogger, ConsoleLogger, SafeLogger } from "../logger";
+import { ILogger, ConsoleLogger, SafeLogger, ScopedLogger } from "../logger";
 import { SetupConfig } from "../setup";
 
 interface SDKOptions {
@@ -8,11 +8,13 @@ interface SDKOptions {
 }
 
 export class HaxballHostSDK {
-    private rootLogger: ILogger
+  private rootLogger: ILogger;
+  private logger: ILogger;
 
     constructor(options?: SDKOptions) {
-        const baseLogger = options?.logger ?? new ConsoleLogger(2);
-        this.rootLogger = new SafeLogger(baseLogger);
+    const baseLogger = options?.logger ?? new ConsoleLogger(3);
+    this.rootLogger = new SafeLogger(baseLogger);
+    this.logger = new ScopedLogger(this.rootLogger , "HBH");
   }
 
   // (desarrollo) metodos para probar el bridge, luego borrar.
@@ -26,7 +28,7 @@ export class HaxballHostSDK {
       roomName: "Haxball-host-sdk",
       playerName: "Lauto5",
       maxPlayers: 10,
-      public: false,
+      public: true,
       noPlayer: true,
       token: "thr1.AAAAAGnSii41y-ydFXubTg.17QTvvujc2k",
       password: "meMata",
@@ -56,25 +58,21 @@ export class HaxballHostSDK {
       }
     })
     
+    bridge.onRoomDeath((pageId: string) => {
+      
+      this.logger.warn(`Room ${pageId} died`);
+      
+    });
+    
     await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
     
     await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
     
     const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
 
-    console.log(urlRoom);
+    this.logger.info(urlRoom);
     
     // esperar 20 segundos probar restartRoom:
-    
-    setTimeout(async () => {
-      
-      await bridge.restartRoom(roomConfig);
-      
-      const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
-  
-      console.log(urlRoom);
-      
-    }, 20000);
     
     /*
     

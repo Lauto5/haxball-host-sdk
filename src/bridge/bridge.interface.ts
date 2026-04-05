@@ -22,6 +22,8 @@ export interface IBridge {
   restartRoom(config: RoomConfig): Promise<void>;
   closeRoom(id: string): Promise<void>;
   
+  onRoomDeath(callback: () => void): void;
+  
   getUrlRoom(id: string): string;
 
   // =========================
