@@ -83,6 +83,14 @@ export class Bridge implements IBridge {
     this.logger.info("Room closed", { id });
     
   }
+  
+  getUrlRoom(id: string): string {
+    
+    if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
+    
+    return this.runtime.getUrlHost(id);
+    
+  }
 
   // =========================
   // COMMUNICATION

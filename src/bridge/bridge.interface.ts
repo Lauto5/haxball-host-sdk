@@ -21,6 +21,8 @@ export interface IBridge {
   launchRoom(config: RoomConfig, url: string): Promise<void>;
   restartRoom(config: RoomConfig): Promise<void>;
   closeRoom(id: string): Promise<void>;
+  
+  getUrlRoom(id: string): string;
 
   // =========================
   // COMMUNICATION

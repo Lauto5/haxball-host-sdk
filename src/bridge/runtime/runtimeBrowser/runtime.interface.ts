@@ -11,6 +11,8 @@ export interface IRuntime {
   ): Promise<void>;
 
   execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>;
+  
+  getUrlHost(pageId: string): string;
 
   on(callback:(data: BrowserResponse) => void): void;
 

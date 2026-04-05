@@ -15,7 +15,7 @@ export class RuntimeFactory {
     
     if (bridgeLaunchConfig.runtime === 'puppeteer') {
       
-      logger.info("Getting Puppeteer runtime");
+      logger.debug("Getting Puppeteer runtime");
       
       return await this.getRuntimePuppeteer(rootLogger, bridgeLaunchConfig);
       

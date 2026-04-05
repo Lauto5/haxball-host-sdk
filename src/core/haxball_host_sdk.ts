@@ -26,9 +26,10 @@ export class HaxballHostSDK {
       roomName: "Haxball-host-sdk",
       playerName: "Lauto5",
       maxPlayers: 10,
-      public: true,
+      public: false,
       noPlayer: true,
-      token: "thr1.AAAAAGnShk7lMUVctQzZTg.UXhJxrcc_yQ"
+      token: "thr1.AAAAAGnSii41y-ydFXubTg.17QTvvujc2k",
+      password: "meMata",
     }
     
     const roomConfig2: RoomConfig = {
@@ -59,10 +60,20 @@ export class HaxballHostSDK {
     
     await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
     
+    const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
+
+    console.log(urlRoom);
+    
     // esperar 20 segundos probar restartRoom:
     
     setTimeout(async () => {
+      
       await bridge.restartRoom(roomConfig);
+      
+      const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
+  
+      console.log(urlRoom);
+      
     }, 20000);
     
     /*

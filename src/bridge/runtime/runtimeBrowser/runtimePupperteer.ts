@@ -93,7 +93,20 @@ export class RuntimePuppeteer implements IRuntime {
     }
     
   }
-
+  
+  getUrlHost(pageId: string): string {
+    
+    const hostPage: IHostPage | undefined = this.pages.get(pageId);
+    
+    if (!hostPage) {
+      
+      throw new Error(`Page ${pageId} not found`);
+      
+    }
+    
+    return hostPage.getUrlHost();
+    
+  }
 
   on(callback:(data: BrowserResponse) => void): void{
     

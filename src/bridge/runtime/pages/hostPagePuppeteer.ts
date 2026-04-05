@@ -10,6 +10,8 @@ import { HostInitResponse } from "../responses/hostInitResponse.interface";
 
 export class HostPagePuppeteer implements IHostPage {
   
+  urlHost: string | undefined;
+  
   private logger: ILogger;
   
   private eventEmitter: EventEmitter;
@@ -101,6 +103,8 @@ export class HostPagePuppeteer implements IHostPage {
       throw new Error(`Room: ${config.roomName}, ${response.message}`)
       
     }
+    
+    this.urlHost = response.data;
 
     this.logger.debug(response.message, { room: config.roomName, link: response.data });
 
@@ -187,10 +191,23 @@ export class HostPagePuppeteer implements IHostPage {
     );
     
   }
+  
+  getUrlHost(): string {
+    
+    if (this.urlHost) {
+      
+      return this.urlHost;
+    
+    }
+    
+    throw new Error("urlHost is not defined");
+    
+  }
 
   private connectLogger(): void {
     
     this.page.on("console", (msg) => this.logger.debug("", msg.text()));
     
   }
+  
 }
