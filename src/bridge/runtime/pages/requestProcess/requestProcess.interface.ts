@@ -1,7 +1,7 @@
 
 import { BrowserResponse } from "../../responses/browserResponse.interface";
 
-export interface RequestProcess {
+export interface IRequestProcess {
   
   queue: Array<{
     task: () => Promise<BrowserResponse>;
@@ -11,6 +11,7 @@ export interface RequestProcess {
   
   isProcessing: boolean;
   
+  warnQueueSize: number;
   maxQueueSize: number;
   
   add(task: () => Promise<BrowserResponse>): Promise<BrowserResponse>;

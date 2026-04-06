@@ -7,6 +7,8 @@ import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
 import { HostInitResponse } from "../responses/hostInitResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
+import { SimpleRequestQueue } from "./requestProcess/simpleRequestProcess";
+import { IRequestProcess } from "./requestProcess/requestProcess.interface";
 
 
 export class HostPagePuppeteer implements IHostPage {
@@ -15,11 +17,7 @@ export class HostPagePuppeteer implements IHostPage {
   
   isActive: boolean = false;
   
-  queue: Array<{
-    task: () => Promise<BrowserResponse>;
-    resolve: (value: BrowserResponse) => void;
-    reject: (reason?: any) => void;
-  }> = [];
+  requestProcess: IRequestProcess;
   
   private logger: ILogger;
   
@@ -34,6 +32,8 @@ export class HostPagePuppeteer implements IHostPage {
     this.eventEmitter = new EventEmitter();
     
     this.logger = new ScopedLogger(rootLogger, "HostPage");
+    
+    this.requestProcess = new SimpleRequestQueue(this.logger);
     
     setInterval(() => {
       
@@ -145,34 +145,30 @@ export class HostPagePuppeteer implements IHostPage {
   }
 
   async execute(request: MethodRequest): Promise<BrowserResponse> {
-    
-    if (!this.page) {
-      
-      throw new Error("Page not initialized");
-      
-    }
-    
-    this.logger.debug("Execute method..", { id: this.id, method: request.method, args: request.args });
-    
-    const result = await this.page.evaluate(
-    
-      (method: string, args: any[]) => {
-        
-        return (window as any).__headless.exec(method, args);
-        
-      },
-      request.method,
-      request.args,
-    );
-    
-    const response: BrowserResponse = {
-      id: this.id,
-      method: request.method,
-      response: result,
-    };
-
-    return response;
-    
+    if (!this.page) throw new Error("Page not initialized");
+    if (!this.isActive) throw new Error("Host is not active");
+  
+    return this.requestProcess.add(async () => {
+      this.logger.debug("Execute method..", {
+        id: this.id,
+        method: request.method,
+        args: request.args,
+      });
+  
+      const result = await this.page.evaluate(
+        (method: string, args: any[]) => {
+          return (window as any).__headless.exec(method, args);
+        },
+        request.method,
+        request.args
+      );
+  
+      return {
+        id: this.id,
+        method: request.method,
+        response: result,
+      };
+    });
   }
 
   async close(): Promise<void> {

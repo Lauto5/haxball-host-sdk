@@ -12,7 +12,7 @@ export class HaxballHostSDK {
   private logger: ILogger;
 
     constructor(options?: SDKOptions) {
-    const baseLogger = options?.logger ?? new ConsoleLogger(3);
+    const baseLogger = options?.logger ?? new ConsoleLogger(2);
     this.rootLogger = new SafeLogger(baseLogger);
     this.logger = new ScopedLogger(this.rootLogger , "HBH");
   }
@@ -47,7 +47,7 @@ export class HaxballHostSDK {
         bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Welcome to the room! ${playerName}`] });
         
         // probando ejecutar multiples veces un metodo:
-        for (let i = 0; i < 1000 ; i++) {
+        for (let i = 0; i < 9000 ; i++) {
           bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Numero de ejecucion : ${i}`] });
         }
         

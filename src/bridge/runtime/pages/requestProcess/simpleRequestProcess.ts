@@ -1,8 +1,10 @@
 import { BrowserResponse } from "../../responses/browserResponse.interface";
 
-import { RequestProcess } from "./requestProcess.interface";
+import { IRequestProcess } from "./requestProcess.interface";
 
-export class SimpleRequestQueue implements RequestProcess {
+import { ILogger , ScopedLogger } from "../../../../logger";
+
+export class SimpleRequestQueue implements IRequestProcess {
 
   
   queue: Array<{
@@ -12,15 +14,27 @@ export class SimpleRequestQueue implements RequestProcess {
   }> = [];
   
   isProcessing = false;
+  
+  warnQueueSize: number;
+  
   maxQueueSize: number;
 
-  constructor(maxQueueSize = 1000) {
+  private logger: ILogger;
+  
+  constructor(logger: ILogger ,warnQueueSize = 1000, maxQueueSize = 5000) {
+    this.warnQueueSize = warnQueueSize;
     this.maxQueueSize = maxQueueSize;
+    this.logger = new ScopedLogger(logger, "SimpleRequestQueue");
   }
 
   add(task: () => Promise<BrowserResponse>): Promise<BrowserResponse> {
     if (this.queue.length >= this.maxQueueSize) {
+      this.logger.error("Queue overflow");
       return Promise.reject(new Error("Queue overflow"));
+    }
+    
+    if (this.queue.length >= this.warnQueueSize) {
+      this.logger.warn("Queue size warning: " + this.queue.length);
     }
 
     return new Promise((resolve, reject) => {

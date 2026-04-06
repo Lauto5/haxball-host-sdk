@@ -1,22 +1,15 @@
 import { RoomConfig } from "#/types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
-
+import { IRequestProcess } from "./requestProcess/requestProcess.interface"
 
 
 export interface IHostPage {
   urlHost: string | undefined;
   isActive: boolean;
   
-  queue: Array<{
-    task: () => Promise<BrowserResponse>;
-    resolve: (value: BrowserResponse) => void;
-    reject: (reason?: any) => void;
-  }>;
+  requestProcess: IRequestProcess;
   
-  isProcessing: false;
-  
-  maxQueueSize: 1000;
   
   navigate(url: string): Promise<void>;
   injectEnvironmentBuilder(): Promise<void>;
