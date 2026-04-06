@@ -33,8 +33,10 @@ export class SimpleRequestQueue implements IRequestProcess {
       return Promise.reject(new Error("Queue overflow"));
     }
     
-    if (this.queue.length >= this.warnQueueSize) {
-      this.logger.warn("Queue size warning: " + this.queue.length);
+    if (this.queue.length === this.warnQueueSize) {
+      this.logger.warn("Queue entered warning zone", {
+        size: this.queue.length,
+      });
     }
 
     return new Promise((resolve, reject) => {
@@ -58,6 +60,18 @@ export class SimpleRequestQueue implements IRequestProcess {
       } catch (err) {
         item.reject(err);
       }
+      
+      if (this.queue.length >= this.warnQueueSize) {
+        const delay = Math.min(this.queue.length / 10, 50);
+
+        this.logger.debug("Applying backpressure delay", {
+          delay,
+          queueSize: this.queue.length,
+        });
+
+        await new Promise(res => setTimeout(res, delay));
+      }
+      
     }
 
     this.isProcessing = false;
