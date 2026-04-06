@@ -1,4 +1,4 @@
-import { ILogger, ScopedLogger } from "../observability";
+import { ILogger, Observability} from "../observability";
 import { RuntimeFactory, BrowserResponse , IRuntime , MethodRequest} from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
@@ -6,24 +6,24 @@ import { EventEmitter } from "stream";
 
 export class Bridge implements IBridge {
 
-  url: string | undefined;
+  private url: string | undefined;
   private logger: ILogger;
   private runtime?: IRuntime;
   private eventEmitter: EventEmitter = new EventEmitter();
 
-  constructor(rootLogger: ILogger) {
-    this.logger = new ScopedLogger(rootLogger, "Bridge");
+  constructor(private readonly obs: Observability) {
+    this.logger = obs.createScopeLogger("Bridge");
   }
 
   // =========================
   // LIFECYCLE
   // =========================
 
-  async init(rootLogger: ILogger, config: BridgeLaunchConfig): Promise<void> {
+  async init(obs: Observability, config: BridgeLaunchConfig): Promise<void> {
     
     const runtimeFactory = new RuntimeFactory();
     
-    this.runtime = await runtimeFactory.getRuntime(rootLogger, config);
+    this.runtime = await runtimeFactory.getRuntime(obs, config);
     
     this.runtime.on((data: BrowserResponse) => {
       
@@ -56,7 +56,7 @@ export class Bridge implements IBridge {
   // ROOM MANAGEMENT
   // =========================
 
-  async launchRoom(config: RoomConfig, url: string): Promise<void> {
+  async launchRoom(obs : Observability,config: RoomConfig, url: string): Promise<void> {
     
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
 
@@ -64,19 +64,19 @@ export class Bridge implements IBridge {
       this.url = url;
     }
     
-    await this.runtime.launchPage(this.logger, config.roomName, url, config);
+    await this.runtime.launchPage(obs, config.roomName, url, config);
 
     this.logger.info("Room launched", { roomName: config.roomName });
     
   }
   
-  async restartRoom(config: RoomConfig): Promise<void> {
+  async restartRoom(obs : Observability,config: RoomConfig): Promise<void> {
     
     if (!this.runtime || this.url === undefined) throw new Error("Bridge not initialized. Call init() first.");
     
     await this.runtime.closePage(config.roomName);
     
-    await this.launchRoom(config, this.url);
+    await this.launchRoom(obs,config, this.url);
     
     this.logger.info('Room restart sucessfully : ', config.roomName);
     

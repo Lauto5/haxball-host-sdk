@@ -1,4 +1,4 @@
-import { ILogger, ScopedLogger } from "../../../observability";
+import { ILogger, Observability } from "../../../observability";
 import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
@@ -24,14 +24,14 @@ export class HostPagePuppeteer implements IHostPage {
   private eventEmitter: EventEmitter;
   
   constructor(
-    rootLogger: ILogger,
+    obs : Observability,
     private readonly id: string,
     private readonly page: Page,
   ) {
     
     this.eventEmitter = new EventEmitter();
     
-    this.logger = new ScopedLogger(rootLogger, "HostPage");
+    this.logger = obs.createScopeLogger("HostPage");
     
     this.requestProcess = new SimpleRequestQueue(this.logger);
     

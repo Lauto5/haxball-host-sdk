@@ -2,7 +2,7 @@ import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
-import { ILogger, ScopedLogger } from "../../../observability";
+import { ILogger, Observability } from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
@@ -19,9 +19,9 @@ export class RuntimePuppeteer implements IRuntime {
   
   private eventEmitter: EventEmitter;
 
-  constructor(browser: Browser, rootLogger: ILogger) {
+  constructor(browser: Browser, obs: Observability) {
     
-    this.logger = new ScopedLogger(rootLogger, "Runtime");
+    this.logger = obs.createScopeLogger("Runtime");
     
     this.browser = browser;
     
@@ -30,7 +30,7 @@ export class RuntimePuppeteer implements IRuntime {
   }
 
   async launchPage(
-    rootLogger: ILogger,
+    obs: Observability,
     pageId: string,
     url: string,
     config: RoomConfig,
@@ -44,7 +44,7 @@ export class RuntimePuppeteer implements IRuntime {
 
     const page: Page = await this.browser.newPage();
     
-    const hostPage: IHostPage = new HostPagePuppeteer(rootLogger, pageId, page);
+    const hostPage: IHostPage = new HostPagePuppeteer(obs, pageId, page);
     
     try {
       

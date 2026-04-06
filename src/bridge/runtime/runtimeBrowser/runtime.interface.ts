@@ -1,12 +1,13 @@
-import { ILogger } from "../../../observability";
+import { ILogger , Observability} from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 
 
 export interface IRuntime {
+  
   launchPage(
-    rootLoger: ILogger,
+    obs: Observability,
     pageId: string,
     url: string,
     config: RoomConfig,

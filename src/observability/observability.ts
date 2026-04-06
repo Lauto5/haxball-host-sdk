@@ -1,15 +1,23 @@
 
-import { ILogger } from './logger/interfaces/logger.interface';
-import { IMetrics } from './metrics/interfaces/metrics.interface';
+import { ScopedLogger, ScopedMetrics, ILogger, IMetrics } from './';
+
 
 export class Observability {
 
-  public readonly logger: ILogger;
-  public readonly metrics: IMetrics;
+  private readonly rootLogger: ILogger;
+  private readonly rootMetrics: IMetrics;
 
   constructor(logger: ILogger, metrics: IMetrics) {
-    this.logger = logger;
-    this.metrics = metrics;
+    this.rootLogger = logger;
+    this.rootMetrics = metrics;
+  }
+  
+  createScopeLogger(scope: string): ILogger {
+    return new ScopedLogger(this.rootLogger, scope);
+  }
+
+  createScopeMetrics(labels?: Record<string, string>): IMetrics {
+    return new ScopedMetrics(this.rootMetrics, labels ?? {});
   }
 
 }

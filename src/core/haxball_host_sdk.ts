@@ -1,26 +1,26 @@
 import { RoomConfig } from "#/types/haxball";
 import { Bridge, BrowserResponse, MethodRequest} from "../bridge";
-import { ILogger, ConsoleLogger, SafeLogger, ScopedLogger } from "../observability/logger";
+import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "../observability";
 import { SetupConfig } from "../setup";
 
 interface SDKOptions {
-  logger?: ILogger
+  logger?: ILogger;
+  metrics?: IMetrics;
 }
 
 export class HaxballHostSDK {
-  private rootLogger: ILogger;
+  private obs: Observability;
   private logger: ILogger;
 
-    constructor(options?: SDKOptions) {
-    const baseLogger = options?.logger ?? new ConsoleLogger(2);
-    this.rootLogger = new SafeLogger(baseLogger);
-    this.logger = new ScopedLogger(this.rootLogger , "HBH");
+  constructor(options?: SDKOptions) {
+    this.obs = new Observability(options?.logger ?? new ConsoleLogger(2), options?.metrics ?? new ConsoleMetrics());
+    this.logger = this.obs.createScopeLogger("HBH");
   }
 
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
     
-    const bridge = new Bridge(this.rootLogger);
+    const bridge = new Bridge(this.obs);
     
     const setupConfig = new SetupConfig("puppeteer","/usr/bin/chromium-browser");
     
@@ -29,10 +29,10 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnTeLZCuPuFyQU29g.kmGupj089b8",
+      token: "thr1.AAAAAGnT6S4Nyj70Y-tSAQ.AXbZ9ovXc9E",
     }
     
-    await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
+    await bridge.init(this.obs , setupConfig.getBrowserConfig());
     
     bridge.on((data: BrowserResponse) => {
       
@@ -46,10 +46,9 @@ export class HaxballHostSDK {
         bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Welcome to the room! ${playerName}`] });
         
         // probando ejecutar multiples veces un metodo:
-        for (let i = 0; i < 500 ; i++) {
-          bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Numero de ejecucion : ${i}`] });
+        for (let i = 0; i < 2 ; i++) {
           
-          bridge.execute({ id: data.id, method: "setPlayerTeam", args: [playerId, i % 2] });
+          bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Numero de ejecucion : ${i}`] });
           
         }
         
@@ -62,7 +61,7 @@ export class HaxballHostSDK {
       
     });
 
-    await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
+    await bridge.launchRoom(this.obs ,roomConfig, setupConfig.getUrlPath());
 
     await bridge.execute({ id: roomConfig.roomName, method: "setDefaultStadium", args: ["Big"] });
 
