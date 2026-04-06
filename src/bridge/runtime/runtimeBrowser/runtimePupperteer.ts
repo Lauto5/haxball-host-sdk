@@ -2,7 +2,7 @@ import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
-import { ILogger, Observability } from "../../../observability";
+import { ILogger, IMetrics, Observability } from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
@@ -13,6 +13,8 @@ export class RuntimePuppeteer implements IRuntime {
   
   private logger: ILogger;
   
+  private metrics: IMetrics;
+  
   private browser: Browser;
   
   private pages = new Map<string, IHostPage>();
@@ -22,6 +24,8 @@ export class RuntimePuppeteer implements IRuntime {
   constructor(browser: Browser, obs: Observability) {
     
     this.logger = obs.createScopeLogger("Runtime");
+    
+    this.metrics = obs.createScopeMetrics({ runtime: "puppeteer" });
     
     this.browser = browser;
     
@@ -41,32 +45,44 @@ export class RuntimePuppeteer implements IRuntime {
       throw new Error(`Page ${pageId} already exists`);
       
     }
-
+    
+    const start = Date.now();
+    
+    this.metrics.increment("runtime.page.launch");
+    
     const page: Page = await this.browser.newPage();
     
-    const hostPage: IHostPage = new HostPagePuppeteer(obs, pageId, page);
-    
     try {
-      
+    
+      const hostPage: IHostPage = new HostPagePuppeteer(obs, pageId, page);
+    
       await hostPage.navigate(url);
-      
       await hostPage.injectEnvironmentBuilder();
-      
+    
       this.suscribeToPageEvents(hostPage);
-      
       this.suscribeToPageDeath(hostPage, pageId);
-      
+    
       await hostPage.launchHost(config);
-
+    
       this.pages.set(pageId, hostPage);
-      
+    
+      this.metrics.gauge("runtime.page.count", this.pages.size);
+    
     } catch (error) {
-      
+    
+      this.metrics.increment("runtime.page.launch.error");
+    
       await page.close().catch(() => { });
-      
+    
       this.logger.error("Failed to launch host", error);
-      
+    
       process.exit(1);
+    
+    } finally {
+    
+      const duration = Date.now() - start;
+      this.metrics.observe("runtime.page.launch.duration", duration);
+    
     }
   }
   
@@ -80,20 +96,39 @@ export class RuntimePuppeteer implements IRuntime {
       
     }
     
+    const start = Date.now();
+    
+    this.metrics.increment("runtime.execute.count");
+    
     try {
-      
+    
       const result: BrowserResponse = await hostPage.execute(request);
-      
+    
       return result;
-      
+    
     } catch (error) {
-      
+    
+      this.metrics.increment("runtime.execute.error");
+    
       await hostPage.close().catch(() => { });
-      
-      this.logger.error("Failed to execute method", { id: request.id, method: request.method, args: request.args, error: error });
-      
+    
+      this.logger.error("Failed to execute method", {
+        id: request.id,
+        method: request.method,
+        args: request.args,
+        error: error,
+      });
+    
       process.exit(1);
-      
+    
+    } finally {
+    
+      const duration = Date.now() - start;
+    
+      this.metrics.observe("runtime.execute.duration", duration, {
+        method: request.method,
+      });
+    
     }
     
   }
@@ -137,13 +172,19 @@ export class RuntimePuppeteer implements IRuntime {
     
     try { 
       
+      this.metrics.increment("runtime.page.close");
+      
       await hostPage.close();
       
       this.pages.delete(pageId);
       
+      this.metrics.gauge("runtime.page.count", this.pages.size);
+      
     } catch (error) {
       
       this.logger.error("Failed to closed page", { id: pageId, error: error });
+      
+      this.metrics.increment("runtime.page.close.error");
       
       throw error;
       
@@ -152,17 +193,17 @@ export class RuntimePuppeteer implements IRuntime {
   
   async close(): Promise<void> {
     
+    this.metrics.increment("runtime.close");
+    
     this.pages.forEach(async (hostPage) => {
-      
-      await hostPage.close().catch(() => { });
-      
+      await hostPage.close().catch(() => {});
     });
     
     this.pages.clear();
     
-    this.browser.close().catch(() => { });
+    this.metrics.gauge("runtime.page.count", 0);
     
-    this.logger.debug("Runtime closed");
+    this.browser.close().catch(() => {});
     
   }
   
@@ -179,9 +220,15 @@ export class RuntimePuppeteer implements IRuntime {
   private suscribeToPageDeath(hostPage: IHostPage, pageId: string): void {
     
     hostPage.onHostDeath(() => {
-      
+    
+      this.metrics.increment("runtime.page.death");
+    
+      this.pages.delete(pageId);
+    
+      this.metrics.gauge("runtime.page.count", this.pages.size);
+    
       this.eventEmitter.emit("onHostDeath", pageId);
-      
+    
     });
     
   }

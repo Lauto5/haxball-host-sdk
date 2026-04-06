@@ -1,17 +1,21 @@
 import { IMetrics } from "../interfaces/metrics.interface";
 
+import { ILogger } from "../../../observability/logger";
+
 export class ConsoleMetrics implements IMetrics {
 
+  constructor(private logger: ILogger) {}
+  
   increment(name: string, value: number = 1, labels?: Record<string, string>): void {
-    console.log(this.format("INC", name, value, labels));
+    this.logger.debug(this.format("INC", name, value, labels));
   }
 
   gauge(name: string, value: number, labels?: Record<string, string>): void {
-    console.log(this.format("GAUGE", name, value, labels));
+    this.logger.debug(this.format("GAUGE", name, value, labels));
   }
 
   observe(name: string, value: number, labels?: Record<string, string>): void {
-    console.log(this.format("OBS", name, value, labels));
+    this.logger.debug(this.format("OBS", name, value, labels));
   }
 
   private format(

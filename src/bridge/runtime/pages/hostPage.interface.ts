@@ -2,7 +2,6 @@ import { RoomConfig } from "#/types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 import { IRequestProcess } from "./requestProcess/requestProcess.interface"
-import { ILogger } from "../../../observability";
 
 
 

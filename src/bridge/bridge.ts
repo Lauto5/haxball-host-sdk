@@ -11,7 +11,7 @@ export class Bridge implements IBridge {
   private runtime?: IRuntime;
   private eventEmitter: EventEmitter = new EventEmitter();
 
-  constructor(private readonly obs: Observability) {
+  constructor(obs: Observability) {
     this.logger = obs.createScopeLogger("Bridge");
   }
 

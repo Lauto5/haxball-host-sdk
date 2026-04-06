@@ -13,7 +13,9 @@ export class HaxballHostSDK {
   private logger: ILogger;
 
   constructor(options?: SDKOptions) {
-    this.obs = new Observability(options?.logger ?? new ConsoleLogger(2), options?.metrics ?? new ConsoleMetrics());
+    const Ilogger : ILogger = options?.logger ?? new ConsoleLogger(3);
+    const Imetrics : IMetrics = options?.metrics ?? new ConsoleMetrics(Ilogger);
+    this.obs = new Observability(Ilogger, Imetrics);
     this.logger = this.obs.createScopeLogger("HBH");
   }
 

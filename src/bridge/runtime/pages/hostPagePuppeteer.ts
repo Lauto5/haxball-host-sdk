@@ -1,4 +1,4 @@
-import { ILogger, Observability } from "../../../observability";
+import { ILogger, Observability , IMetrics } from "../../../observability";
 import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
@@ -21,6 +21,8 @@ export class HostPagePuppeteer implements IHostPage {
   
   private logger: ILogger;
   
+  private metrics: IMetrics;
+  
   private eventEmitter: EventEmitter;
   
   constructor(
@@ -33,7 +35,9 @@ export class HostPagePuppeteer implements IHostPage {
     
     this.logger = obs.createScopeLogger("HostPage");
     
-    this.requestProcess = new SimpleRequestQueue(this.logger);
+    this.metrics = obs.createScopeMetrics({ hostPageId: this.id });
+    
+    this.requestProcess = new SimpleRequestQueue(obs);
     
     setInterval(() => {
       
@@ -55,8 +59,8 @@ export class HostPagePuppeteer implements IHostPage {
       throw new Error("Page not initialized");
       
     }
-
-    this.logger.debug("Page navigating to ", { url: url, pageId: this.id });
+    
+    const start = Date.now();
 
     await this.page.goto(url);
     
@@ -65,11 +69,10 @@ export class HostPagePuppeteer implements IHostPage {
       () => typeof (window as any).HBInit === "function",
       
     );
-
-    this.logger.debug("Page navigation completed", {
-      url: url,
-      pageId: this.id,
-    });
+    
+    const duration = Date.now() - start;
+    
+    this.metrics.observe("host.navigate.duration", duration);
     
   }
 
@@ -81,9 +84,9 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
 
+    const start = Date.now();
+    
     const environment = new HostEnvironmentBuilder();
-
-    this.logger.debug("Injecting environment into page", { pageId: this.id });
 
     await this.page.evaluate(environment.build());
     
@@ -93,11 +96,14 @@ export class HostPagePuppeteer implements IHostPage {
       
     );
 
-    this.logger.debug("Environment injection completed", { pageId: this.id });
-
     this.connectLogger();
 
     this.environmentReceive();
+    
+    const duration = Date.now() - start;
+    
+    this.metrics.observe("host.inject.duration", duration);
+    
   }
 
   async launchHost(config: RoomConfig): Promise<void> {
@@ -107,8 +113,8 @@ export class HostPagePuppeteer implements IHostPage {
       throw new Error("Page not initialized");
       
     }
-
-    this.logger.debug("Launching host", { pageId: this.id });
+    
+    const start = Date.now();
 
     const response: HostInitResponse = await this.page.evaluate((config: RoomConfig) => {
       
@@ -124,10 +130,6 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
     
-
-    this.logger.debug(response.message, { room: config.roomName, link: response.data });
-
-    
     await this.page.evaluate(() => {
       
       (window as any).__headless.subscribeEvents();
@@ -137,49 +139,66 @@ export class HostPagePuppeteer implements IHostPage {
     this.urlHost = response.data;
     
     this.isActive = true;
-
-    this.logger.debug("Host launch completed successfully", {
-      pageId: this.id,
-    });
+    
+    const duration = Date.now() - start;
+    
+    this.metrics.observe("host.launch.duration", duration);
     
   }
 
   async execute(request: MethodRequest): Promise<BrowserResponse> {
     if (!this.page) throw new Error("Page not initialized");
     if (!this.isActive) throw new Error("Host is not active");
-  
+    
     return this.requestProcess.add(async () => {
-      this.logger.debug("Execute method..", {
-        id: this.id,
-        method: request.method,
-        args: request.args,
-      });
-  
-      const result = await this.page.evaluate(
-        (method: string, args: any[]) => {
-          return (window as any).__headless.exec(method, args);
-        },
-        request.method,
-        request.args
-      );
-  
-      return {
-        id: this.id,
-        method: request.method,
-        response: result,
-      };
+    
+      const start = Date.now();
+    
+      try {
+    
+        this.metrics.increment("host.execute.count", 1, {
+          method: request.method,
+        });
+    
+        const result = await this.page.evaluate(
+          (method: string, args: any[]) => {
+            return (window as any).__headless.exec(method, args);
+          },
+          request.method,
+          request.args
+        );
+    
+        return {
+          id: this.id,
+          method: request.method,
+          response: result,
+        };
+    
+      } catch (err) {
+        
+        this.metrics.increment("host.execute.error", 1, {
+          method: request.method,
+        });
+    
+        throw err;
+    
+      } finally {
+    
+        const duration = Date.now() - start;
+    
+        this.metrics.observe("host.execute.duration", duration, {
+          method: request.method,
+        });
+    
+      }
     });
   }
 
   async close(): Promise<void> {
     
-    this.logger.debug("closing page", { pageId: this.id });
-    
     await this.page.close();
     
-    this.logger.debug("page closed completed successfully", {
-      pageId: this.id,
-    });
+    this.metrics.increment("host.close");
     
   }
 
@@ -202,10 +221,15 @@ export class HostPagePuppeteer implements IHostPage {
           method: browserReponse.method,
           response: browserReponse.response,
         };
-
-        //this.logger.debug("environment received:", {id:eventResponse.id, method:eventResponse.method});
+        
+        if (browserReponse.method !== "onGameTick") {
+          this.metrics.increment("host.event.received", 1, {
+            method: browserReponse.method,
+          });
+        }
         
         this.eventEmitter.emit("onEmit", eventResponse);
+        
       },
     );
     
@@ -234,6 +258,8 @@ export class HostPagePuppeteer implements IHostPage {
     const isAlive = await this.isAlive();
     
     if (!isAlive) {
+      
+      this.metrics.gauge("host.alive", isAlive ? 1 : 0);
       
       this.isActive = false;
       
