@@ -6,6 +6,7 @@ import { IRequestProcess } from "./requestProcess/requestProcess.interface"
 
 export interface IHostPage {
   urlHost: string | undefined;
+  
   isActive: boolean;
   
   requestProcess: IRequestProcess;

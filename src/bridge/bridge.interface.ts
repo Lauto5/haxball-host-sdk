@@ -1,5 +1,5 @@
 import { RoomConfig } from "../types/haxball";
-import { ILogger } from "../logger";
+import { ILogger } from "../observability/logger";
 import { BridgeLaunchConfig } from "../types/haxball";
 import { BrowserResponse , MethodRequest} from "./runtime";
 

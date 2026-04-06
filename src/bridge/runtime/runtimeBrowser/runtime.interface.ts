@@ -1,4 +1,4 @@
-import { ILogger } from "../../../logger";
+import { ILogger } from "../../../observability/logger";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";

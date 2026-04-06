@@ -1,4 +1,4 @@
-import { ILogger, ScopedLogger } from "../../../logger";
+import { ILogger, ScopedLogger } from "../../../observability/logger";
 import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";

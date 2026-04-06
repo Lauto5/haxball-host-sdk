@@ -2,7 +2,7 @@ import { BrowserResponse } from "../../responses/browserResponse.interface";
 
 import { IRequestProcess } from "./requestProcess.interface";
 
-import { ILogger , ScopedLogger } from "../../../../logger";
+import { ILogger , ScopedLogger } from "../../../../observability/logger";
 
 export class SimpleRequestQueue implements IRequestProcess {
 
