@@ -1,11 +1,11 @@
 import { RoomConfig } from "../types/haxball";
 import { ILogger } from "../logger";
 import { BridgeLaunchConfig } from "../types/haxball";
-import { BrowserResponse } from "./runtime";
+import { BrowserResponse , MethodRequest} from "./runtime";
 
 export interface IBridge {
   
-  url :string | undefined
+  url: string | undefined,
 
   // =========================
   // LIFECYCLE
@@ -30,7 +30,7 @@ export interface IBridge {
   // COMMUNICATION
   // =========================
 
-  execute(id: string, method: string, args: unknown[]): Promise<BrowserResponse>;
+  execute(request: MethodRequest): Promise<BrowserResponse>;
   on(callback: (data: BrowserResponse) => void): void;
 
 }

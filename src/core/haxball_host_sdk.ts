@@ -1,5 +1,5 @@
 import { RoomConfig } from "#/types/haxball";
-import { Bridge, BrowserResponse} from "../bridge";
+import { Bridge, BrowserResponse, MethodRequest} from "../bridge";
 import { ILogger, ConsoleLogger, SafeLogger, ScopedLogger } from "../logger";
 import { SetupConfig } from "../setup";
 
@@ -30,8 +30,7 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnSii41y-ydFXubTg.17QTvvujc2k",
-      password: "meMata",
+      token: "thr1.AAAAAGnTYJWRfZvPdFXvrg.w6o9MaXu7aI",
     }
     
     await bridge.init(this.rootLogger, setupConfig.getBrowserConfig());
@@ -42,10 +41,16 @@ export class HaxballHostSDK {
         const playerId = data.response.id;
         const playerName = data.response.name;
         
-        bridge.execute(data.id, "setPlayerTeam", [playerId, 1]);
-        bridge.execute(data.id, "setPlayerAdmin", [playerId, true]);
-        bridge.execute(data.id, "startGame", []);
-        bridge.execute(data.id, "sendAnnouncement", [`Welcome to the room! ${playerName}`])
+        bridge.execute({ id: data.id, method: "setPlayerTeam", args: [playerId, 1] });
+        bridge.execute({ id: data.id, method: "setPlayerAdmin", args: [playerId, true] });
+        bridge.execute({ id: data.id, method: "startGame", args: [] });
+        bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Welcome to the room! ${playerName}`] });
+        
+        // probando ejecutar multiples veces un metodo:
+        for (let i = 0; i < 1000 ; i++) {
+          bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Numero de ejecucion : ${i}`] });
+        }
+        
       }
     })
     
@@ -59,11 +64,13 @@ export class HaxballHostSDK {
     
     await bridge.launchRoom(roomConfig, setupConfig.getUrlPath());
     
-    await bridge.execute(roomConfig.roomName, "setDefaultStadium", ["Big"]);
+    await bridge.execute({ id: roomConfig.roomName, method: "setDefaultStadium", args: ["Big"] });
     
     const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
 
     this.logger.info(urlRoom);
+    
+    
     
   }
 

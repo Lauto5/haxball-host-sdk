@@ -1,5 +1,5 @@
 import { ILogger, ScopedLogger } from "../logger";
-import { RuntimeFactory, BrowserResponse , IRuntime} from "./runtime";
+import { RuntimeFactory, BrowserResponse , IRuntime , MethodRequest} from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { EventEmitter } from "stream";
@@ -108,11 +108,11 @@ export class Bridge implements IBridge {
   // COMMUNICATION
   // =========================
 
-  async execute(id: string, method: string, args: unknown[]): Promise<BrowserResponse> {
+  async execute(request: MethodRequest): Promise<BrowserResponse> {
     
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
     
-    const response:BrowserResponse = await this.runtime.execute(id, method, args)
+    const response:BrowserResponse = await this.runtime.execute(request)
     
     return response;
     

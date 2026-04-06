@@ -5,6 +5,7 @@ import { IHostPage } from "../pages/hostPage.interface";
 import { ILogger, ScopedLogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
+import { MethodRequest } from "../requests/methodRequest.interface";
 import { EventEmitter } from "events";
 
 
@@ -69,19 +70,19 @@ export class RuntimePuppeteer implements IRuntime {
     }
   }
   
-  async execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>{
+  async execute(request: MethodRequest): Promise<BrowserResponse>{
     
-    const hostPage: IHostPage | undefined = this.pages.get(pageId);
+    const hostPage: IHostPage | undefined = this.pages.get(request.id);
     
     if (!hostPage) {
       
-      throw new Error(`Page ${pageId} not found`);
+      throw new Error(`Page ${request.id} not found`);
       
     }
     
     try {
       
-      const result: BrowserResponse = await hostPage.execute(method, args ? args : []);
+      const result: BrowserResponse = await hostPage.execute(request);
       
       return result;
       
@@ -89,7 +90,7 @@ export class RuntimePuppeteer implements IRuntime {
       
       await hostPage.close().catch(() => { });
       
-      this.logger.error("Failed to execute method", { id: pageId, method: method, args: args, error: error });
+      this.logger.error("Failed to execute method", { id: request.id, method: request.method, args: request.args, error: error });
       
       process.exit(1);
       

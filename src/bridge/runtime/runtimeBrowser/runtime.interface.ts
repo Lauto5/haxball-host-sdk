@@ -1,6 +1,8 @@
 import { ILogger } from "../../../logger";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
+import { MethodRequest } from "../requests/methodRequest.interface";
+
 
 export interface IRuntime {
   launchPage(
@@ -10,7 +12,7 @@ export interface IRuntime {
     config: RoomConfig,
   ): Promise<void>;
 
-  execute(pageId: string, method: string, args?: any[]): Promise<BrowserResponse>;
+  execute(request: MethodRequest): Promise<BrowserResponse>;
   
   getUrlHost(pageId: string): string;
   

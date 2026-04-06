@@ -1,3 +1,3 @@
 
 export { Bridge } from "./bridge";
-export { BrowserResponse } from "./runtime";
+export { BrowserResponse , MethodRequest} from "./runtime";

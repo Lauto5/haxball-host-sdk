@@ -6,6 +6,7 @@ import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
 import { HostInitResponse } from "../responses/hostInitResponse.interface";
+import { MethodRequest } from "../requests/methodRequest.interface";
 
 
 export class HostPagePuppeteer implements IHostPage {
@@ -137,7 +138,7 @@ export class HostPagePuppeteer implements IHostPage {
     
   }
 
-  async execute(method: string, args: any[]): Promise<BrowserResponse> {
+  async execute(request: MethodRequest): Promise<BrowserResponse> {
     
     if (!this.page) {
       
@@ -145,7 +146,7 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
     
-    this.logger.debug("Execute method..", { id: this.id, method: method, args: args });
+    this.logger.debug("Execute method..", { id: this.id, method: request.method, args: request.args });
     
     const result = await this.page.evaluate(
     
@@ -154,13 +155,13 @@ export class HostPagePuppeteer implements IHostPage {
         return (window as any).__headless.exec(method, args);
         
       },
-      method,
-      args,
+      request.method,
+      request.args,
     );
     
     const response: BrowserResponse = {
       id: this.id,
-      method,
+      method: request.method,
       response: result,
     };
 
