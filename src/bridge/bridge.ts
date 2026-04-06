@@ -31,12 +31,16 @@ export class Bridge implements IBridge {
     this.runtime = await runtimeFactory.getRuntime(obs, config);
     
     this.runtime.on((data: BrowserResponse) => {
-    
-      this.metrics.increment("bridge.event.received", 1, {
-        method: data.method,
-      });
-    
-      this.eventEmitter.emit("onEvent", data);
+      
+      if (data.method !== "onGameTick") {
+        
+        this.metrics.increment("bridge.event.received", 1, {
+          method: data.method,
+        });
+      
+        this.eventEmitter.emit("onEvent", data);
+          
+      }
     
     });
     

@@ -47,13 +47,6 @@ export class HaxballHostSDK {
         bridge.execute({ id: data.id, method: "startGame", args: [] });
         bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Welcome to the room! ${playerName}`] });
         
-        // probando ejecutar multiples veces un metodo:
-        for (let i = 0; i < 2 ; i++) {
-          
-          bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Numero de ejecucion : ${i}`] });
-          
-        }
-        
       }
     })
     
@@ -64,8 +57,6 @@ export class HaxballHostSDK {
     });
 
     await bridge.launchRoom(this.obs ,roomConfig, setupConfig.getUrlPath());
-
-    await bridge.execute({ id: roomConfig.roomName, method: "setDefaultStadium", args: ["Big"] });
 
     const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
 

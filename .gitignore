@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+# Metrics
+metrics.json
+
 # Logs
 logs/
 *.log
