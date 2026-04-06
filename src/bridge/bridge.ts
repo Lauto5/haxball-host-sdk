@@ -1,4 +1,4 @@
-import { ILogger, Observability} from "../observability";
+import { ILogger, IMetrics, Observability} from "../observability";
 import { RuntimeFactory, BrowserResponse , IRuntime , MethodRequest} from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";
@@ -8,11 +8,16 @@ export class Bridge implements IBridge {
 
   private url: string | undefined;
   private logger: ILogger;
+  private metrics: IMetrics;
   private runtime?: IRuntime;
   private eventEmitter: EventEmitter = new EventEmitter();
 
   constructor(obs: Observability) {
+    
     this.logger = obs.createScopeLogger("Bridge");
+    
+    this.metrics = obs.createScopeMetrics({ layer: "bridge" });
+    
   }
 
   // =========================
@@ -26,18 +31,26 @@ export class Bridge implements IBridge {
     this.runtime = await runtimeFactory.getRuntime(obs, config);
     
     this.runtime.on((data: BrowserResponse) => {
-      
+    
+      this.metrics.increment("bridge.event.received", 1, {
+        method: data.method,
+      });
+    
       this.eventEmitter.emit("onEvent", data);
-      
+    
     });
     
     this.runtime.onHostDeath((pageId: string) => {
-      
-      this.eventEmitter.emit("onHostDeath",pageId);
-      
-    })
     
-    this.logger.debug("Bridge initialized");
+      this.metrics.increment("bridge.room.death", 1, {
+        roomId: pageId,
+      });
+    
+      this.eventEmitter.emit("onHostDeath", pageId);
+    
+    });
+    
+    this.metrics.increment("bridge.init");
     
   }
 
@@ -66,6 +79,8 @@ export class Bridge implements IBridge {
     
     await this.runtime.launchPage(obs, config.roomName, url, config);
 
+    this.metrics.increment("bridge.room.launch");
+    
     this.logger.info("Room launched", { roomName: config.roomName });
     
   }
@@ -78,6 +93,8 @@ export class Bridge implements IBridge {
     
     await this.launchRoom(obs,config, this.url);
     
+    this.metrics.increment("bridge.room.restart");
+    
     this.logger.info('Room restart sucessfully : ', config.roomName);
     
   }
@@ -85,6 +102,8 @@ export class Bridge implements IBridge {
   async closeRoom(id: string): Promise<void> {
     
     await this.runtime!.closePage(id);
+    
+    this.metrics.increment("bridge.room.close");
     
     this.logger.info("Room closed", { id });
     
@@ -112,9 +131,25 @@ export class Bridge implements IBridge {
     
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
     
-    const response:BrowserResponse = await this.runtime.execute(request)
+    this.metrics.increment("bridge.execute.count", 1, {
+      method: request.method,
+    });
     
-    return response;
+    try {
+    
+      const response = await this.runtime.execute(request);
+      
+      return response;
+    
+    } catch (error) {
+    
+      this.metrics.increment("bridge.execute.error", 1, {
+        method: request.method,
+      });
+    
+      throw error;
+      
+    }
     
   }
   
