@@ -1,4 +1,4 @@
-import { ILogger, ScopedLogger } from "../observability/logger";
+import { ILogger, ScopedLogger } from "../observability";
 import { RuntimeFactory, BrowserResponse , IRuntime , MethodRequest} from "./runtime";
 import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
 import { IBridge } from "./bridge.interface";

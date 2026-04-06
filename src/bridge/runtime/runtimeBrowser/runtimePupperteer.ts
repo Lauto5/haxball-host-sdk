@@ -2,7 +2,7 @@ import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
-import { ILogger, ScopedLogger } from "../../../observability/logger";
+import { ILogger, ScopedLogger } from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
