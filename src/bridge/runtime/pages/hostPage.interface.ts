@@ -7,9 +7,21 @@ import { MethodRequest } from "../requests/methodRequest.interface";
 export interface IHostPage {
   urlHost: string | undefined;
   isActive: boolean;
+  
+  queue: Array<{
+    task: () => Promise<BrowserResponse>;
+    resolve: (value: BrowserResponse) => void;
+    reject: (reason?: any) => void;
+  }>;
+  
+  isProcessing: false;
+  
+  maxQueueSize: 1000;
+  
   navigate(url: string): Promise<void>;
   injectEnvironmentBuilder(): Promise<void>;
   launchHost(config: RoomConfig): Promise<void>;
+  
   execute(request: MethodRequest): Promise<BrowserResponse>;
   on(callback: (data: BrowserResponse) => void): void;
   close(): Promise<void>;

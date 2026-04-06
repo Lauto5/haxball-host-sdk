@@ -15,6 +15,12 @@ export class HostPagePuppeteer implements IHostPage {
   
   isActive: boolean = false;
   
+  queue: Array<{
+    task: () => Promise<BrowserResponse>;
+    resolve: (value: BrowserResponse) => void;
+    reject: (reason?: any) => void;
+  }> = [];
+  
   private logger: ILogger;
   
   private eventEmitter: EventEmitter;
