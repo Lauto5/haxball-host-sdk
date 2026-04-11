@@ -26,4 +26,8 @@ export class ScopedLogger implements ILogger {
   error(message: string, meta?: unknown) {
     this.base.error(this.format(message), meta)
   }
+  
+  trace(message: string, meta?: unknown) {
+    this.base.trace(this.format(message), meta)
+  }
 }

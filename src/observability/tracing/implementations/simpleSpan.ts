@@ -18,7 +18,7 @@ export class SimpleSpan implements ISpan {
     this.spanId = randomUUID();
     this.startTime = Date.now();
 
-    this.logger.debug("Span started", {
+    this.logger.trace("Span started", {
       traceId: this.traceId,
       spanId: this.spanId,
       name: this.name,
@@ -28,7 +28,7 @@ export class SimpleSpan implements ISpan {
   end(): void {
     const duration = Date.now() - this.startTime;
 
-    this.logger.debug("Span ended", {
+    this.logger.trace("Span ended", {
       traceId: this.traceId,
       spanId: this.spanId,
       duration,

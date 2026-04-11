@@ -52,6 +52,11 @@ export class HaxballHostSDK {
         bridge.execute({ id: data.id, method: "startGame", args: [] });
         bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`Welcome to the room! ${playerName}`] });
         
+      // probar 400 executes() :
+        for (let i = 0; i < 400; i++) {
+          bridge.execute({ id: data.id, method: "sendAnnouncement", args: [`${playerName} ${i}`] });
+        }
+        
       }
     })
     

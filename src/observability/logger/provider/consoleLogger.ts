@@ -33,4 +33,9 @@ export class ConsoleLogger implements ILogger {
     if (!this.shouldLog(LogLevel.ERROR)) return;
     console.error(this.formatMessage("ERROR", message), meta ?? "");
   }
+  
+  trace(message: string, meta?: unknown): void {
+    if (!this.shouldLog(LogLevel.TRACE)) return;
+    console.trace(this.formatMessage("TRACE", message), meta ?? "");
+  }
 }

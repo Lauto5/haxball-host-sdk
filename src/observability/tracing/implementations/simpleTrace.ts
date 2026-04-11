@@ -15,7 +15,7 @@ export class SimpleTrace implements ITrace {
   ) {
     this.traceId = randomUUID();
 
-    this.logger.debug("Trace started", {
+    this.logger.trace("Trace started", {
       traceId: this.traceId,
       name: this.name,
     });

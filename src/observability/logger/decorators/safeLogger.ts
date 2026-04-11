@@ -27,4 +27,9 @@ export class SafeLogger implements ILogger {
   error(message: string, meta?: unknown) {
     this.call("error", message, meta)
   }
+  
+  trace(message: string, meta?: unknown) {
+    this.call("trace", message, meta)
+  }
+  
 }
