@@ -24,7 +24,6 @@ export class HaxballHostSDK {
     
     const bridge = new Bridge(this.obs);
     
-    // probar tracer:
     const tracer = this.obs.getTracer();
     const trace = tracer.startTrace("HBH");
     
