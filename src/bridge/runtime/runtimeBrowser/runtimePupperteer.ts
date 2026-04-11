@@ -2,7 +2,7 @@ import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
-import { ILogger, IMetrics, Observability } from "../../../observability";
+import { ILogger, IMetrics, ITrace, Observability } from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
@@ -38,6 +38,7 @@ export class RuntimePuppeteer implements IRuntime {
     pageId: string,
     url: string,
     config: RoomConfig,
+    trace: ITrace,
   ): Promise<void> {
     
     if (this.pages.has(pageId)) {
@@ -45,6 +46,8 @@ export class RuntimePuppeteer implements IRuntime {
       throw new Error(`Page ${pageId} already exists`);
       
     }
+    
+    const span = trace.startSpan("runtime.launchPage");
     
     const start = Date.now();
     
@@ -62,7 +65,7 @@ export class RuntimePuppeteer implements IRuntime {
       this.suscribeToPageEvents(hostPage);
       this.suscribeToPageDeath(hostPage, pageId);
     
-      await hostPage.launchHost(config);
+      await hostPage.launchHost(config, trace);
     
       this.pages.set(pageId, hostPage);
     
@@ -81,12 +84,15 @@ export class RuntimePuppeteer implements IRuntime {
     } finally {
     
       const duration = Date.now() - start;
+      
       this.metrics.observe("runtime.page.launch.duration", duration);
+      
+      span.end();
     
     }
   }
   
-  async execute(request: MethodRequest): Promise<BrowserResponse>{
+  async execute(request: MethodRequest, trace: ITrace): Promise<BrowserResponse>{
     
     const hostPage: IHostPage | undefined = this.pages.get(request.id);
     
@@ -96,13 +102,15 @@ export class RuntimePuppeteer implements IRuntime {
       
     }
     
+    const span = trace.startSpan("runtime.execute");
+    
     const start = Date.now();
     
     this.metrics.increment("runtime.execute.count");
     
     try {
     
-      const result: BrowserResponse = await hostPage.execute(request);
+      const result: BrowserResponse = await hostPage.execute(request, trace);
     
       return result;
     
@@ -110,7 +118,7 @@ export class RuntimePuppeteer implements IRuntime {
     
       this.metrics.increment("runtime.execute.error");
     
-      await hostPage.close().catch(() => { });
+      await hostPage.close(trace).catch(() => { });
     
       this.logger.error("Failed to execute method", {
         id: request.id,
@@ -128,6 +136,8 @@ export class RuntimePuppeteer implements IRuntime {
       this.metrics.observe("runtime.execute.duration", duration, {
         method: request.method,
       });
+      
+      span.end();
     
     }
     
@@ -160,7 +170,7 @@ export class RuntimePuppeteer implements IRuntime {
     
   }
 
-  async closePage(pageId: string): Promise<void> {
+  async closePage(pageId: string , trace: ITrace): Promise<void> {
     
     const hostPage: IHostPage | undefined = this.pages.get(pageId);
     
@@ -170,11 +180,13 @@ export class RuntimePuppeteer implements IRuntime {
       
     }
     
+    const span = trace.startSpan("runtime.closePage");
+    
     try { 
       
       this.metrics.increment("runtime.page.close");
       
-      await hostPage.close();
+      await hostPage.close(trace);
       
       this.pages.delete(pageId);
       
@@ -188,23 +200,44 @@ export class RuntimePuppeteer implements IRuntime {
       
       throw error;
       
+    } finally {
+      
+      span.end();
+      
     }
   }
   
-  async close(): Promise<void> {
+  async close(trace: ITrace): Promise<void> {
     
-    this.metrics.increment("runtime.close");
+    const span = trace.startSpan("runtime.close");
     
-    this.pages.forEach(async (hostPage) => {
-      await hostPage.close().catch(() => {});
-    });
-    
-    this.pages.clear();
-    
-    this.metrics.gauge("runtime.page.count", 0);
-    
-    this.browser.close().catch(() => {});
-    
+    try {
+      
+      this.metrics.increment("runtime.close");
+      
+      this.pages.forEach(async (hostPage) => {
+        await hostPage.close(trace).catch(() => {});
+      });
+      
+      this.pages.clear();
+      
+      this.metrics.gauge("runtime.page.count", 0);
+      
+      this.browser.close().catch(() => {});
+      
+    } catch (error) {
+      
+      this.logger.error("Failed to close runtime", { error: error });
+      
+      this.metrics.increment("runtime.close.error");
+      
+      throw error;
+      
+    } finally {
+      
+      span.end();
+      
+    }
   }
   
   private suscribeToPageEvents(hostPage: IHostPage): void {

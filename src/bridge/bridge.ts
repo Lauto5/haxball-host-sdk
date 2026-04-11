@@ -63,13 +63,27 @@ export class Bridge implements IBridge {
 
   async close(): Promise<void> {
     
-    if (this.runtime) {
+    const trace = this.tracer.startTrace("bridge.close");
+    
+    const span = trace.startSpan("bridge.close");
+    try {
+      if (this.runtime) {
+        
+        await this.runtime.close(trace);
+        
+      }
+    } catch (err) {
       
-      await this.runtime.close();
+      this.logger.error("Error to close bridge", err);
+      
+    } finally {
+      
+      this.logger.debug("Bridge closed");
+      
+      span.end();
       
     }
     
-    this.logger.debug("Bridge closed");
   }
 
   // =========================
@@ -81,6 +95,7 @@ export class Bridge implements IBridge {
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
 
     const trace = this.tracer.startTrace("bridge.launchRoom");
+    
     const span = trace.startSpan("bridge.launchRoom");
 
     if (this.url === undefined) {
@@ -89,7 +104,7 @@ export class Bridge implements IBridge {
 
     try {
 
-      await this.runtime.launchPage(obs, config.roomName, url, config);
+      await this.runtime.launchPage(obs, config.roomName, url, config , trace);
 
       this.metrics.increment("bridge.room.launch");
 
@@ -124,7 +139,7 @@ export class Bridge implements IBridge {
 
     try {
 
-      await this.runtime.closePage(config.roomName);
+      await this.runtime.closePage(config.roomName, trace);
 
       await this.launchRoom(obs, config, this.url);
 
@@ -145,11 +160,12 @@ export class Bridge implements IBridge {
   async closeRoom(id: string): Promise<void> {
 
     const trace = this.tracer.startTrace("bridge.closeRoom");
+    
     const span = trace.startSpan("bridge.closeRoom");
 
     try {
 
-      await this.runtime!.closePage(id);
+      await this.runtime!.closePage(id, trace);
 
       this.metrics.increment("bridge.room.close");
 
@@ -188,6 +204,7 @@ export class Bridge implements IBridge {
     if (!this.runtime) throw new Error("Bridge not initialized. Call init() first.");
     
     const trace = this.tracer.startTrace("bridge.execute");
+    
     const span = trace.startSpan("bridge.execute");
     
     this.metrics.increment("bridge.execute.count", 1, {
@@ -196,7 +213,7 @@ export class Bridge implements IBridge {
     
     try {
     
-      const response = await this.runtime.execute(request);
+      const response = await this.runtime.execute(request , trace);
       
       return response;
     

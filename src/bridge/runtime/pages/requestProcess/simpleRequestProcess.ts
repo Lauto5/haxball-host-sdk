@@ -2,7 +2,7 @@ import { BrowserResponse } from "../../responses/browserResponse.interface";
 
 import { IRequestProcess } from "./requestProcess.interface";
 
-import { ILogger , IMetrics, Observability } from "../../../../observability";
+import { ILogger , IMetrics, ITrace, Observability } from "../../../../observability";
 
 export class SimpleRequestQueue implements IRequestProcess {
 
@@ -35,6 +35,7 @@ export class SimpleRequestQueue implements IRequestProcess {
   }
 
   add(task: () => Promise<BrowserResponse>): Promise<BrowserResponse> {
+
     
     if (this.queue.length >= this.maxQueueSize) {
       

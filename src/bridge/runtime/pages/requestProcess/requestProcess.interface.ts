@@ -1,4 +1,4 @@
-
+import { ITrace } from "../../../../observability";
 import { BrowserResponse } from "../../responses/browserResponse.interface";
 
 export interface IRequestProcess {

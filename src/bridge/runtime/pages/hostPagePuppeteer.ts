@@ -1,4 +1,4 @@
-import { ILogger, Observability , IMetrics } from "../../../observability";
+import { ILogger, Observability , IMetrics, ITrace, ITracer } from "../../../observability";
 import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
@@ -23,6 +23,8 @@ export class HostPagePuppeteer implements IHostPage {
   
   private metrics: IMetrics;
   
+  private tracer: ITracer;
+  
   private eventEmitter: EventEmitter;
   
   constructor(
@@ -36,6 +38,8 @@ export class HostPagePuppeteer implements IHostPage {
     this.logger = obs.createScopeLogger("HostPage");
     
     this.metrics = obs.createScopeMetrics({ hostPageId: this.id });
+    
+    this.tracer = obs.getTracer();
     
     this.requestProcess = new SimpleRequestQueue(obs);
     
@@ -106,7 +110,7 @@ export class HostPagePuppeteer implements IHostPage {
     
   }
 
-  async launchHost(config: RoomConfig): Promise<void> {
+  async launchHost(config: RoomConfig, trace: ITrace): Promise<void> {
     
     if (!this.page) {
       
@@ -114,41 +118,56 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
     
+    const span = trace.startSpan("host.launch");
+    
     const start = Date.now();
-
-    const response: HostInitResponse = await this.page.evaluate((config: RoomConfig) => {
+    
+    try {
       
-      const result = (window as any).__headless.init(config);
+      const response: HostInitResponse = await this.page.evaluate((config: RoomConfig) => {
+        
+        const result = (window as any).__headless.init(config);
+        
+        return result;
+        
+      }, config);
+  
+      if (!response.success) {
+        
+        throw new Error(`Room: ${config.roomName}, ${response.message}`)
+        
+      }
       
-      return result;
+      await this.page.evaluate(() => {
+        
+        (window as any).__headless.subscribeEvents();
+        
+      });
       
-    }, config);
-
-    if (!response.success) {
+      this.urlHost = response.data;
       
-      throw new Error(`Room: ${config.roomName}, ${response.message}`)
+      this.isActive = true;
+      
+    } catch (error) {
+      
+      throw error;
+      
+    } finally {
+      
+      const duration = Date.now() - start;
+      
+      this.metrics.observe("host.launch.duration", duration);
+      
+      span.end();
       
     }
-    
-    await this.page.evaluate(() => {
-      
-      (window as any).__headless.subscribeEvents();
-      
-    });
-    
-    this.urlHost = response.data;
-    
-    this.isActive = true;
-    
-    const duration = Date.now() - start;
-    
-    this.metrics.observe("host.launch.duration", duration);
-    
   }
 
-  async execute(request: MethodRequest): Promise<BrowserResponse> {
+  async execute(request: MethodRequest, trace: ITrace): Promise<BrowserResponse> {
     if (!this.page) throw new Error("Page not initialized");
     if (!this.isActive) throw new Error("Host is not active");
+    
+    const span = trace.startSpan("host.execute");
     
     return this.requestProcess.add(async () => {
     
@@ -189,16 +208,22 @@ export class HostPagePuppeteer implements IHostPage {
         this.metrics.observe("host.execute.duration", duration, {
           method: request.method,
         });
+        
+        span.end();
     
       }
     });
   }
 
-  async close(): Promise<void> {
+  async close(trace: ITrace): Promise<void> {
+    
+    const span = trace.startSpan("host.close");
     
     await this.page.close();
     
     this.metrics.increment("host.close");
+    
+    span.end();
     
   }
 
@@ -265,9 +290,12 @@ export class HostPagePuppeteer implements IHostPage {
       
       this.logger.warn("Host is dead, closing page : ", this.id);
       
-      this.close();
+      const trace = this.tracer.startTrace("host.close");
+      
+      await this.close(trace);
       
       this.eventEmitter.emit("onDeath", this.id);
+      
       
     }
     

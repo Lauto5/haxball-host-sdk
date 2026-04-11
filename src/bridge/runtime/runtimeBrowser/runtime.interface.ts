@@ -1,4 +1,4 @@
-import { Observability} from "../../../observability";
+import { Observability , ITrace} from "../../../observability";
 import { RoomConfig } from "../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
@@ -11,9 +11,10 @@ export interface IRuntime {
     pageId: string,
     url: string,
     config: RoomConfig,
+    trace: ITrace,
   ): Promise<void>;
 
-  execute(request: MethodRequest): Promise<BrowserResponse>;
+  execute(request: MethodRequest , trace : ITrace): Promise<BrowserResponse>;
   
   getUrlHost(pageId: string): string;
   
@@ -21,9 +22,9 @@ export interface IRuntime {
 
   on(callback:(data: BrowserResponse) => void): void;
 
-  closePage(pageId: string): Promise<void>;
+  closePage(pageId: string, trace: ITrace): Promise<void>;
   
-  close(): Promise<void>;
+  close(trace: ITrace): Promise<void>;
 
 
 }
