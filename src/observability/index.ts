@@ -2,5 +2,6 @@ import { Observability } from './observability';
 
 export * from './logger';
 export * from './metrics';
+export * from './tracing';
 
 export { Observability };

@@ -24,6 +24,12 @@ export class HaxballHostSDK {
     
     const bridge = new Bridge(this.obs);
     
+    // probar tracer:
+    const tracer = this.obs.getTracer();
+    const trace = tracer.startTrace("HBH");
+    
+    const span = trace.startSpan("testBridge");    
+    
     const setupConfig = new SetupConfig("puppeteer","/usr/bin/chromium-browser");
     
     const roomConfig: RoomConfig = {
@@ -31,7 +37,7 @@ export class HaxballHostSDK {
       maxPlayers: 10,
       public: true,
       noPlayer: true,
-      token: "thr1.AAAAAGnT6S4Nyj70Y-tSAQ.AXbZ9ovXc9E",
+      token: "thr1.AAAAAGnae1TlIlHEevsikw.yWFwhmsaYOE",
     }
     
     await bridge.init(this.obs , setupConfig.getBrowserConfig());
@@ -55,12 +61,14 @@ export class HaxballHostSDK {
       this.logger.warn(`Room ${pageId} died`);
       
     });
-
+    
     await bridge.launchRoom(this.obs ,roomConfig, setupConfig.getUrlPath());
 
     const urlRoom = bridge.getUrlRoom(roomConfig.roomName);
 
     this.logger.info(urlRoom);
+    
+    span.end();
 
   }
 
