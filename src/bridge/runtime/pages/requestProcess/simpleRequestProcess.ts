@@ -9,6 +9,7 @@ export class SimpleRequestQueue implements IRequestProcess {
   
   queue: Array<{
     task: () => Promise<BrowserResponse>;
+    trace: ITrace;
     resolve: (value: BrowserResponse) => void;
     reject: (reason?: any) => void;
   }> = [];
@@ -34,7 +35,7 @@ export class SimpleRequestQueue implements IRequestProcess {
     this.metrics = obs.createScopeMetrics({ queue: "simple_request_queue" });
   }
 
-  add(task: () => Promise<BrowserResponse>): Promise<BrowserResponse> {
+  add(task: () => Promise<BrowserResponse>, trace: ITrace): Promise<BrowserResponse> {
 
     
     if (this.queue.length >= this.maxQueueSize) {
@@ -61,7 +62,7 @@ export class SimpleRequestQueue implements IRequestProcess {
 
     return new Promise((resolve, reject) => {
       
-      this.queue.push({ task, resolve, reject });
+      this.queue.push({ task, trace, resolve, reject });
       
       this.metrics.gauge("queue.size", this.queue.length);
       
@@ -73,55 +74,33 @@ export class SimpleRequestQueue implements IRequestProcess {
 
   async processQueue(): Promise<void> {
     
-    if (this.isProcessing) return;
-
-    this.isProcessing = true;
-
-    while (this.queue.length > 0) {
-      
-      const item = this.queue.shift();
-      
-      if (!item) continue;
-      
-      const start = Date.now();
-
-      try {
-        
-        const result = await item.task();
-        
-        item.resolve(result);
-        
-        this.metrics.increment("queue.task.success");
-        
-      } catch (err) {
-        
-        item.reject(err);
-        
-        this.metrics.increment("queue.task.error");
-        
-      }
-      
-      const duration = Date.now() - start;
-      
-      this.metrics.observe("queue.task.duration", duration);
-      
-      if (this.queue.length >= this.warnQueueSize) {
-        
-        const delay = Math.min(this.queue.length / 10, 50);
-        
-        this.metrics.observe("queue.delay", delay);
-        
-        this.metrics.gauge("queue.size", this.queue.length);
-
-        await new Promise(res => setTimeout(res, delay));
-        
-      }
-      
-    }
-
-    this.isProcessing = false;
+    const item = this.queue.shift();
+    if (!item) return;
     
-    this.metrics.gauge("queue.size", this.queue.length);
+    const span = item.trace.startSpan("queue.process");
+    const start = Date.now();
+    
+    try {
+    
+      const result = await item.task();
+      item.resolve(result);
+    
+      this.metrics.increment("queue.task.success");
+    
+    } catch (err) {
+    
+      item.reject(err);
+    
+      this.metrics.increment("queue.task.error");
+    
+    } finally {
+    
+      const duration = Date.now() - start;
+    
+      this.metrics.observe("queue.task.duration", duration);
+    
+      span.end();
+    }
     
   }
   

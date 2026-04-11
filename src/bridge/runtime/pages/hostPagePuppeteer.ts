@@ -167,10 +167,10 @@ export class HostPagePuppeteer implements IHostPage {
     if (!this.page) throw new Error("Page not initialized");
     if (!this.isActive) throw new Error("Host is not active");
     
-    const span = trace.startSpan("host.execute");
-    
     return this.requestProcess.add(async () => {
     
+      const span = trace.startSpan("host.execute");
+      
       const start = Date.now();
     
       try {
@@ -212,10 +212,12 @@ export class HostPagePuppeteer implements IHostPage {
         span.end();
     
       }
-    });
+    }, trace);
   }
 
-  async close(trace: ITrace): Promise<void> {
+  async close(): Promise<void> {
+    
+    const trace = this.tracer.startTrace("host.close");
     
     const span = trace.startSpan("host.close");
     
@@ -282,20 +284,17 @@ export class HostPagePuppeteer implements IHostPage {
     
     const isAlive = await this.isAlive();
     
+    this.metrics.gauge("host.alive", isAlive ? 1 : 0);
+    
     if (!isAlive) {
-      
-      this.metrics.gauge("host.alive", isAlive ? 1 : 0);
       
       this.isActive = false;
       
       this.logger.warn("Host is dead, closing page : ", this.id);
       
-      const trace = this.tracer.startTrace("host.close");
-      
-      await this.close(trace);
+      await this.close();
       
       this.eventEmitter.emit("onDeath", this.id);
-      
       
     }
     

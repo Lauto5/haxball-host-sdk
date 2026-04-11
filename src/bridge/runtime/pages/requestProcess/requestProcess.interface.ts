@@ -14,7 +14,7 @@ export interface IRequestProcess {
   warnQueueSize: number;
   maxQueueSize: number;
   
-  add(task: () => Promise<BrowserResponse>): Promise<BrowserResponse>;
+  add(task: () => Promise<BrowserResponse> , trace: ITrace): Promise<BrowserResponse>;
   
   processQueue(): Promise<void>;
 }

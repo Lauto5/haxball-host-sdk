@@ -20,7 +20,7 @@ export interface IHostPage {
   
   execute(request: MethodRequest, trace: ITrace): Promise<BrowserResponse>;
   on(callback: (data: BrowserResponse) => void): void;
-  close(trace: ITrace): Promise<void>;
+  close(): Promise<void>;
   getUrlHost(): string;
   handleAlive(): Promise<void>;
   onHostDeath(callback: (pageId: string) => void): void;

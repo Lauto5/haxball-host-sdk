@@ -118,7 +118,7 @@ export class RuntimePuppeteer implements IRuntime {
     
       this.metrics.increment("runtime.execute.error");
     
-      await hostPage.close(trace).catch(() => { });
+      await hostPage.close().catch(() => { });
     
       this.logger.error("Failed to execute method", {
         id: request.id,
@@ -186,7 +186,7 @@ export class RuntimePuppeteer implements IRuntime {
       
       this.metrics.increment("runtime.page.close");
       
-      await hostPage.close(trace);
+      await hostPage.close();
       
       this.pages.delete(pageId);
       
@@ -216,7 +216,7 @@ export class RuntimePuppeteer implements IRuntime {
       this.metrics.increment("runtime.close");
       
       this.pages.forEach(async (hostPage) => {
-        await hostPage.close(trace).catch(() => {});
+        await hostPage.close().catch(() => {});
       });
       
       this.pages.clear();
