@@ -1,6 +1,6 @@
 import { RoomConfig } from "#/types/haxball";
-import { Bridge, BrowserResponse, MethodRequest} from "../bridge";
-import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "../observability";
+import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
+import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
 import { SetupConfig } from "../setup";
 
 interface SDKOptions {

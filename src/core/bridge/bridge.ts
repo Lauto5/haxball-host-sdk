@@ -1,6 +1,6 @@
 import { ILogger, IMetrics, ITracer , Observability} from "../observability";
 import { RuntimeFactory, BrowserResponse , IRuntime , MethodRequest} from "./runtime";
-import { RoomConfig, BridgeLaunchConfig } from "../types/haxball";
+import { RoomConfig, BridgeLaunchConfig } from "../../types/haxball";
 import { IBridge } from "./bridge.interface";
 import { EventEmitter } from "stream";
 

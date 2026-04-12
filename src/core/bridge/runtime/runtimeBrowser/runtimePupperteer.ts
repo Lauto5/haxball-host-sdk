@@ -3,7 +3,7 @@ import { IRuntime } from "./runtime.interface";
 import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
 import { IHostPage } from "../pages/hostPage.interface";
 import { ILogger, IMetrics, ITrace, Observability } from "../../../observability";
-import { RoomConfig } from "../../../types/haxball";
+import { RoomConfig } from "../../../../types/haxball";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 import { EventEmitter } from "events";
