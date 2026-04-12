@@ -1,6 +1,6 @@
 
 import { getOperatingSystem } from "./readSystemOperative"
-import { BridgeLaunchConfig } from "../types/haxball"
+import { BridgeLaunchConfig } from "../../types/haxball"
 
 export class SetupCoreConfig {
   

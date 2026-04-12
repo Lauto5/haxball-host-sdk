@@ -1,18 +1,57 @@
 import { RoomConfig } from "#/types/haxball";
 import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
 import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
-import { SetupCoreConfig } from "../setup";
-import { ObservabilityConfig } from "../config/observabilityConfig";
+import { ObservabilityConfig, SetupCoreConfig } from "../config/";
+import { IBridge } from "./bridge";
 
 export class HaxballHostSDK {
-  private obs: Observability;
+  
+  private observability: Observability;
+  
   private logger: ILogger;
+  
+  private bridge: IBridge
 
-  constructor(readonly observability: ObservabilityConfig = new ObservabilityConfig(2)) {
+  constructor(
+    readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(2),
+    readonly setupConfig: SetupCoreConfig = new SetupCoreConfig("puppeteer", "/usr/bin/chromium-browser"),
+  ) {
     
-    this.obs = new Observability(observability.logging, observability.metrics);
+    this.observability = new Observability(observabilityConfig.logging, observabilityConfig.metrics);
     
-    this.logger = this.obs.createScopeLogger("HBH");
+    this.logger = this.observability.createScopeLogger("HaxballHostSDK");
+    
+    this.bridge = new Bridge(this.observability);
+    
+    this.bridgeSetup();
+    
+  }
+  
+  private bridgeSetup() {
+    
+    this.bridge.on((data: BrowserResponse) => {
+      
+      // luego introducir logica.
+      
+    });
+    
+    this.bridge.onRoomDeath(() => {
+      
+      // luego introducir logica.
+      
+    });
+    
+  }
+  
+  async launchRoom(roomConfig: RoomConfig) {
+    
+    await this.bridge.launchRoom(this.observability, roomConfig, this.setupConfig.getUrlPath());
+    
+  }
+  
+  async reLaunchRoom(roomConfig: RoomConfig) {
+    
+    await this.bridge.restartRoom(this.observability, roomConfig);
     
   }
 
