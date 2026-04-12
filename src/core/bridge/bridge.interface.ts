@@ -11,6 +11,8 @@ export interface IBridge {
   
   init(obs: Observability, config: BridgeLaunchConfig): Promise<void>;
   close(): Promise<void>;
+  
+  isInit(): boolean;
 
   // =========================
   // ROOM MANAGEMENT

@@ -85,6 +85,10 @@ export class Bridge implements IBridge {
     }
     
   }
+  
+  isInit(): boolean {
+    return !!this.runtime;
+  }
 
   // =========================
   // ROOM MANAGEMENT

@@ -1,10 +1,11 @@
 import { HaxballHostSDK } from "./core/haxball_host_sdk";
-
-import { IMetrics } from "./observability";
+import { ObservabilityConfig } from "./config";
+import { IMetrics } from "./core/observability";
 
 
 import * as fs from "fs";
 import * as path from "path";
+import { RoomConfig } from "./types/haxball";
 
 // PRUEBA
 // haciendo que las metricas se guarden en un archivo
@@ -59,10 +60,19 @@ class MyTestMetrics implements IMetrics {
   }
 }
 
+const observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3, undefined, new MyTestMetrics());
 
-const hbh:HaxballHostSDK = new HaxballHostSDK({
-  metrics: new MyTestMetrics(),
-});
+const hbh = new HaxballHostSDK(observabilityConfig);
+
+const roomConfig: RoomConfig = {
+  roomName: "Haxball-host-sdk-1",
+  maxPlayers: 10,
+  public: true,
+  noPlayer: true,
+  token: "thr1.AAAAAGnbsRxOOgL5u2Y6NA._5W6Yo2xm5w",
+}
+
+hbh.launchRoom(roomConfig);
 
 // (desarrollo) probar el bridge, luego borrar.
-hbh.testBridge().catch(console.error);
+// hbh.testBridge().catch(console.error);

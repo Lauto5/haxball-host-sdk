@@ -93,10 +93,6 @@ export class HostEnvironmentBuilder {
           };
 
           this.room.onPlayerJoin = (player: any) => {
-            
-            if (!this.isGameTickActive) {
-              this.isGameTickActive = true;
-            }
 
             this.emitEvent("onPlayerJoin", player);
 
@@ -110,7 +106,17 @@ export class HostEnvironmentBuilder {
 
           this.room.onPlayerChat = (player: any, message: string) => {
 
+            if (message.startsWith("!")) {
+             
+              this.emitEvent("onPlayerCommand", [player, message]);
+              
+              return false;
+            }
+            
+            
             this.emitEvent("onPlayerChat", [player, message]);
+            
+            return true;
 
           };
 
@@ -122,6 +128,10 @@ export class HostEnvironmentBuilder {
 
           this.room.onGameStart = (byPlayer: any) => {
 
+            if (!this.isGameTickActive) {
+              this.isGameTickActive = true;
+            }
+            
             this.emitEvent("onGameStart", byPlayer);
 
           };

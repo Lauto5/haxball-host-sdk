@@ -28,11 +28,40 @@ export class HaxballHostSDK {
   }
   
   private bridgeSetup() {
-    
+
     this.bridge.on((data: BrowserResponse) => {
-      
+
       // luego introducir logica.
-      
+      //
+      // Logica para testear comandos, luego borrar:
+
+      if (data.method === "onPlayerCommand") {
+
+        const msg: string = data.response[1];
+
+        this.logger.debug("onPlayerCommand received", { msg });
+
+        switch (msg) {
+          case "!startGame":
+            
+            this.logger.debug("startGame command received", { msg });
+
+            this.bridge.execute({ id: data.id, method: "sendChat", args: ["Game starting"] });
+
+            this.bridge.execute({ id: data.id, method: "startGame", args: [] });
+            break;
+          
+          // en el caso de no existir mandar un mensaje a el jugador de que no existe el comando:
+          default:
+            this.logger.debug("command not found", { msg });
+            // args : msg, targetId, color , style , sound
+            this.bridge.execute({ id: data.id, method: "sendAnnouncement", args: ["command not found" , data.response[0].id , 0xFF0000 , "bold", 0] });
+            break;
+        }
+
+      }
+
+
     });
     
     this.bridge.onRoomDeath(() => {
@@ -45,15 +74,22 @@ export class HaxballHostSDK {
   
   async launchRoom(roomConfig: RoomConfig) {
     
+    if (!this.bridge.isInit()) {
+      await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
+    }
+    
     await this.bridge.launchRoom(this.observability, roomConfig, this.setupConfig.getUrlPath());
     
   }
   
-  async reLaunchRoom(roomConfig: RoomConfig) {
+  async reLaunchRoom(roomName: string) {
     
+    /* 
     await this.bridge.restartRoom(this.observability, roomConfig);
+    */
     
   }
+}
 
   /*
   
@@ -115,5 +151,3 @@ export class HaxballHostSDK {
   }
   
   */
-
-}
