@@ -2,21 +2,18 @@ import { RoomConfig } from "#/types/haxball";
 import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
 import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
 import { SetupCoreConfig } from "../setup";
-
-interface SDKOptions {
-  logger?: ILogger;
-  metrics?: IMetrics;
-}
+import { ObservabilityConfig } from "../config/observabilityConfig";
 
 export class HaxballHostSDK {
   private obs: Observability;
   private logger: ILogger;
 
-  constructor(options?: SDKOptions) {
-    const Ilogger : ILogger = options?.logger ?? new ConsoleLogger(3);
-    const Imetrics : IMetrics = options?.metrics ?? new ConsoleMetrics(Ilogger);
-    this.obs = new Observability(Ilogger, Imetrics);
+  constructor(readonly observability: ObservabilityConfig = new ObservabilityConfig(2)) {
+    
+    this.obs = new Observability(observability.logging, observability.metrics);
+    
     this.logger = this.obs.createScopeLogger("HBH");
+    
   }
 
   /*
