@@ -1,7 +1,7 @@
 import { RoomConfig } from "#/types/haxball";
 import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
 import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
-import { SetupConfig } from "../setup";
+import { SetupCoreConfig } from "../setup";
 
 interface SDKOptions {
   logger?: ILogger;
@@ -19,6 +19,8 @@ export class HaxballHostSDK {
     this.logger = this.obs.createScopeLogger("HBH");
   }
 
+  /*
+  
   // (desarrollo) metodos para probar el bridge, luego borrar.
   async testBridge(): Promise<void> {
     
@@ -75,5 +77,7 @@ export class HaxballHostSDK {
     span.end();
 
   }
+  
+  */
 
 }

@@ -1,2 +1,2 @@
 
-export { SetupConfig } from "./setupConfig"
+export { SetupCoreConfig } from "./setupCoreConfig"
