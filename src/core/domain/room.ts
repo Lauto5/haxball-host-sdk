@@ -1,17 +1,21 @@
 import { RoomExecutor } from "../safe";
 import { RoomMethods } from "./roomInterfaces/roomMethods.interface";
+import { RoomEvents } from "./roomInterfaces/roomEvents.interface";
 import { Player } from "./typed/player.interface";
 import { TeamID } from "./typed/teamId.interface";
 import { Scores } from "./typed/scores.interface";
 import { Position } from "./typed/position.interface";
 import { DiscProperties } from "./typed/discProperties.interface";
+import { EventEmitter } from "events";
 
 
-export class Room implements RoomMethods {
+export class Room implements RoomMethods, RoomEvents {
   
   public readonly id: string;
 
   private readonly executor: RoomExecutor;
+  
+  private readonly emitter: EventEmitter = new EventEmitter();
   
   constructor(id: string, executor: RoomExecutor){
     this.id = id;
@@ -21,8 +25,14 @@ export class Room implements RoomMethods {
   private async execute<T = any>(method: string, args: any[]): Promise<T> {
     return this.executor.execute<T>(method, args);
   }
+  
+  
 
-  // Methods:
+  /*
+  
+  METHODS
+  
+  */
   
   sendChat(message: string, targetId?: number): Promise<void>{
     return this.execute<void>("sendChat", [message, targetId]);
@@ -165,4 +175,95 @@ export class Room implements RoomMethods {
   getDiscCount(): Promise<number>{
     return this.execute<number>("getDiscCount", []);
   }
+  
+  /*
+ 
+    EVENTS
+ 
+  */
+  
+  onPlayerJoin(callback: (player: Player) => void): void{
+    this.emitter.on("playerJoin", callback);
+  }
+  
+  onPlayerLeave(callback: (player: Player) => void): void {
+    this.emitter.on("playerLeave", callback);
+  }
+
+  onPlayerChat(callback: (player: Player, message: string) => boolean | void): void {
+    this.emitter.on("playerChat", callback);
+  }
+  
+  onPlayerCommand(callback: (player: Player, message: string) => void): void {
+    this.emitter.on("playerCommand", callback);
+  }
+  
+  onPlayerActivity(callback: (player: Player) => void): void {
+    this.emitter.on("playerActivity", callback);
+  }
+  
+  onGameStart(callback: (byPlayer: Player | null) => void): void {
+    this.emitter.on("gameStart", callback);
+  }
+  
+  onGameStop(callback: (byPlayer: Player | null) => void): void {
+    this.emitter.on("gameStop", callback);
+  }
+  
+  onGameTick(callback: () => void): void {
+    this.emitter.on("gameTick", callback);
+  }
+  
+  onGamePause(callback: (byPlayer: Player | null) => void): void {
+    this.emitter.on("gamePause", callback);
+  }
+  
+  onGameUnpause(callback: (byPlayer: Player | null) => void): void {
+    this.emitter.on("gameUnpause", callback);
+  }
+  
+  onPositionsReset(callback: () => void): void {
+    this.emitter.on("positionsReset", callback);
+  }
+  
+  onTeamGoal(callback: (team: TeamID) => void): void {
+    this.emitter.on("teamGoal", callback);
+  }
+  
+  onTeamVictory(callback: (scores: Scores) => void): void {
+    this.emitter.on("teamVictory", callback);
+  }
+  
+  onPlayerAdminChange(callback: (changedPlayer: Player, byPlayer: Player | null) => void): void {
+    this.emitter.on("playerAdminChange", callback);
+  }
+  
+  onPlayerTeamChange(callback: (changedPlayer: Player, byPlayer: Player | null) => void): void {
+    this.emitter.on("playerTeamChange", callback);
+  }
+  
+  onPlayerKicked(
+    callback: (kickedPlayer: Player, reason: string, ban: boolean, byPlayer: Player | null) => void
+  ): void {
+    this.emitter.on("playerKicked", callback);
+  }
+  
+  onStadiumChange(callback: (stadiumName: string, byPlayer: Player | null) => void): void {
+    this.emitter.on("stadiumChange", callback);
+  }
+  
+  onRoomLink(callback: (url: string) => void): void {
+    this.emitter.on("roomLink", callback);
+  }
+  
+  onTeamsLockChange(callback: (locked: boolean, byPlayer: Player | null) => void): void {
+    this.emitter.on("teamsLockChange", callback);
+  }
+  
+  onKickRateLimitSet(
+    callback: (min: number, rate: number, burst: number, byPlayer: Player | null) => void
+  ): void {
+    this.emitter.on("kickRateLimitSet", callback);
+  }
+  
 }
