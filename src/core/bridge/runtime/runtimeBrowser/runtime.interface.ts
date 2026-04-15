@@ -1,5 +1,5 @@
-import { Observability , ITrace} from "../../../observability";
-import { RoomConfig } from "../../../../types/haxball";
+import { Observability, ITrace } from "../../../observability";
+import { RoomConfig } from "../../../domain";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 

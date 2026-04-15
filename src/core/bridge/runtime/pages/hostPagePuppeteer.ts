@@ -2,7 +2,7 @@ import { ILogger, Observability , IMetrics, ITrace, ITracer } from "../../../obs
 import { Page } from "puppeteer-core";
 import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
-import { RoomConfig } from "../../../../types/haxball";
+import { RoomConfig } from "../../../domain";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { EventEmitter } from "events";
 import { HostInitResponse } from "../responses/hostInitResponse.interface";

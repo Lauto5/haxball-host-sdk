@@ -1,11 +1,10 @@
-import { RoomConfig } from "#/types/haxball";
-import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
-import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
+import { Bridge, BrowserResponse} from "./bridge";
+import { ILogger, Observability } from "./observability";
 import { ObservabilityConfig, SetupCoreConfig } from "../config/";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
 import { RoomExecutor } from "./safe";
-import { Room, RoomProvider } from "./domain";
+import { Room, RoomProvider, RoomConfig } from "./domain";
 
 export class HaxballHostSDK {
   

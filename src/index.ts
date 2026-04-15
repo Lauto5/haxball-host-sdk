@@ -4,7 +4,7 @@ import { IMetrics } from "./core/observability";
 
 import * as fs from "fs";
 import * as path from "path";
-import { RoomConfig } from "./types/haxball";
+import { RoomConfig } from "./core/domain";
 
 // PRUEBA
 // haciendo que las metricas se guarden en un archivo

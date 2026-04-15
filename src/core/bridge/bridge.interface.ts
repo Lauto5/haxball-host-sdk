@@ -1,7 +1,7 @@
-import { RoomConfig } from "../../types/haxball";
 import { Observability } from "../observability";
 import { BridgeLaunchConfig } from "../../types/haxball";
-import { BrowserResponse , MethodRequest} from "./runtime";
+import { BrowserResponse, MethodRequest } from "./runtime";
+import { RoomConfig } from "../domain";
 
 export interface IBridge {
 

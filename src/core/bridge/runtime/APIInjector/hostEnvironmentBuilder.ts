@@ -1,4 +1,4 @@
-import { RoomConfig } from "../../../../types/haxball";
+import { RoomConfig } from "../../../domain";
 
 export class HostEnvironmentBuilder {
 

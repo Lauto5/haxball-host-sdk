@@ -1,5 +1,5 @@
 import { RuntimePuppeteer } from "../runtimeBrowser/runtimePupperteer";
-import { ILogger, ScopedLogger , Observability } from "../../../observability"
+import { Observability } from "../../../observability"
 import { puppeteerBrowser } from "../browser/puppeteerBrowser"
 import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
 import { IRuntime } from "../runtimeBrowser/runtime.interface";

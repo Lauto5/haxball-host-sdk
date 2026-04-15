@@ -1,4 +1,4 @@
-import { RoomConfig } from "#/types/haxball";
+import { RoomConfig } from "../../../domain";
 import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 import { IRequestProcess } from "./requestProcess/requestProcess.interface"
