@@ -2,7 +2,7 @@
 import { BrowserResponse, IBridge } from "../bridge"
 
 
-export class SafeExecute {
+export class RoomExecutor {
   
   constructor(private id: string, private bridge: IBridge){}
   
@@ -21,7 +21,7 @@ export class SafeExecute {
     } catch (error) {
       
       throw new Error(
-        `SafeExecute failed [room=${this.id}, method=${method}]: ${error}`
+        `SafeRoomExecute failed [room=${this.id}, method=${method}]: ${error}`
       );
       
     }
