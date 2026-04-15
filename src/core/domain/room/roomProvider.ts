@@ -1,15 +1,12 @@
-import { RoomExecutor } from "../safe";
-import { RoomMethods } from "./roomInterfaces/roomMethods.interface";
-import { RoomEvents } from "./roomInterfaces/roomEvents.interface";
-import { Player } from "./typed/player.interface";
-import { TeamID } from "./typed/teamId.interface";
-import { Scores } from "./typed/scores.interface";
-import { Position } from "./typed/position.interface";
-import { DiscProperties } from "./typed/discProperties.interface";
+import { RoomExecutor } from "../../safe";
+import { Player, TeamID, Scores, Position, DiscProperties } from "../typed";
 import { EventEmitter } from "events";
 
 
-export class Room implements RoomMethods, RoomEvents {
+import { Room } from "./room";
+
+
+export class RoomProvider implements Room {
   
   public readonly id: string;
 

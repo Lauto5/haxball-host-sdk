@@ -1,8 +1,6 @@
 
 
-import { Player } from "../typed/player.interface";
-import { TeamID } from "../typed/teamId.interface";
-import { Scores } from "../typed/scores.interface";
+import { Player, TeamID, Scores } from "../../typed";
 
 export interface RoomEvents {
   

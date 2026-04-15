@@ -2,9 +2,6 @@ import { HaxballHostSDK } from "./core/haxball_host_sdk";
 import { ObservabilityConfig } from "./config";
 import { IMetrics } from "./core/observability";
 
-
-import { Room } from "./core/domain/room";
-
 import * as fs from "fs";
 import * as path from "path";
 import { RoomConfig } from "./types/haxball";
@@ -71,7 +68,7 @@ const roomConfig: RoomConfig = {
   maxPlayers: 10,
   public: true,
   noPlayer: true,
-  token: "thr1.AAAAAGne6Q7YUaZ_h4vekw.VzK5klWu0d0",
+  token: "thr1.AAAAAGnfy6hFKA1OL5O-dg.a33vVHncdvI",
 }
 
 async function main() {

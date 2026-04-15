@@ -1,10 +1,10 @@
 import { BrowserResponse } from "../bridge";
-import { Room } from "../domain/room";
+import { RoomProvider } from "../domain/room/roomProvider";
 
 export class RoomAdapter {
 
   constructor(
-    private room: Room,
+    private room: RoomProvider,
     private roomId: string
   ) {}
 

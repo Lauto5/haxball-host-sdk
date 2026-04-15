@@ -1,8 +1,4 @@
-import { Player } from "../typed/player.interface";
-import { TeamID } from "../typed/teamId.interface";
-import { Scores } from "../typed/scores.interface";
-import { Position } from "../typed/position.interface";
-import { DiscProperties } from "../typed/discProperties.interface";
+import { Player, TeamID, Scores, Position, DiscProperties } from "../../typed";
 
 export interface RoomMethods {
 
