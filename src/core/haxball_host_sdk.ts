@@ -53,21 +53,21 @@ export class HaxballHostSDK {
     
   }
   
-  async launchRoom(roomConfig: RoomConfig) : Promise<Room> {
+  async createRoom(config: RoomConfig) : Promise<Room> {
     
     if (!this.bridge.isInit()) {
-      await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
-    }
+        await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
+      }
     
-    await this.bridge.launchRoom(this.observability, roomConfig, this.setupConfig.getUrlPath());
+    await this.bridge.launchRoom(this.observability, config, this.setupConfig.getUrlPath());
     
-    const roomExecutor: RoomExecutor = new RoomExecutor(roomConfig.roomName, this.bridge);
+    const roomId = config.roomName;
     
-    const room = new Room(roomConfig.roomName, roomExecutor);
+    const executor = new RoomExecutor(roomId, this.bridge);
+    const room = new Room(roomId, executor);
+    const adapter = new RoomAdapter(room, roomId);
     
-    const roomAdapter = new RoomAdapter(room, roomConfig.roomName);
-    
-    this.roomAdapters.set(roomConfig.roomName, roomAdapter);
+    this.roomAdapters.set(roomId, adapter);
     
     return room;
     

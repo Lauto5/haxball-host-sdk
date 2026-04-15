@@ -74,41 +74,34 @@ const roomConfig: RoomConfig = {
   token: "thr1.AAAAAGne6Q7YUaZ_h4vekw.VzK5klWu0d0",
 }
 
-const room: Promise<Room> = hbh.launchRoom(roomConfig);
-
-room.then((room) => {
+async function main() {
   
-  room.onPlayerJoin((player) => {
-    
-    console.log(player);
-    
-  });
+  const room = await hbh.createRoom(roomConfig);
   
-  room.onPlayerChat((player, message) => {
-    
-    console.log(player, message);
-    
-  });
+  room.setDefaultStadium("Huge");
   
-  room.onPlayerCommand((player, command) => {
+  room.onPlayerCommand((player, message) => {
     
-    console.log(player, command);
-    
-    if (command === "!startGame") {
-      
+    if ( message === "!startGame") {
       room.startGame();
-      
     }
-    
-    if (command === "!stopGame") {
-      
+    if ( message === "!stopGame") {
       room.stopGame();
-      
+    }
+    if (message === "!giveAdmin") {
+      room.setPlayerAdmin(player.id, true);
+    }
+    if (message === "!takeAdmin") {
+      room.setPlayerAdmin(player.id, false);
     }
     
   });
   
-});
+}
+
+
+main().catch(console.error);
+
 
 // (desarrollo) probar el bridge, luego borrar.
 // hbh.testBridge().catch(console.error);
