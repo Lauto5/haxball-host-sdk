@@ -1,6 +1,6 @@
 import { Bridge, BrowserResponse} from "./bridge";
 import { ILogger, Observability } from "./observability";
-import { ObservabilityConfig, SetupCoreConfig } from "../config/";
+import { ObservabilityConfig, SetupCoreConfig } from "../config";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
 import { RoomExecutor } from "./safe";

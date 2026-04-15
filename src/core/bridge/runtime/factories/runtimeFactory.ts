@@ -3,7 +3,7 @@ import { Observability } from "../../../observability"
 import { puppeteerBrowser } from "../browser/puppeteerBrowser"
 import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
 import { IRuntime } from "../runtimeBrowser/runtime.interface";
-import { BridgeLaunchConfig } from "../../../../types/haxball";
+import { BridgeLaunchConfig } from "../../../../config";
 import { Browser } from "puppeteer";
 
 

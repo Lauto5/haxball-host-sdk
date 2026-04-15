@@ -1,5 +1,5 @@
 import { Observability } from "../observability";
-import { BridgeLaunchConfig } from "../../types/haxball";
+import { BridgeLaunchConfig } from "../../config";
 import { BrowserResponse, MethodRequest } from "./runtime";
 import { RoomConfig } from "../domain";
 
