@@ -3,6 +3,9 @@ import { Bridge, BrowserResponse, MethodRequest} from "./bridge";
 import { ILogger, ConsoleLogger, ConsoleMetrics , Observability, IMetrics } from "./observability";
 import { ObservabilityConfig, SetupCoreConfig } from "../config/";
 import { IBridge } from "./bridge";
+import { RoomAdapter } from "./safe/roomAdapter";
+import { RoomExecutor } from "./safe";
+import { Room } from "./domain/room";
 
 export class HaxballHostSDK {
   
@@ -11,6 +14,9 @@ export class HaxballHostSDK {
   private logger: ILogger;
   
   private bridge: IBridge
+  
+  private roomAdapters: Map<string, RoomAdapter> = new Map();
+  
 
   constructor(
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(2),
@@ -30,37 +36,12 @@ export class HaxballHostSDK {
   private bridgeSetup() {
 
     this.bridge.on((data: BrowserResponse) => {
-
-      // luego introducir logica.
-      //
-      // Logica para testear comandos, luego borrar:
-
-      if (data.method === "onPlayerCommand") {
-
-        const msg: string = data.response[1];
-
-        this.logger.debug("onPlayerCommand received", { msg });
-
-        switch (msg) {
-          case "!startGame":
-            
-            this.logger.debug("startGame command received", { msg });
-
-            this.bridge.execute({ id: data.id, method: "sendChat", args: ["Game starting"] });
-
-            this.bridge.execute({ id: data.id, method: "startGame", args: [] });
-            break;
-          
-          // en el caso de no existir mandar un mensaje a el jugador de que no existe el comando:
-          default:
-            this.logger.debug("command not found", { msg });
-            // args : msg, targetId, color , style , sound
-            this.bridge.execute({ id: data.id, method: "sendAnnouncement", args: ["command not found" , data.response[0].id , 0xFF0000 , "bold", 0] });
-            break;
-        }
-
+      
+      const roomAdapter = this.roomAdapters.get(data.id);
+      
+      if (roomAdapter) {
+        roomAdapter.handleEvent(data);
       }
-
 
     });
     
@@ -72,13 +53,23 @@ export class HaxballHostSDK {
     
   }
   
-  async launchRoom(roomConfig: RoomConfig) {
+  async launchRoom(roomConfig: RoomConfig) : Promise<Room> {
     
     if (!this.bridge.isInit()) {
       await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
     }
     
     await this.bridge.launchRoom(this.observability, roomConfig, this.setupConfig.getUrlPath());
+    
+    const roomExecutor: RoomExecutor = new RoomExecutor(roomConfig.roomName, this.bridge);
+    
+    const room = new Room(roomConfig.roomName, roomExecutor);
+    
+    const roomAdapter = new RoomAdapter(room, roomConfig.roomName);
+    
+    this.roomAdapters.set(roomConfig.roomName, roomAdapter);
+    
+    return room;
     
   }
   

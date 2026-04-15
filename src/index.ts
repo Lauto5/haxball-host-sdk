@@ -3,6 +3,8 @@ import { ObservabilityConfig } from "./config";
 import { IMetrics } from "./core/observability";
 
 
+import { Room } from "./core/domain/room";
+
 import * as fs from "fs";
 import * as path from "path";
 import { RoomConfig } from "./types/haxball";
@@ -69,10 +71,44 @@ const roomConfig: RoomConfig = {
   maxPlayers: 10,
   public: true,
   noPlayer: true,
-  token: "thr1.AAAAAGnbsRxOOgL5u2Y6NA._5W6Yo2xm5w",
+  token: "thr1.AAAAAGne6Q7YUaZ_h4vekw.VzK5klWu0d0",
 }
 
-hbh.launchRoom(roomConfig);
+const room: Promise<Room> = hbh.launchRoom(roomConfig);
+
+room.then((room) => {
+  
+  room.onPlayerJoin((player) => {
+    
+    console.log(player);
+    
+  });
+  
+  room.onPlayerChat((player, message) => {
+    
+    console.log(player, message);
+    
+  });
+  
+  room.onPlayerCommand((player, command) => {
+    
+    console.log(player, command);
+    
+    if (command === "!startGame") {
+      
+      room.startGame();
+      
+    }
+    
+    if (command === "!stopGame") {
+      
+      room.stopGame();
+      
+    }
+    
+  });
+  
+});
 
 // (desarrollo) probar el bridge, luego borrar.
 // hbh.testBridge().catch(console.error);

@@ -22,6 +22,10 @@ export class Room implements RoomMethods, RoomEvents {
     this.executor = executor;
   }
   
+  emit(event: string, ...args: any[]) {
+    this.emitter.emit(event, ...args);
+  }
+  
   private async execute<T = any>(method: string, args: any[]): Promise<T> {
     return this.executor.execute<T>(method, args);
   }
