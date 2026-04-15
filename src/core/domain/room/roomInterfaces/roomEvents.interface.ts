@@ -47,4 +47,7 @@ export interface RoomEvents {
   onKickRateLimitSet(
     callback: (min: number, rate: number, burst: number, byPlayer: Player | null) => void
   ): void;
+  
+  onRoomDeath(callback: () => void): void;
+  
 }

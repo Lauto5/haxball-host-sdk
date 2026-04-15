@@ -7,9 +7,9 @@ export class ObservabilityConfig {
   
   metrics: IMetrics;
   
-  constructor(levelLogger: LogLevel, logger?: ILogger, metrics?: IMetrics) {    
+  constructor(levelLogger?: LogLevel, logger?: ILogger, metrics?: IMetrics) {    
     
-    const Ilogger : ILogger = logger ?? new ConsoleLogger(levelLogger);
+    const Ilogger : ILogger = logger ?? new ConsoleLogger(levelLogger ?? LogLevel.INFO);
     const Imetrics : IMetrics = metrics ?? new ConsoleMetrics(Ilogger);
     
     this.logging = Ilogger;

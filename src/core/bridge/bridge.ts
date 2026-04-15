@@ -186,7 +186,7 @@ export class Bridge implements IBridge {
     }
   }
   
-  onRoomDeath(callback: (pageId: string) => void): void {
+  onRoomDeath(callback: (id: string) => void): void {
     
     this.eventEmitter.on("onHostDeath", callback);
     

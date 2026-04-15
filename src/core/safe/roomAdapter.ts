@@ -93,6 +93,10 @@ export class RoomAdapter {
         case "onKickRateLimitSet":
           this.room.emit("kickRateLimitSet", data.response[0], data.response[1], data.response[2], data.response[3]);
           break;
+          
+        case "onRoomDeath":
+          this.room.emit("roomDeath");
+          break;
 
     }
   }

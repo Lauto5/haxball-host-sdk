@@ -1,5 +1,5 @@
 import { Bridge, BrowserResponse} from "./bridge";
-import { ILogger, Observability } from "./observability";
+import { ILogger, LogLevel, Observability } from "./observability";
 import { ObservabilityConfig, SetupCoreConfig } from "../config";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
@@ -18,7 +18,7 @@ export class HaxballHostSDK {
   
 
   constructor(
-    readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(2),
+    readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
     readonly setupConfig: SetupCoreConfig = new SetupCoreConfig("puppeteer", "/usr/bin/chromium-browser"),
   ) {
     
@@ -44,9 +44,13 @@ export class HaxballHostSDK {
 
     });
     
-    this.bridge.onRoomDeath(() => {
+    this.bridge.onRoomDeath((id: string) => {
       
-      // luego introducir logica.
+      const roomAdapter = this.roomAdapters.get(id);
+      
+      if (roomAdapter) {
+        roomAdapter.handleEvent({id : id , method : "onRoomDeath", response: null});
+      }
       
     });
     
@@ -74,9 +78,7 @@ export class HaxballHostSDK {
   
   async reLaunchRoom(roomName: string) {
     
-    /* 
-    await this.bridge.restartRoom(this.observability, roomConfig);
-    */
+    
     
   }
 }

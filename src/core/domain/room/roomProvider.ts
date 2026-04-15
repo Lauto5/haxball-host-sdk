@@ -267,4 +267,8 @@ export class RoomProvider implements Room {
     this.emitter.on("kickRateLimitSet", callback);
   }
   
+  onRoomDeath(callback: () => void): void {
+    this.emitter.on("roomDeath", callback);
+  }
+  
 }

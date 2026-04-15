@@ -22,7 +22,7 @@ export interface IBridge {
   restartRoom(obs : Observability,config: RoomConfig): Promise<void>;
   closeRoom(id: string): Promise<void>;
   
-  onRoomDeath(callback: () => void): void;
+  onRoomDeath(callback: (id: string) => void): void;
   
   getUrlRoom(id: string): string;
 

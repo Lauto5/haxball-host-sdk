@@ -61,14 +61,14 @@ class MyTestMetrics implements IMetrics {
 
 const observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3, undefined, new MyTestMetrics());
 
-const hbh = new HaxballHostSDK(observabilityConfig);
+const hbh = new HaxballHostSDK();
 
 const roomConfig: RoomConfig = {
   roomName: "Haxball-host-sdk-1",
   maxPlayers: 10,
   public: true,
   noPlayer: true,
-  token: "thr1.AAAAAGnfy6hFKA1OL5O-dg.a33vVHncdvI",
+  token: "thr1.AAAAAGngH8C_Z1iZoagUVQ.41qCQmFvdBs",
 }
 
 async function main() {
@@ -77,19 +77,46 @@ async function main() {
   
   room.setDefaultStadium("Huge");
   
-  room.onPlayerCommand((player, message) => {
+  room.onPlayerCommand(async (player, message) => {
     
-    if ( message === "!startGame") {
+    // obtener el comando !comando args1 args2
+    const command: string = message.split(" ")[0];
+    const args: string[] = message.split(" ").slice(1);
+    
+    console.log(`Player ${player.name} sent command: ${message} \n args: ${args}`);
+    
+    if (command === "!startGame") {
       room.startGame();
     }
-    if ( message === "!stopGame") {
+    if (command === "!stopGame") {
       room.stopGame();
     }
-    if (message === "!giveAdmin") {
+    if (command === "!giveAdmin") {
       room.setPlayerAdmin(player.id, true);
     }
-    if (message === "!takeAdmin") {
+    if (command === "!takeAdmin") {
       room.setPlayerAdmin(player.id, false);
+    }
+    
+    if (command === "!iceball") {
+      // poner en modo ice ball:
+      
+      room.setDiscProperties(0, { color : 0x0000ff ,ygravity:  10 , xgravity: 10 , xspeed: 9 , yspeed: 9});
+      
+    }
+    
+    if (command === "!playerPosition") {
+      room.setPlayerDiscProperties(player.id, { x: parseFloat(args[0]), y: parseFloat(args[1]) });
+    }
+    
+    if (command === "!meColor") {
+      if (args[0] === "red") {
+        room.setPlayerDiscProperties(player.id, { color: 0xff0000 });
+      } else if (args[0] === "blue") {
+        room.setPlayerDiscProperties(player.id, { color: 0x0000ff });
+      } else if (args[0] === "green") {
+        room.setPlayerDiscProperties(player.id, { color: 0x00ff00 });
+      }
     }
     
   });
