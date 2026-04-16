@@ -1,9 +1,6 @@
 # Node modules
 node_modules/
 
-# Metrics
-metrics.json
-
 # Logs
 logs/
 *.log
@@ -25,8 +22,6 @@ coverage/
 *.tsbuildinfo
 
 # Compiled JavaScript (common locations)
-/*.js
-/*.js.map
 src/**/*.js
 src/**/*.js.map
 build/**/*.js
