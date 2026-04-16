@@ -113,7 +113,7 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.launch");
 
-      this.logger.info("Room launched", {
+      this.logger.debug("Room launched", {
         traceId: trace.traceId,
         roomName: config.roomName,
       });
@@ -150,7 +150,7 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.restart");
 
-      this.logger.info("Room restarted", {
+      this.logger.debug("Room restarted", {
         traceId: trace.traceId,
         roomName: config.roomName,
       });
@@ -174,7 +174,7 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.close");
 
-      this.logger.info("Room closed", {
+      this.logger.debug("Room closed", {
         traceId: trace.traceId,
         roomId: id,
       });

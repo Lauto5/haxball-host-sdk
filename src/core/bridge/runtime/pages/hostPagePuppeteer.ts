@@ -223,6 +223,10 @@ export class HostPagePuppeteer implements IHostPage {
     
     await this.page.close();
     
+    this.isActive = false;
+    
+    this.eventEmitter.removeAllListeners("onEmit");
+    
     this.metrics.increment("host.close");
     
     span.end();

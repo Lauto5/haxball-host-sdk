@@ -10,7 +10,7 @@ export class RoomProvider implements Room {
   
   public readonly id: string;
 
-  private readonly executor: RoomExecutor;
+  private executor: RoomExecutor;
   
   private readonly emitter: EventEmitter = new EventEmitter();
   
@@ -25,6 +25,10 @@ export class RoomProvider implements Room {
   
   private async execute<T = any>(method: string, args: any[]): Promise<T> {
     return this.executor.execute<T>(method, args);
+  }
+  
+  setExecutor(executor: RoomExecutor) {
+    this.executor = executor;
   }
   
   

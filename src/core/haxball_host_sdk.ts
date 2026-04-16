@@ -1,5 +1,5 @@
 import { Bridge, BrowserResponse} from "./bridge";
-import { ILogger, LogLevel, Observability } from "./observability";
+import { ILogger, Observability } from "./observability";
 import { ObservabilityConfig, SetupCoreConfig } from "../config";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
@@ -14,7 +14,11 @@ export class HaxballHostSDK {
   
   private bridge: IBridge
   
+  private rooms: Map<string , RoomProvider> = new Map();
+  
   private roomAdapters: Map<string, RoomAdapter> = new Map();
+  
+  private roomsConfig: Map<string, RoomConfig> = new Map();
   
 
   constructor(
@@ -39,6 +43,9 @@ export class HaxballHostSDK {
       const roomAdapter = this.roomAdapters.get(data.id);
       
       if (roomAdapter) {
+      
+        this.logger.debug(`Received event: ${data.method}`, data);
+        
         roomAdapter.handleEvent(data);
       }
 
@@ -49,8 +56,13 @@ export class HaxballHostSDK {
       const roomAdapter = this.roomAdapters.get(id);
       
       if (roomAdapter) {
+        
+        this.logger.debug(`Room death: ${id}`);
+        
         roomAdapter.handleEvent({id : id , method : "onRoomDeath", response: null});
       }
+      
+      this.logger.info(`Room death: ${id}`);
       
     });
     
@@ -60,9 +72,13 @@ export class HaxballHostSDK {
     
     if (!this.bridge.isInit()) {
         await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
-      }
+    }
+    
+    this.logger.debug(`Creating room: ${config.roomName}`);
     
     await this.bridge.launchRoom(this.observability, config, this.setupConfig.getUrlPath());
+    
+    this.logger.debug(`Room created: ${config.roomName}`);
     
     const roomId = config.roomName;
     
@@ -72,13 +88,76 @@ export class HaxballHostSDK {
     
     this.roomAdapters.set(roomId, adapter);
     
+    this.roomsConfig.set(roomId, config);
+    
+    this.rooms.set(roomId, room);
+    
+    this.logger.debug(`Room adapter created: ${roomId}`);
+    
+    this.logger.info(`Room created: ${roomId}`);
+    
     return room;
     
   }
   
-  async reLaunchRoom(roomName: string) {
+  async restartRoom(roomName: string) {
     
+    if (!this.bridge.isInit()) {
+      throw new Error("Bridge is not initialized");
+    }
     
+    this.logger.debug(`Re-launching room: ${roomName}`);
+    
+    const config = this.roomsConfig.get(roomName);
+    
+    if (!config) {
+      throw new Error(`Room config not found: ${roomName}`);
+    }
+    
+    await this.bridge.restartRoom(this.observability, config);
+    
+    this.roomAdapters.delete(roomName);
+    
+    const executor = new RoomExecutor(roomName, this.bridge);
+    
+    const room = this.rooms.get(roomName);
+    
+    if (!room) {
+      throw new Error(`Room not found: ${roomName}`);
+    }
+    
+    room.setExecutor(executor);
+    
+    const adapter = new RoomAdapter(room, roomName);
+    
+    this.roomAdapters.set(roomName, adapter);
+    
+    this.logger.debug(`Room re-launched: ${roomName}`);
+    
+    this.logger.info(`Room re-launched: ${roomName}`);
     
   }
+  
+  async closeRoom(roomName: string) {
+    
+    if (!this.bridge.isInit()) {
+      throw new Error("Bridge is not initialized");
+    }
+    
+    this.logger.debug(`Closing room: ${roomName}`);
+    
+    await this.bridge.closeRoom(roomName);
+    
+    this.roomAdapters.delete(roomName);
+    
+    this.rooms.delete(roomName);
+    
+    this.roomsConfig.delete(roomName);
+    
+    this.logger.debug(`Room closed: ${roomName}`);
+    
+    this.logger.info(`Room closed: ${roomName}`);
+    
+  }
+  
 }
