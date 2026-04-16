@@ -5,6 +5,7 @@ import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
 import { RoomExecutor } from "./safe";
 import { Room, RoomProvider, RoomConfig } from "./domain";
+import { BannerPrinter , Version} from "../org";
 
 export class HaxballHostSDK {
   
@@ -25,6 +26,8 @@ export class HaxballHostSDK {
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
     readonly setupConfig: SetupCoreConfig = new SetupCoreConfig("puppeteer", "/usr/bin/chromium-browser"),
   ) {
+    
+    BannerPrinter.printBanner(Version.version);
     
     this.observability = new Observability(observabilityConfig.logging, observabilityConfig.metrics);
     
