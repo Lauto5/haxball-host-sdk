@@ -1,13 +1,13 @@
 import { Bridge, BrowserResponse} from "./bridge";
 import { ILogger, Observability } from "./observability";
-import { ObservabilityConfig, SetupCoreConfig } from "../config";
+import { ObservabilityConfig, SetupEngineConfig } from "../config";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
 import { RoomExecutor } from "./safe";
 import { Room, RoomProvider, RoomConfig } from "./domain";
 import { BannerPrinter , Version} from "../org";
 
-export class HaxballHostSDK {
+export class HaxballHost {
   
   private observability: Observability;
   
@@ -24,7 +24,7 @@ export class HaxballHostSDK {
 
   constructor(
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
-    readonly setupConfig: SetupCoreConfig = new SetupCoreConfig("puppeteer", "/usr/bin/chromium-browser"),
+    readonly setupEngineConfig: SetupEngineConfig = new SetupEngineConfig("puppeteer", "/usr/bin/chromium-browser"),
   ) {
     
     BannerPrinter.printBanner(Version.version);
@@ -74,12 +74,12 @@ export class HaxballHostSDK {
   async createRoom(config: RoomConfig) : Promise<Room> {
     
     if (!this.bridge.isInit()) {
-        await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
+        await this.bridge.init(this.observability, this.setupEngineConfig.getBrowserConfig());
     }
     
     this.logger.debug(`Creating room: ${config.roomName}`);
     
-    await this.bridge.launchRoom(this.observability, config, this.setupConfig.getUrlPath());
+    await this.bridge.launchRoom(this.observability, config, this.setupEngineConfig.getUrlPath());
     
     this.logger.debug(`Room created: ${config.roomName}`);
     

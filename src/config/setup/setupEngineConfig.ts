@@ -2,7 +2,7 @@
 import { getOperatingSystem } from "./readSystemOperative"
 import { BridgeLaunchConfig } from "./bridgeLaunchConfig.interface"
 
-export class SetupCoreConfig {
+export class SetupEngineConfig {
   
   private urlPath: string = "https://www.haxball.com/headless";
   
