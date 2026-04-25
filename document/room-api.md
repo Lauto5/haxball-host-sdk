@@ -1,79 +1,707 @@
-# Room API Documentation
+# 🎮 Room API Documentation
 
-The Room API allows developers to manage rooms in the Haxball hosting environment. Below is the detailed documentation for the available endpoints, their parameters, responses, and examples.
+Welcome to the **Room API** documentation. This guide covers all available methods and events you can use to control and monitor HaxBall rooms.
 
-## Endpoints
+---
 
-### Create Room
+## 📋 Table of Contents
 
-- **Endpoint:** `POST /rooms`
-- **Description:** Create a new room.
-- **Request Body:**
-  ```json
-  {
-      "name": "string",
-      "maxPlayers": "integer",
-      "private": "boolean"
-  }
-  ```
-- **Responses:**
-  - `201 Created`
-  - `400 Bad Request`
+1. [Overview](#overview)
+2. [Room Methods](#room-methods)
+3. [Room Events](#room-events)
+4. [Examples](#examples)
 
-### Get Room
+---
 
-- **Endpoint:** `GET /rooms/{roomId}`
-- **Description:** Retrieve information about a specific room.
-- **Path Parameters:**
-  - `roomId`: The ID of the room to retrieve.
-- **Responses:**
-  - `200 OK`
-  - `404 Not Found`
+## Overview
 
-### Update Room
+The **Room** object is the main interface for interacting with a HaxBall room. It provides:
 
-- **Endpoint:** `PUT /rooms/{roomId}`
-- **Description:** Update an existing room.
-- **Path Parameters:**
-  - `roomId`: The ID of the room to update.
-- **Request Body:**
-  ```json
-  {
-      "name": "string",
-      "maxPlayers": "integer",
-      "private": "boolean"
-  }
-  ```
-- **Responses:**
-  - `200 OK`
-  - `404 Not Found`
+- **Methods** → Actions you can perform on the room (send messages, manage players, control the game)
+- **Events** → Listeners for everything that happens in the room (players joining, scoring, etc.)
 
-### Delete Room
+Every method is asynchronous and returns a `Promise`. All events use a callback-based pattern.
 
-- **Endpoint:** `DELETE /rooms/{roomId}`
-- **Description:** Delete a specific room.
-- **Path Parameters:**
-  - `roomId`: The ID of the room to delete.
-- **Responses:**
-  - `204 No Content`
-  - `404 Not Found`
+---
 
-## Example
+## 🔧 Room Methods
 
-### Create Room Example
+### Communication Methods
 
-```bash
-curl -X POST https://api.haxball.com/rooms \
-     -H 'Content-Type: application/json' \
-     -d '{"name": "New Room", "maxPlayers": 10, "private": true}'
+#### `sendChat(message: string, targetId?: number): Promise<void>`
+
+Sends a message to the room chat.
+
+```typescript
+// Send to all players
+await room.sendChat("Hello everyone!");
+
+// Send to a specific player
+await room.sendChat("Hello Player!", 5);
 ```
 
-### Get Room Example
+#### `sendAnnouncement(message: string, targetId?: number, color?: number, style?: number, sound?: number): Promise<void>`
 
-```bash
-curl -X GET https://api.haxball.com/rooms/{roomId}
+Sends an announcement with customization options.
+
+```typescript
+await room.sendAnnouncement(
+  "Match starting in 10 seconds!",
+  undefined, // targetId - undefined for all players
+  0xFF0000,  // color - Red in hexadecimal
+  1,         // style - Text style
+  1          // sound - Sound notification
+);
 ```
 
-## Conclusion
+---
 
-The Room API provides the necessary endpoints to manage rooms effectively within the Haxball hosting platform. Make sure to refer to the official documentation for any updates or changes to the API specifications.
+### Player Management Methods
+
+#### `setPlayerAdmin(playerId: number, admin: boolean): Promise<void>`
+
+Sets or removes admin status from a player.
+
+```typescript
+// Make player admin
+await room.setPlayerAdmin(3, true);
+
+// Remove admin status
+await room.setPlayerAdmin(3, false);
+```
+
+#### `setPlayerTeam(playerId: number, team: TeamID): Promise<void>`
+
+Changes a player's team. TeamID can be `"red"`, `"blue"`, or `"spectators"`.
+
+```typescript
+await room.setPlayerTeam(5, "red");
+await room.setPlayerTeam(6, "blue");
+await room.setPlayerTeam(7, "spectators");
+```
+
+#### `kickPlayer(playerId: number, reason: string, ban: boolean): Promise<void>`
+
+Kicks a player from the room with optional ban.
+
+```typescript
+// Kick without banning
+await room.kickPlayer(2, "Inactive player", false);
+
+// Kick and ban
+await room.kickPlayer(2, "Cheating", true);
+```
+
+#### `clearBan(playerId: number): Promise<void>`
+
+Removes a ban for a specific player.
+
+```typescript
+await room.clearBan(2);
+```
+
+#### `clearBans(): Promise<void>`
+
+Clears all bans in the room.
+
+```typescript
+await room.clearBans();
+```
+
+#### `setPlayerAvatar(playerId: number, avatar: string): Promise<void>`
+
+Sets a player's avatar.
+
+```typescript
+await room.setPlayerAvatar(1, "https://example.com/avatar.png");
+```
+
+#### `reorderPlayers(playerIds: number[], moveToTop: boolean): Promise<void>`
+
+Reorders players in the player list.
+
+```typescript
+// Move to top
+await room.reorderPlayers([1, 2, 3], true);
+
+// Move to bottom
+await room.reorderPlayers([4, 5], false);
+```
+
+---
+
+### Room Settings Methods
+
+#### `setScoreLimit(limit: number): Promise<void>`
+
+Sets the score limit for the match.
+
+```typescript
+await room.setScoreLimit(5); // First team to 5 goals wins
+```
+
+#### `setTimeLimit(limitInMinutes: number): Promise<void>`
+
+Sets the time limit for the match.
+
+```typescript
+await room.setTimeLimit(10); // 10 minute match
+```
+
+#### `setPassword(password: string | null): Promise<void>`
+
+Sets or removes the room password.
+
+```typescript
+// Set password
+await room.setPassword("secretpass123");
+
+// Remove password
+await room.setPassword(null);
+```
+
+#### `setRequireRecaptcha(enabled: boolean): Promise<void>`
+
+Requires or disables reCAPTCHA verification for joining.
+
+```typescript
+await room.setRequireRecaptcha(true);
+await room.setRequireRecaptcha(false);
+```
+
+#### `setTeamsLock(locked: boolean): Promise<void>`
+
+Locks or unlocks teams (prevents players from changing teams).
+
+```typescript
+await room.setTeamsLock(true);
+```
+
+#### `setTeamColors(team: TeamID, angle: number, textColor: number, colors: number[]): Promise<void>`
+
+Customizes team colors.
+
+```typescript
+await room.setTeamColors(
+  "red",
+  0,          // angle
+  0xFFFFFF,   // text color (white)
+  [0xFF0000]  // team colors (red)
+);
+```
+
+#### `setKickRateLimit(min: number, rate: number, burst: number): Promise<void>`
+
+Sets kick rate limits to prevent spam.
+
+```typescript
+await room.setKickRateLimit(
+  10, // minimum value
+  5,  // rate
+  3   // burst
+);
+```
+
+---
+
+### Stadium Methods
+
+#### `setDefaultStadium(name: string): Promise<void>`
+
+Sets a default stadium by name.
+
+```typescript
+await room.setDefaultStadium("Classic");
+await room.setDefaultStadium("Big");
+```
+
+#### `setCustomStadium(hbs: string): Promise<void>`
+
+Loads a custom stadium from HBS content.
+
+```typescript
+const hbsContent = "..."; // Your HBS stadium data
+await room.setCustomStadium(hbsContent);
+```
+
+---
+
+### Game Control Methods
+
+#### `startGame(): Promise<void>`
+
+Starts the game.
+
+```typescript
+await room.startGame();
+```
+
+#### `stopGame(): Promise<void>`
+
+Stops the current game.
+
+```typescript
+await room.stopGame();
+```
+
+#### `pauseGame(pauseState: boolean): Promise<void>`
+
+Pauses or unpauses the game.
+
+```typescript
+// Pause
+await room.pauseGame(true);
+
+// Resume
+await room.pauseGame(false);
+```
+
+---
+
+### Game State Methods
+
+#### `getPlayer(playerId: number): Promise<Player | null>`
+
+Gets information about a specific player.
+
+```typescript
+const player = await room.getPlayer(1);
+if (player) {
+  console.log(player.name, player.team, player.position);
+}
+```
+
+#### `getPlayerList(): Promise<Player[]>`
+
+Gets a list of all players in the room.
+
+```typescript
+const players = await room.getPlayerList();
+players.forEach(player => {
+  console.log(player.name);
+});
+```
+
+#### `getScores(): Promise<Scores | null>`
+
+Gets current match scores.
+
+```typescript
+const scores = await room.getScores();
+if (scores) {
+  console.log("Red team:", scores.red, "Blue team:", scores.blue);
+}
+```
+
+#### `getBallPosition(): Promise<Position | null>`
+
+Gets the current ball position.
+
+```typescript
+const ballPos = await room.getBallPosition();
+if (ballPos) {
+  console.log(`Ball at (${ballPos.x}, ${ballPos.y})`);
+}
+```
+
+---
+
+### Recording Methods
+
+#### `startRecording(): Promise<void>`
+
+Starts recording the game.
+
+```typescript
+await room.startRecording();
+```
+
+#### `stopRecording(): Promise<Uint8Array>`
+
+Stops recording and returns the recording data.
+
+```typescript
+const recordingData = await room.stopRecording();
+// Save recordingData to a file or process it
+```
+
+---
+
+### Physics Methods
+
+#### `setDiscProperties(discIndex: number, properties: DiscProperties): Promise<void>`
+
+Sets properties for a specific disc (ball).
+
+```typescript
+await room.setDiscProperties(0, {
+  x: 0,
+  y: 0,
+  vx: 10,
+  vy: 5,
+  gravity: 0.11
+});
+```
+
+#### `getDiscProperties(discIndex: number): Promise<DiscProperties>`
+
+Gets properties for a specific disc.
+
+```typescript
+const discProps = await room.getDiscProperties(0);
+console.log(discProps);
+```
+
+#### `setPlayerDiscProperties(playerId: number, properties: DiscProperties): Promise<void>`
+
+Sets physical properties for a player disc.
+
+```typescript
+await room.setPlayerDiscProperties(1, {
+  damping: 0.99,
+  acceleration: 0.1
+});
+```
+
+#### `getPlayerDiscProperties(playerId: number): Promise<DiscProperties>`
+
+Gets physical properties for a player disc.
+
+```typescript
+const playerDiscProps = await room.getPlayerDiscProperties(1);
+console.log(playerDiscProps);
+```
+
+#### `getDiscCount(): Promise<number>`
+
+Gets the total number of discs in the room.
+
+```typescript
+const discCount = await room.getDiscCount();
+console.log(`Total discs: ${discCount}`);
+```
+
+---
+
+## 💡 Room Events
+
+### Player Events
+
+#### `onPlayerJoin(callback: (player: Player) => void): void`
+
+Triggered when a player joins the room.
+
+```typescript
+room.onPlayerJoin((player) => {
+  console.log(`${player.name} joined the game!`);
+});
+```
+
+#### `onPlayerLeave(callback: (player: Player) => void): void`
+
+Triggered when a player leaves the room.
+
+```typescript
+room.onPlayerLeave((player) => {
+  console.log(`${player.name} left the game!`);
+});
+```
+
+#### `onPlayerChat(callback: (player: Player, message: string) => boolean | void): void`
+
+Triggered when a player sends a chat message. Return `false` to block the message.
+
+```typescript
+room.onPlayerChat((player, message) => {
+  console.log(`${player.name}: ${message}`);
+  // Return false to prevent the message from being displayed
+  if (message.includes("badword")) {
+    return false;
+  }
+});
+```
+
+#### `onPlayerCommand(callback: (player: Player, command: string) => void): void`
+
+Triggered when a player sends a command (starts with `!`). Commands are not displayed in chat.
+
+```typescript
+room.onPlayerCommand((player, command) => {
+  if (command === "!help") {
+    room.sendChat("Available commands: !help, !stats");
+  }
+});
+```
+
+#### `onPlayerActivity(callback: (player: Player) => void): void`
+
+Triggered when a player is active (moves, kicks, etc.).
+
+```typescript
+room.onPlayerActivity((player) => {
+  console.log(`${player.name} is active`);
+});
+```
+
+---
+
+### Admin Events
+
+#### `onPlayerAdminChange(callback: (changedPlayer: Player, byPlayer: Player | null) => void): void`
+
+Triggered when a player's admin status changes.
+
+```typescript
+room.onPlayerAdminChange((changedPlayer, byPlayer) => {
+  const adminName = byPlayer?.name || "System";
+  console.log(`${adminName} changed ${changedPlayer.name}'s admin status`);
+});
+```
+
+#### `onPlayerTeamChange(callback: (changedPlayer: Player, byPlayer: Player | null) => void): void`
+
+Triggered when a player switches teams.
+
+```typescript
+room.onPlayerTeamChange((changedPlayer, byPlayer) => {
+  console.log(`${changedPlayer.name} switched to ${changedPlayer.team}`);
+});
+```
+
+#### `onPlayerKicked(callback: (kickedPlayer: Player, reason: string, ban: boolean, byPlayer: Player | null) => void): void`
+
+Triggered when a player is kicked.
+
+```typescript
+room.onPlayerKicked((kickedPlayer, reason, ban, byPlayer) => {
+  const adminName = byPlayer?.name || "System";
+  const banStatus = ban ? "and banned" : "";
+  console.log(`${adminName} kicked ${kickedPlayer.name} ${banStatus}. Reason: ${reason}`);
+});
+```
+
+---
+
+### Game Events
+
+#### `onGameStart(callback: (byPlayer: Player | null) => void): void`
+
+Triggered when the game starts.
+
+```typescript
+room.onGameStart((byPlayer) => {
+  const starter = byPlayer?.name || "System";
+  console.log(`Game started by ${starter}`);
+});
+```
+
+#### `onGameStop(callback: (byPlayer: Player | null) => void): void`
+
+Triggered when the game stops.
+
+```typescript
+room.onGameStop((byPlayer) => {
+  console.log("Game stopped");
+});
+```
+
+#### `onGameTick(callback: () => void): void`
+
+Triggered every frame during an active game (high frequency event).
+
+```typescript
+room.onGameTick(() => {
+  // Do something every game tick
+  // Use sparingly as this fires very frequently
+});
+```
+
+#### `onGamePause(callback: (byPlayer: Player | null) => void): void`
+
+Triggered when the game is paused.
+
+```typescript
+room.onGamePause((byPlayer) => {
+  console.log("Game paused");
+});
+```
+
+#### `onGameUnpause(callback: (byPlayer: Player | null) => void): void`
+
+Triggered when the game is resumed.
+
+```typescript
+room.onGameUnpause((byPlayer) => {
+  console.log("Game resumed");
+});
+```
+
+#### `onPositionsReset(callback: () => void): void`
+
+Triggered when player positions are reset.
+
+```typescript
+room.onPositionsReset(() => {
+  console.log("Positions have been reset");
+});
+```
+
+---
+
+### Scoring Events
+
+#### `onTeamGoal(callback: (team: TeamID) => void): void`
+
+Triggered when a team scores a goal.
+
+```typescript
+room.onTeamGoal((team) => {
+  console.log(`${team} team scored!`);
+});
+```
+
+#### `onTeamVictory(callback: (scores: Scores) => void): void`
+
+Triggered when a team wins the match.
+
+```typescript
+room.onTeamVictory((scores) => {
+  console.log(`Match over! Red: ${scores.red}, Blue: ${scores.blue}`);
+});
+```
+
+---
+
+### Room Events
+
+#### `onStadiumChange(callback: (stadiumName: string, byPlayer: Player | null) => void): void`
+
+Triggered when the stadium is changed.
+
+```typescript
+room.onStadiumChange((stadiumName, byPlayer) => {
+  console.log(`Stadium changed to ${stadiumName}`);
+});
+```
+
+#### `onRoomLink(callback: (url: string) => void): void`
+
+Triggered when the room link is generated (after room creation).
+
+```typescript
+room.onRoomLink((url) => {
+  console.log(`Join the room: ${url}`);
+});
+```
+
+#### `onTeamsLockChange(callback: (locked: boolean, byPlayer: Player | null) => void): void`
+
+Triggered when teams lock status changes.
+
+```typescript
+room.onTeamsLockChange((locked, byPlayer) => {
+  const status = locked ? "locked" : "unlocked";
+  console.log(`Teams are now ${status}`);
+});
+```
+
+#### `onKickRateLimitSet(callback: (min: number, rate: number, burst: number, byPlayer: Player | null) => void): void`
+
+Triggered when kick rate limit is changed.
+
+```typescript
+room.onKickRateLimitSet((min, rate, burst, byPlayer) => {
+  console.log(`Kick rate limit: min=${min}, rate=${rate}, burst=${burst}`);
+});
+```
+
+#### `onRoomDeath(callback: () => void): void`
+
+Triggered when the room closes or crashes.
+
+```typescript
+room.onRoomDeath(() => {
+  console.log("The room has been closed");
+  process.exit(0);
+});
+```
+
+---
+
+## 💡 Examples
+
+### Example 1: Complete Game Management
+
+```typescript
+import { HaxballHostSDK } from "haxball-host-sdk";
+
+const sdk = new HaxballHostSDK();
+
+const room = await sdk.launchRoom({
+  roomName: "My Awesome Room",
+  maxPlayers: 12,
+  public: true,
+  noPlayer: true,
+  token: "YOUR_TOKEN_HERE"
+});
+
+// Listen to room link
+room.onRoomLink((url) => {
+  console.log(`Room ready: ${url}`);
+});
+
+// Welcome players
+room.onPlayerJoin((player) => {
+  room.sendChat(`Welcome ${player.name}! Good luck!`);
+});
+
+// Handle commands
+room.onPlayerCommand((player, command) => {
+  if (command === "!start" && player.admin) {
+    room.startGame();
+  }
+  if (command === "!stop" && player.admin) {
+    room.stopGame();
+  }
+});
+
+// Track goals
+room.onTeamGoal((team) => {
+  room.sendAnnouncement(`${team.toUpperCase()} scored!`);
+});
+
+// Match end
+room.onTeamVictory((scores) => {
+  room.sendChat(`Match over! Red: ${scores.red} | Blue: ${scores.blue}`);
+});
+```
+
+### Example 2: Player Management
+
+```typescript
+room.onPlayerJoin((player) => {
+  if (player.id === 1) {
+    // Make first player admin
+    room.setPlayerAdmin(player.id, true);
+  }
+});
+
+// Handle players leaving
+room.onPlayerLeave((player) => {
+  room.sendChat(`${player.name} has left the room.`);
+});
+```
+
+### Example 3: Chat Moderation
+
+```typescript
+const bannedWords = ["badword1", "badword2"];
+
+room.onPlayerChat((player, message) => {
+  if (bannedWords.some(word => message.toLowerCase().includes(word))) {
+    room.sendChat(`${player.name}, please keep chat appropriate!`);
+    return false; // Block the message
+  }
+  return true; // Allow the message
+});
+```

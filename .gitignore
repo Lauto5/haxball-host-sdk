@@ -38,6 +38,7 @@ build/**/*.js.map
 *.ntvs*
 *.njsproj
 *.sln
+*.obsidian
 
 # OS files
 .DS_Store

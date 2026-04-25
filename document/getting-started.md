@@ -103,9 +103,8 @@ Now that you have your first room up and running:
 
 👉 Review the complete documentation:
 
-- Architecture
-- Room API
-- Observability
+- [Room API Documentation](./room-api.md)
+- [Observability](./observability.md)
 
 # 🧩 Complete Example
 
