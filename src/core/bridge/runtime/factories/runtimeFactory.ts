@@ -11,11 +11,7 @@ export class RuntimeFactory {
   
   async getRuntime(obs: Observability, bridgeLaunchConfig: BridgeLaunchConfig): Promise<IRuntime> {
     
-    const logger = obs.createScopeLogger("Runtime-Factory");
-    
     if (bridgeLaunchConfig.runtime === 'puppeteer') {
-      
-      logger.debug("Getting Puppeteer runtime");
       
       return await this.getRuntimePuppeteer(obs, bridgeLaunchConfig);
       

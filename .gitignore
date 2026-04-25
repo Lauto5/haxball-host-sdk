@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+# Develoment
+dev/
+
 # Logs
 logs/
 *.log

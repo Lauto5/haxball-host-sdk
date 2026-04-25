@@ -6,7 +6,6 @@ import { ILogger , IMetrics, ITrace, Observability } from "../../../../observabi
 
 export class SimpleRequestQueue implements IRequestProcess {
 
-  
   queue: Array<{
     task: () => Promise<BrowserResponse>;
     trace: ITrace;

@@ -61,9 +61,11 @@ export class RuntimePuppeteer implements IRuntime {
       const hostPage: IHostPage = new HostPagePuppeteer(obs, pageId, page);
     
       await hostPage.navigate(url);
+      
       await hostPage.injectEnvironmentBuilder();
     
       this.suscribeToPageEvents(hostPage);
+      
       this.suscribeToPageDeath(hostPage, pageId);
     
       await hostPage.launchHost(config, trace);
@@ -79,8 +81,8 @@ export class RuntimePuppeteer implements IRuntime {
       await page.close().catch(() => { });
     
       this.logger.error("Failed to launch host", error);
-    
-      process.exit(1);
+      
+      throw error;
     
     } finally {
     
@@ -127,13 +129,13 @@ export class RuntimePuppeteer implements IRuntime {
         args: request.args,
         error: error,
       });
-    
-      process.exit(1);
+      
+      throw error;
     
     } finally {
     
       const duration = Date.now() - start;
-    
+      
       this.metrics.observe("runtime.execute.duration", duration, {
         method: request.method,
       });

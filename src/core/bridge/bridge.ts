@@ -77,6 +77,8 @@ export class Bridge implements IBridge {
       
       this.logger.error("Error to close bridge", err);
       
+      throw err;
+      
     } finally {
       
       this.logger.debug("Bridge closed");
@@ -113,11 +115,6 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.launch");
 
-      this.logger.debug("Room launched", {
-        traceId: trace.traceId,
-        roomName: config.roomName,
-      });
-
     } catch (error) {
 
       this.logger.error("Room launch failed", {
@@ -129,6 +126,11 @@ export class Bridge implements IBridge {
       throw error;
 
     } finally {
+      
+      this.logger.debug("Room launch finished", {
+        roomName: config.roomName,
+        traceId: trace.traceId,
+      });
 
       span.end();
 
@@ -150,13 +152,23 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.restart");
 
+    } catch (error) {
+
+      this.logger.error("Room restart failed", {
+        traceId: trace.traceId,
+        roomName: config.roomName,
+        error,
+      });
+
+      throw error;
+
+    } finally {
+
       this.logger.debug("Room restarted", {
         traceId: trace.traceId,
         roomName: config.roomName,
       });
-
-    } finally {
-
+      
       span.end();
 
     }
@@ -174,13 +186,23 @@ export class Bridge implements IBridge {
 
       this.metrics.increment("bridge.room.close");
 
+    } catch (error) {
+
+      this.logger.error("Room close failed", {
+        traceId: trace.traceId,
+        roomId: id,
+        error,
+      });
+
+      throw error;
+
+    } finally {
+
       this.logger.debug("Room closed", {
         traceId: trace.traceId,
         roomId: id,
       });
-
-    } finally {
-
+      
       span.end();
 
     }
@@ -227,10 +249,23 @@ export class Bridge implements IBridge {
       this.metrics.increment("bridge.execute.error", 1, {
         method: request.method,
       });
-    
+      
+      this.logger.error("Execute failed", {
+        traceId: trace.traceId,
+        roomName: request.id,
+        method: request.method,
+        error,
+      });
+      
       throw error;
       
     } finally {
+      
+      this.logger.debug("Execute finished", {
+        traceId: trace.traceId,
+        roomName: request.id,
+        method: request.method,
+      });
       
       span.end();
       
