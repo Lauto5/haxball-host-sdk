@@ -9,13 +9,13 @@ export class SimpleTrace implements ITrace {
   public readonly traceId: string;
 
   constructor(
-    private readonly logger: ILogger,
-    private readonly metrics: IMetrics,
+    private readonly logger?: ILogger,
+    private readonly metrics?: IMetrics,
     private readonly name?: string
   ) {
     this.traceId = randomUUID();
 
-    this.logger.trace("Trace started", {
+    this.logger?.trace("Trace started", {
       traceId: this.traceId,
       name: this.name,
     });

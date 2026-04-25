@@ -12,13 +12,13 @@ export class SimpleSpan implements ISpan {
   constructor(
     private readonly traceId: string,
     private readonly name: string,
-    private readonly logger: ILogger,
-    private readonly metrics: IMetrics
+    private readonly logger?: ILogger,
+    private readonly metrics?: IMetrics
   ) {
     this.spanId = randomUUID();
     this.startTime = Date.now();
 
-    this.logger.trace("Span started", {
+    this.logger?.trace("Span started", {
       traceId: this.traceId,
       spanId: this.spanId,
       name: this.name,
@@ -28,14 +28,14 @@ export class SimpleSpan implements ISpan {
   end(): void {
     const duration = Date.now() - this.startTime;
 
-    this.logger.trace("Span ended", {
+    this.logger?.trace("Span ended", {
       traceId: this.traceId,
       spanId: this.spanId,
       duration,
       name: this.name,
     });
 
-    this.metrics.observe("trace.span.duration", duration, {
+    this.metrics?.observe("trace.span.duration", duration, {
       span: this.name,
     });
   }

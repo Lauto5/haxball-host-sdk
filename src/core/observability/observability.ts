@@ -13,8 +13,9 @@ export class Observability {
     
     if (metrics) {
       this.rootMetrics = metrics;
-      this.tracer = new SimpleTracer(this.rootLogger, this.rootMetrics);  
     }
+    
+    this.tracer = new SimpleTracer(this.rootLogger, this.rootMetrics);  
     
   }
   

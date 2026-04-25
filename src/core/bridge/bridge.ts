@@ -24,6 +24,8 @@ export class Bridge implements IBridge {
     
     this.tracer = obs.getTracer();
     
+    
+    
   }
 
   // =========================
@@ -68,7 +70,7 @@ export class Bridge implements IBridge {
     
     const trace = this.tracer.startTrace("bridge.close");
     
-    const span = trace.startSpan("bridge.close");
+    const span = trace?.startSpan("bridge.close");
     try {
       if (this.runtime) {
         
@@ -85,7 +87,7 @@ export class Bridge implements IBridge {
       
       this.logger.debug("Bridge closed");
       
-      span.end();
+      span?.end();
       
     }
     

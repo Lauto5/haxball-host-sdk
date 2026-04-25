@@ -14,7 +14,7 @@ export interface IRuntime {
     trace: ITrace,
   ): Promise<void>;
 
-  execute(request: MethodRequest , trace : ITrace): Promise<BrowserResponse>;
+  execute(request: MethodRequest , trace: ITrace): Promise<BrowserResponse>;
   
   getUrlHost(pageId: string): string;
   
