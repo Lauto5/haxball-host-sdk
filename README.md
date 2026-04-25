@@ -1,59 +1,56 @@
-
 <p align="center">
-  <img src="./HaxballHostSdk_Icono.png" width="120" />
+  <img src="./HaxballHostSdk_Icono.png" width="220" />
 </p>
 
 # 📘 HaxBall-host-sdk
 
-**Infraestructura avanzada en Node.js para la gestión profesional de hosts de HaxBall.**
+**Advanced Node.js infrastructure for professional HaxBall host management.**
 
-Desarrollado por **Lauto5**, este SDK abstrae la complejidad de la API oficial Headless de HaxBall, permitiendo ejecutar, administrar y escalar múltiples salas simultáneamente desde un entorno **Node.js** estructurado y profesional.
-
----
-
-## 🏷️ ¿Qué es?
-
-La API oficial de HaxBall está diseñada exclusivamente para el navegador. **HaxBall-host-sdk** elimina esa barrera, permitiendo a los desarrolladores centrarse en la lógica del juego mientras el SDK se encarga de:
-
-* 🌐 **Abstracción del Navegador:** Ejecución automática y gestión del entorno headless (Puppeteer).
-* 🔄 **Comunicación Multi-proceso:** Manejo interno del puente entre Node.js y el navegador.
-* 🚦 **Control de Instancias:** Gestión nativa de múltiples hosts en una sola aplicación.
-* 📢 **Gestión de Eventos:** Sistema reactivo para capturar cada acción del juego.
+Developed by **Lauto5**, this SDK abstracts the complexity of the official HaxBall Headless API, allowing you to run, manage, and scale multiple rooms simultaneously from a structured, professional **Node.js** environment.
 
 ---
 
-## 🚀 ¿Por qué es especial?
+## 🏷️ What is it?
 
-A diferencia de un *wrapper* convencional, este SDK se comporta como una **capa de infraestructura** basada en cuatro pilares:
+The official HaxBall API is designed exclusively for the browser. **HaxBall-host-sdk** removes that barrier, letting developers focus on game logic while the SDK takes care of:
 
-1. **Bridge Híbrido (RPC + Event Bus):** Combina comandos directos (RPC) con un bus de eventos reactivo, replicando la naturaleza asíncrona de HaxBall.
-2. **Aislamiento Total (Multi-host):** Cada host funciona en su propio entorno con su propio **Runtime**, **Bridge** y **Logger** independiente.
-3. **Arquitectura Modular:** Diseñado con módulos desacoplados (Runtime, Transport, Bridge, API Pública) para garantizar mantenibilidad.
-4. **Cero Opinión de Persistencia:** El SDK no impone bases de datos ni estructuras de datos; proporciona la base técnica para que tú construyas tu propia arquitectura encima.
-
----
-
-## 🧠 Filosofía de Diseño
-
-El SDK sigue principios rigurosos de ingeniería para asegurar la estabilidad:
-
-* ✅ **Separación de Responsabilidades:** Cada módulo tiene una misión única y clara.
-* ✅ **Inyección de Dependencias:** Evitamos el uso de Singletons globales, facilitando el testing y la escalabilidad.
-* ✅ **Observabilidad:** Logging estructurado en cada capa para entender qué ocurre internamente en tiempo real.
-* ✅ **Clean Architecture:** Preparado para crecer sin convertirse en código espagueti.
+- 🌐 **Browser Abstraction:** Automatic execution and management of the headless environment (Puppeteer).
+- 🔄 **Multi-process Communication:** Internal handling of the bridge between Node.js and the browser.
+- 🚦 **Instance Control:** Native management of multiple hosts within a single application.
+- 📢 **Event Management:** Reactive system to capture every in-game action.
 
 ---
 
-## 🏗️ Mapa del Proyecto
+## 🚀 Why is it special?
 
-Para entender cómo está construido el SDK, consulta nuestra documentación detallada:
+Unlike a conventional *wrapper*, this SDK behaves as an **infrastructure layer** built on three pillars:
 
-* [**Documentación de Arquitectura**](./docs/architecture.md): Principios, reglas inmutables y flujo de datos.
-* [**Módulo Logger**](./src/logger/README.md): Cómo funciona nuestro sistema de trazabilidad.
-* *(Próximamente)* **Módulo Bridge**: Detalles sobre el sistema RPC y eventos.
+1. **Full Isolation (Multi-host):** Each host runs in its own environment with its own independent **Runtime**, **Bridge**, **Logger**, and **Domain**.
+2. **Modular Architecture:** Designed with decoupled modules (Runtime, Bridge, Public API) to guarantee maintainability.
+3. **Zero Persistence Opinion:** The SDK does not impose any database or data structure; it provides the technical foundation for you to build your own architecture on top.
 
 ---
 
-## 🎯 Objetivo
+## 🧠 Design Philosophy
 
-Proveer una infraestructura **limpia, escalable y profesional** que permita a los desarrolladores construir lógica de servidores de HaxBall de alto nivel sin lidiar con la complejidad técnica del entorno headless.
+The SDK follows rigorous engineering principles to ensure stability:
+
+- ✅ **Separation of Concerns:** Each module has a single, clear responsibility.
+- ✅ **Dependency Injection:** We avoid global Singletons, making testing and scaling easier.
+- ✅ **Observability:** Structured logging at every layer so you always know what's happening internally in real time.
+- ✅ **Clean Architecture:** Built to grow without turning into spaghetti code.
+
+---
+
+## 🏗️ Project Map
+
+To understand how the SDK is built, check out our detailed documentation:
+
+- [**Getting Started**](./document/getting-started.md): Learn how to use the SDK.
+- *(Coming soon)* **Contribution Documentation:** Details on how you can contribute to the project.
+
+---
+
+## 🎯 Goal
+
+To provide a **clean, scalable, and professional** infrastructure that allows developers to build high-level HaxBall server logic without dealing with the technical complexity of the headless environment.
