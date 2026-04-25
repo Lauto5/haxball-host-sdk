@@ -2,6 +2,8 @@
   <img src="./HaxballHostSdk_Icono.png" width="220" />
 </p>
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 # 📘 HaxBall-host-sdk
 
 **Advanced Node.js infrastructure for professional HaxBall host management.**
