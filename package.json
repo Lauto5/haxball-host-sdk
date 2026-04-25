@@ -12,7 +12,7 @@
   },
   "keywords": ["haxball", "sdk", "nodejs", "puppeteer"],
   "author": "Lauto5",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^25.0.3",
     "ts-node": "^10.9.2",
