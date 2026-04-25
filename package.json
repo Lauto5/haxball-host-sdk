@@ -4,13 +4,20 @@
   "description": "Advanced Node.js SDK for managing HaxBall headless hosts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "dev": "ts-node-dev --respawn --transpile-only dev/index.ts",
     "lint": "eslint . --ext .ts"
   },
-  "keywords": ["haxball", "sdk", "nodejs", "puppeteer"],
+  "keywords": [
+    "haxball",
+    "sdk",
+    "nodejs",
+    "puppeteer"
+  ],
   "author": "Lauto5",
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +27,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "puppeteer-core": "^24.x"
+    "puppeteer": "^24.42.0",
+    "puppeteer-core": "^24.42.0"
   }
 }
