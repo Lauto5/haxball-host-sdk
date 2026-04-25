@@ -21,7 +21,7 @@ export class HostPagePuppeteer implements IHostPage {
   
   private logger: ILogger;
   
-  private metrics: IMetrics;
+  private metrics?: IMetrics;
   
   private tracer: ITracer;
   
@@ -37,7 +37,9 @@ export class HostPagePuppeteer implements IHostPage {
     
     this.logger = obs.createScopeLogger("HostPage");
     
-    this.metrics = obs.createScopeMetrics({ hostPageId: this.id });
+    if(obs.isMetricsEnabled()) {
+      this.metrics = obs.createScopeMetrics({ hostPageId: this.id });
+    }
     
     this.tracer = obs.getTracer();
     
@@ -76,7 +78,7 @@ export class HostPagePuppeteer implements IHostPage {
     
     const duration = Date.now() - start;
     
-    this.metrics.observe("host.navigate.duration", duration);
+    this.metrics?.observe("host.navigate.duration", duration);
     
   }
 
@@ -106,7 +108,7 @@ export class HostPagePuppeteer implements IHostPage {
     
     const duration = Date.now() - start;
     
-    this.metrics.observe("host.inject.duration", duration);
+    this.metrics?.observe("host.inject.duration", duration);
     
   }
 
@@ -156,7 +158,7 @@ export class HostPagePuppeteer implements IHostPage {
       
       const duration = Date.now() - start;
       
-      this.metrics.observe("host.launch.duration", duration);
+      this.metrics?.observe("host.launch.duration", duration);
       
       span.end();
       
@@ -175,7 +177,7 @@ export class HostPagePuppeteer implements IHostPage {
     
       try {
     
-        this.metrics.increment("host.execute.count", 1, {
+        this.metrics?.increment("host.execute.count", 1, {
           method: request.method,
         });
     
@@ -195,7 +197,7 @@ export class HostPagePuppeteer implements IHostPage {
     
       } catch (err) {
         
-        this.metrics.increment("host.execute.error", 1, {
+        this.metrics?.increment("host.execute.error", 1, {
           method: request.method,
         });
     
@@ -205,7 +207,7 @@ export class HostPagePuppeteer implements IHostPage {
     
         const duration = Date.now() - start;
     
-        this.metrics.observe("host.execute.duration", duration, {
+        this.metrics?.observe("host.execute.duration", duration, {
           method: request.method,
         });
         
@@ -227,7 +229,7 @@ export class HostPagePuppeteer implements IHostPage {
     
     this.eventEmitter.removeAllListeners("onEmit");
     
-    this.metrics.increment("host.close");
+    this.metrics?.increment("host.close");
     
     span.end();
     
@@ -254,7 +256,7 @@ export class HostPagePuppeteer implements IHostPage {
         };
         
         if (browserReponse.method !== "onGameTick") {
-          this.metrics.increment("host.event.received", 1, {
+          this.metrics?.increment("host.event.received", 1, {
             method: browserReponse.method,
           });
         }
@@ -288,7 +290,7 @@ export class HostPagePuppeteer implements IHostPage {
     
     const isAlive = await this.isAlive();
     
-    this.metrics.gauge("host.alive", isAlive ? 1 : 0);
+    this.metrics?.gauge("host.alive", isAlive ? 1 : 0);
     
     if (!isAlive) {
       

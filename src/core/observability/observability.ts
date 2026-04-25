@@ -5,15 +5,21 @@ import { ScopedLogger, ScopedMetrics, ILogger, IMetrics , ITracer, SimpleTracer 
 export class Observability {
 
   private readonly rootLogger: ILogger;
-  private readonly rootMetrics: IMetrics;
-  private readonly tracer: ITracer;
+  private readonly rootMetrics?: IMetrics;
+  private readonly tracer?: ITracer;
 
-  constructor(logger: ILogger, metrics: IMetrics) {
+  constructor(logger: ILogger, metrics?: IMetrics) {
     this.rootLogger = logger;
-    this.rootMetrics = metrics;
     
-    this.tracer = new SimpleTracer(this.rootLogger, this.rootMetrics);
+    if (metrics) {
+      this.rootMetrics = metrics;
+      this.tracer = new SimpleTracer(this.rootLogger, this.rootMetrics);  
+    }
     
+  }
+  
+  isMetricsEnabled(): boolean {
+    return !!this.rootMetrics;
   }
   
   createScopeLogger(scope: string): ILogger {
@@ -21,10 +27,22 @@ export class Observability {
   }
 
   createScopeMetrics(labels?: Record<string, string>): IMetrics {
+    
+    if (!this.rootMetrics) {
+      
+      throw new Error('Metrics are not configured');
+      
+    }
+    
     return new ScopedMetrics(this.rootMetrics, labels ?? {});
   }
 
   getTracer(): ITracer {
+    if (!this.tracer) {
+      
+      throw new Error('Tracer is not configured');
+      
+    }    
     return this.tracer;
   }
 

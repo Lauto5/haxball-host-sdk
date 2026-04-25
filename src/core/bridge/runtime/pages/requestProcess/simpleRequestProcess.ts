@@ -21,7 +21,7 @@ export class SimpleRequestQueue implements IRequestProcess {
 
   private logger: ILogger;
   
-  private metrics: IMetrics;
+  private metrics?: IMetrics;
   
   constructor(obs: Observability, warnQueueSize = 1000, maxQueueSize = 5000) {
     
@@ -31,7 +31,9 @@ export class SimpleRequestQueue implements IRequestProcess {
     
     this.logger = obs.createScopeLogger("SimpleRequestQueue");
     
-    this.metrics = obs.createScopeMetrics({ queue: "simple_request_queue" });
+    if (obs.isMetricsEnabled()) {
+      this.metrics = obs.createScopeMetrics({ queue: "simple_request_queue" });
+    }
   }
 
   add(task: () => Promise<BrowserResponse>, trace: ITrace): Promise<BrowserResponse> {
@@ -41,7 +43,7 @@ export class SimpleRequestQueue implements IRequestProcess {
       
       this.logger.error("Queue overflow");
       
-      this.metrics.increment("queue.overflow");
+      this.metrics?.increment("queue.overflow");
       
       return Promise.reject(new Error("Queue overflow"));
       
@@ -55,7 +57,7 @@ export class SimpleRequestQueue implements IRequestProcess {
         
       });
       
-      this.metrics.increment("queue.warn");
+      this.metrics?.increment("queue.warn");
       
     }
 
@@ -63,7 +65,7 @@ export class SimpleRequestQueue implements IRequestProcess {
       
       this.queue.push({ task, trace, resolve, reject });
       
-      this.metrics.gauge("queue.size", this.queue.length);
+      this.metrics?.gauge("queue.size", this.queue.length);
       
       this.processQueue();
       
@@ -84,19 +86,19 @@ export class SimpleRequestQueue implements IRequestProcess {
       const result = await item.task();
       item.resolve(result);
     
-      this.metrics.increment("queue.task.success");
+      this.metrics?.increment("queue.task.success");
     
     } catch (err) {
     
       item.reject(err);
     
-      this.metrics.increment("queue.task.error");
+      this.metrics?.increment("queue.task.error");
     
     } finally {
     
       const duration = Date.now() - start;
     
-      this.metrics.observe("queue.task.duration", duration);
+      this.metrics?.observe("queue.task.duration", duration);
     
       span.end();
     }

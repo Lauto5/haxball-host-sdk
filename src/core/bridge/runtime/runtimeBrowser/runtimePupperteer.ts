@@ -14,7 +14,7 @@ export class RuntimePuppeteer implements IRuntime {
   
   private logger: ILogger;
   
-  private metrics: IMetrics;
+  private metrics?: IMetrics;
   
   private browser: Browser;
   
@@ -26,7 +26,9 @@ export class RuntimePuppeteer implements IRuntime {
     
     this.logger = obs.createScopeLogger("Runtime");
     
-    this.metrics = obs.createScopeMetrics({ runtime: "puppeteer" });
+    if (obs.isMetricsEnabled()) {
+      this.metrics = obs.createScopeMetrics({ runtime: "puppeteer" });
+    }
     
     this.browser = browser;
     
@@ -52,7 +54,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     const start = Date.now();
     
-    this.metrics.increment("runtime.page.launch");
+    this.metrics?.increment("runtime.page.launch");
     
     const page: Page = await this.browser.newPage();
     
@@ -72,11 +74,11 @@ export class RuntimePuppeteer implements IRuntime {
     
       this.pages.set(pageId, hostPage);
     
-      this.metrics.gauge("runtime.page.count", this.pages.size);
+      this.metrics?.gauge("runtime.page.count", this.pages.size);
     
     } catch (error) {
     
-      this.metrics.increment("runtime.page.launch.error");
+      this.metrics?.increment("runtime.page.launch.error");
     
       await page.close().catch(() => { });
     
@@ -88,7 +90,7 @@ export class RuntimePuppeteer implements IRuntime {
     
       const duration = Date.now() - start;
       
-      this.metrics.observe("runtime.page.launch.duration", duration);
+      this.metrics?.observe("runtime.page.launch.duration", duration);
       
       span.end();
     
@@ -109,7 +111,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     const start = Date.now();
     
-    this.metrics.increment("runtime.execute.count");
+    this.metrics?.increment("runtime.execute.count");
     
     try {
     
@@ -119,7 +121,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     } catch (error) {
     
-      this.metrics.increment("runtime.execute.error");
+      this.metrics?.increment("runtime.execute.error");
     
       await hostPage.close().catch(() => { });
     
@@ -136,7 +138,7 @@ export class RuntimePuppeteer implements IRuntime {
     
       const duration = Date.now() - start;
       
-      this.metrics.observe("runtime.execute.duration", duration, {
+      this.metrics?.observe("runtime.execute.duration", duration, {
         method: request.method,
       });
       
@@ -187,19 +189,19 @@ export class RuntimePuppeteer implements IRuntime {
     
     try { 
       
-      this.metrics.increment("runtime.page.close");
+      this.metrics?.increment("runtime.page.close");
       
       await hostPage.close();
       
       this.pages.delete(pageId);
       
-      this.metrics.gauge("runtime.page.count", this.pages.size);
+      this.metrics?.gauge("runtime.page.count", this.pages.size);
       
     } catch (error) {
       
       this.logger.error("Failed to closed page", { id: pageId, error: error });
       
-      this.metrics.increment("runtime.page.close.error");
+      this.metrics?.increment("runtime.page.close.error");
       
       throw error;
       
@@ -216,7 +218,7 @@ export class RuntimePuppeteer implements IRuntime {
     
     try {
       
-      this.metrics.increment("runtime.close");
+      this.metrics?.increment("runtime.close");
       
       this.pages.forEach(async (hostPage) => {
         await hostPage.close().catch(() => {});
@@ -224,7 +226,7 @@ export class RuntimePuppeteer implements IRuntime {
       
       this.pages.clear();
       
-      this.metrics.gauge("runtime.page.count", 0);
+      this.metrics?.gauge("runtime.page.count", 0);
       
       this.browser.close().catch(() => {});
       
@@ -232,7 +234,7 @@ export class RuntimePuppeteer implements IRuntime {
       
       this.logger.error("Failed to close runtime", { error: error });
       
-      this.metrics.increment("runtime.close.error");
+      this.metrics?.increment("runtime.close.error");
       
       throw error;
       
@@ -257,11 +259,11 @@ export class RuntimePuppeteer implements IRuntime {
     
     hostPage.onHostDeath(() => {
     
-      this.metrics.increment("runtime.page.death");
+      this.metrics?.increment("runtime.page.death");
     
       this.pages.delete(pageId);
     
-      this.metrics.gauge("runtime.page.count", this.pages.size);
+      this.metrics?.gauge("runtime.page.count", this.pages.size);
     
       this.eventEmitter.emit("onHostDeath", pageId);
     

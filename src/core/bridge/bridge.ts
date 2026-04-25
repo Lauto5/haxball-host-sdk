@@ -9,7 +9,7 @@ export class Bridge implements IBridge {
 
   private url: string | undefined;
   private logger: ILogger;
-  private metrics: IMetrics;
+  private metrics?: IMetrics;
   private tracer: ITracer;
   private runtime?: IRuntime;
   private eventEmitter: EventEmitter = new EventEmitter();
@@ -18,7 +18,9 @@ export class Bridge implements IBridge {
     
     this.logger = obs.createScopeLogger("Bridge");
     
-    this.metrics = obs.createScopeMetrics({ layer: "bridge" });
+    if (obs.isMetricsEnabled()) {
+      this.metrics = obs.createScopeMetrics({ layer: "bridge" });
+    }
     
     this.tracer = obs.getTracer();
     
@@ -38,7 +40,7 @@ export class Bridge implements IBridge {
       
       if (data.method !== "onGameTick") {
         
-        this.metrics.increment("bridge.event.received", 1, {
+        this.metrics?.increment("bridge.event.received", 1, {
           method: data.method,
         });
       
@@ -50,7 +52,7 @@ export class Bridge implements IBridge {
     
     this.runtime.onHostDeath((pageId: string) => {
     
-      this.metrics.increment("bridge.room.death", 1, {
+      this.metrics?.increment("bridge.room.death", 1, {
         roomId: pageId,
       });
     
@@ -58,7 +60,7 @@ export class Bridge implements IBridge {
     
     });
     
-    this.metrics.increment("bridge.init");
+    this.metrics?.increment("bridge.init");
     
   }
 
@@ -113,7 +115,7 @@ export class Bridge implements IBridge {
 
       await this.runtime.launchPage(obs, config.roomName, url, config , trace);
 
-      this.metrics.increment("bridge.room.launch");
+      this.metrics?.increment("bridge.room.launch");
 
     } catch (error) {
 
@@ -150,7 +152,7 @@ export class Bridge implements IBridge {
 
       await this.launchRoom(obs, config, this.url);
 
-      this.metrics.increment("bridge.room.restart");
+      this.metrics?.increment("bridge.room.restart");
 
     } catch (error) {
 
@@ -184,7 +186,7 @@ export class Bridge implements IBridge {
 
       await this.runtime!.closePage(id, trace);
 
-      this.metrics.increment("bridge.room.close");
+      this.metrics?.increment("bridge.room.close");
 
     } catch (error) {
 
@@ -234,7 +236,7 @@ export class Bridge implements IBridge {
     
     const span = trace.startSpan("bridge.execute");
     
-    this.metrics.increment("bridge.execute.count", 1, {
+    this.metrics?.increment("bridge.execute.count", 1, {
       method: request.method,
     });
     
@@ -246,7 +248,7 @@ export class Bridge implements IBridge {
     
     } catch (error) {
     
-      this.metrics.increment("bridge.execute.error", 1, {
+      this.metrics?.increment("bridge.execute.error", 1, {
         method: request.method,
       });
       
