@@ -637,6 +637,8 @@ room.onRoomDeath(() => {
 
 ---
 
-## 🫩Next steps
+## 🫩Other guides
 
 - [Haxball models](./haxball-models.md)
+- [Observability](./observability.md)
+- [First steps](./first-steps.md)

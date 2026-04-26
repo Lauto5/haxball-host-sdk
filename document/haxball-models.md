@@ -123,3 +123,9 @@ interface DiscProperties {
   cGroup?: number;
 }
 ```
+
+## 📝Other guides
+
+- [first steps](./first-steps.md)
+- [Room API](./room-api.md)
+- [observability](./observability.md)

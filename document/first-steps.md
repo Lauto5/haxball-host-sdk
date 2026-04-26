@@ -63,5 +63,6 @@ Now that you have your first room up and running:
 
 👉 Review the complete documentation:
 
-- [Room API Documentation](./room-api.md)
+- [Room API](./room-api.md)
+- [Haxball models](./haxball-models.md)
 - [Observability](./observability.md)

@@ -67,7 +67,7 @@ The SDK follows rigorous engineering principles to ensure stability:
 
 To understand how the SDK is built, check out our detailed documentation:
 
-- [**Getting Started**](./document/getting-started.md): Learn how to use the SDK.
+- [**First steps**](./document/first-steps.md): Learn how to use the SDK.
 - *(Coming soon)* **Contribution Documentation:** Details on how you can contribute to the project.
 
 ---
