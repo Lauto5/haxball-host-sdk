@@ -2,8 +2,8 @@
   <img src="./HaxballHostSdk_Icono.png" width="220" />
 </p>
 
-[![npm version](https://img.shields.io/npm/v/nombre-de-tu-paquete)](https://www.npmjs.com/package/haxball-host-sdk)
-[![npm downloads](https://img.shields.io/npm/dm/nombre-de-tu-paquete)](https://www.npmjs.com/package/haxball-host-sdk)
+[![npm version](https://img.shields.io/npm/v/haxball-host-sdk)](https://www.npmjs.com/package/haxball-host-sdk)
+[![npm downloads](https://img.shields.io/npm/dm/haxball-host-sdk)](https://www.npmjs.com/package/haxball-host-sdk)
 [![GitHub repository](https://img.shields.io/badge/GitHub-Repositorio-181717?logo=github&style=flat)](https://github.com/Lauto5/haxball-host-sdk)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![GitHub stars](https://img.shields.io/github/stars/TU-USUARIO/TU-REPO?style=social)](https://github.com/Lauto5/haxball-host-sdk)
