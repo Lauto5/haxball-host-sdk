@@ -6,10 +6,24 @@ In this guide you will create your first room in less than 2 minutes.
 
 ---
 
-## 📦 Instalación
+# ⚠️ Requirements
+
+- Node.js 18+
+- Chromium / Chrome installed (for Puppeteer)
+
+---
+
+## 📦 Install
 
 ```bash
-npm install haxball-host-sdk
+npm i haxball-host-sdk
+```
+
+### Dependencies
+
+```bash
+npm i puppeteer # Downloads compatible Chrome during installation.
+npm i puppeteer-core # Alternatively, install as a library, without downloading Chrome.
 ```
 
 # ⚡ First Host
@@ -28,55 +42,6 @@ const room = await sdk.launchRoom({
 });
 ```
 
-# 🎮 Listen to Events
-
-```typescript
-room.onPlayerJoin((player) => {
-  console.log("Player joined:", player.name);
-});
-
-room.onPlayerLeave((player) => {
-  console.log("Player left:", player.name);
-});
-
-room.onPlayerChat((player, message) => {
-  console.log(player.name, ":", message);
-});
-```
-
-# ⚙️ Execute Methods
-
-```typescript
-
-// Send message to chat
-await room.sendChat("Welcome!");
-
-// Start game
-await room.startGame();
-
-// Stop game
-await room.stopGame();
-
-```
-
-# 💬 Chat Commands
-
-```typescript
-room.onPlayerCommand((player, command) => {
-  
-  if (command === "!startGame") {
-    room.startGame();
-  }
-
-  if (command === "!stopGame") {
-    room.stopGame();
-  }
-
-});
-```
-
-💡 The commands are not displayed in the chat (they are already intercepted by the SDK).
-
 # 🧠 Key Concepts
 
 - **Room** → It represents a HaxBall room
@@ -92,11 +57,6 @@ The SDK includes support for:
 - Metrics
 - Traces
 
-# ⚠️ Requirements
-
-- Node.js 18+
-- Chromium / Chrome installed (for Puppeteer)
-
 # 🚀 Next Step
 
 Now that you have your first room up and running:
@@ -105,38 +65,3 @@ Now that you have your first room up and running:
 
 - [Room API Documentation](./room-api.md)
 - [Observability](./observability.md)
-
-# 🧩 Complete Example
-
-```typescript
-
-import { HaxballHostSDK } from "haxball-host-sdk";
-
-async function main() {
-  
-  const sdk = new HaxballHostSDK();
-
-  const room = await sdk.launchRoom({
-    roomName: "My Room",
-    maxPlayers: 10,
-    public: true,
-    noPlayer: true,
-    token: "YOUR_TOKEN_HERE"
-  });
-
-  room.onPlayerJoin((player) => {
-    console.log("Joined:", player.name);
-  });
-
-  room.onPlayerCommand((player, command) => {
-    
-    if (command === "!startGame") {
-      room.startGame();
-    }
-
-  });
-
-}
-
-main();
-```
