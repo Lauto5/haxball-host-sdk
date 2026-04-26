@@ -1,7 +1,12 @@
 import { LogLevel } from "../constants";
 import { ILogger } from "../interfaces/logger.interface";
 
-
+/**
+ * provider of logger, ConsoleLogger
+ * 
+ * logger default implementation using console.log
+ * 
+ */
 export class ConsoleLogger implements ILogger {
   constructor(private level: LogLevel = LogLevel.INFO) {}
 

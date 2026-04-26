@@ -19,7 +19,7 @@ export class ObservabilityConfig {
   /**
    * Creates a new ObservabilityConfig instance.
    * @param levelLogger The log level. @link {@link LogLevel}
-   * @param logger The logger instance. @link {@link ILogger}
+   * @param logger The logger instance. @link {@link ILogger} , if not provided, a default {@link ConsoleLogger} will be used.
    * @param metrics The metrics instance. @link {@link IMetrics}
    */
   constructor(levelLogger?: LogLevel, logger?: ILogger, metrics?: IMetrics) {    
