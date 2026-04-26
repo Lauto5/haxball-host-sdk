@@ -7,6 +7,13 @@ import { RoomExecutor } from "./safe";
 import { Room, RoomProvider, RoomConfig } from "./domain";
 import { BannerPrinter } from "../org";
 
+/**
+ * HaxballHost is the main class for the Haxball Host SDK.
+ * 
+ * It provides methods for creating, restarting, and closing rooms.
+ * 
+ * @author **Lauto5**
+ */
 export class HaxballHost {
   
   private observability: Observability;
@@ -22,6 +29,15 @@ export class HaxballHost {
   private roomsConfig: Map<string, RoomConfig> = new Map();
   
 
+  /**
+   * Creates a new room with the given configuration.
+   * 
+   * @param config The room configuration.
+   * 
+   * @argument observabilityConfig The observability configuration. {@link ObservabilityConfig}
+   * 
+   * @argument setupEngineConfig The setup engine configuration. {@link SetupEngineConfig}
+   */
   constructor(
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
     readonly setupEngineConfig: SetupEngineConfig = new SetupEngineConfig("puppeteer", "/usr/bin/chromium-browser"),
@@ -71,6 +87,12 @@ export class HaxballHost {
     
   }
   
+  /**
+   * Creates a room with the given configuration.
+   * 
+   * @param config The room configuration. {@link RoomConfig}
+   * @returns A promise that resolves to the created room. {@link Room}
+   */
   async createRoom(config: RoomConfig) : Promise<Room> {
     
     if (!this.bridge.isInit()) {
@@ -103,6 +125,11 @@ export class HaxballHost {
     
   }
   
+  /**
+   * Restarts a room by re-launching it with the same configuration.
+   * 
+   * @param roomName - The name of the room to restart. {@link Room}
+   */
   async restartRoom(roomName: string) {
     
     if (!this.bridge.isInit()) {
@@ -140,6 +167,12 @@ export class HaxballHost {
     this.logger.info(`Room re-launched: ${roomName}`);
     
   }
+  
+  /**
+   * Closes a room by name.
+   * 
+   * @param roomName - The name of the room to close. {@link Room}
+   */
   
   async closeRoom(roomName: string) {
     
