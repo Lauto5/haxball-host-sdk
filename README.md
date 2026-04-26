@@ -2,13 +2,32 @@
   <img src="./HaxballHostSdk_Icono.png" width="220" />
 </p>
 
+[![npm version](https://img.shields.io/npm/v/nombre-de-tu-paquete)](https://www.npmjs.com/package/haxball-host-sdk)
+[![npm downloads](https://img.shields.io/npm/dm/nombre-de-tu-paquete)](https://www.npmjs.com/package/haxball-host-sdk)
+[![GitHub repository](https://img.shields.io/badge/GitHub-Repositorio-181717?logo=github&style=flat)](https://github.com/Lauto5/haxball-host-sdk)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![GitHub stars](https://img.shields.io/github/stars/TU-USUARIO/TU-REPO?style=social)](https://github.com/Lauto5/haxball-host-sdk)
 
 # 📘 HaxBall-host-sdk
 
 **Advanced Node.js infrastructure for professional HaxBall host management.**
 
 Developed by **Lauto5**, this SDK abstracts the complexity of the official HaxBall Headless API, allowing you to run, manage, and scale multiple rooms simultaneously from a structured, professional **Node.js** environment.
+
+---
+
+# 💻 How to install
+
+```bash
+npm i haxball-host-sdk
+```
+
+### Dependencies
+
+```bash
+npm i puppeteer # Downloads compatible Chrome during installation.
+npm i puppeteer-core # Alternatively, install as a library, without downloading Chrome.
+```
 
 ---
 
