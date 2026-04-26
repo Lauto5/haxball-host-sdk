@@ -40,7 +40,7 @@ export class HaxballHost {
    */
   constructor(
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
-    readonly setupEngineConfig: SetupEngineConfig = new SetupEngineConfig("puppeteer", "/usr/bin/chromium-browser"),
+    readonly setupEngineConfig: SetupEngineConfig = new SetupEngineConfig("puppeteer"),
   ) {
     
     BannerPrinter.printBanner();
