@@ -125,6 +125,12 @@ export class HostEnvironmentBuilder {
             this.emitEvent("onPlayerActivity", player);
 
           };
+          
+          this.room.onPlayerBallKick = (player: any) => {
+
+            this.emitEvent("onPlayerBallKick", player);
+
+          };
 
           this.room.onGameStart = (byPlayer: any) => {
 

@@ -207,6 +207,10 @@ export class RoomProvider implements Room {
     this.emitter.on("playerActivity", callback);
   }
   
+  onPlayerBallKick(callback: (player: Player) => void): void {
+    this.emitter.on("playerBallKick", callback);
+  }
+  
   onGameStart(callback: (byPlayer: Player | null) => void): void {
     this.emitter.on("gameStart", callback);
   }
