@@ -472,7 +472,8 @@ setInterval(async () => {
 
 ---
 
-## 🔗 See Also
+## 🔗 Other guides
 
-- [Getting Started Guide](./getting-started.md)
-- [Room API Documentation](./room-api.md)
+- [Haxball models](./haxball-models.md)
+- [Room API](./room-api.md)
+- [First steps](./first-steps.md)

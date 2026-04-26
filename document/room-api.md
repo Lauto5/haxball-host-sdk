@@ -358,8 +358,9 @@ Sets physical properties for a player disc.
 
 ```typescript
 await room.setPlayerDiscProperties(1, {
+  x: 200,
+  y: 0,
   damping: 0.99,
-  acceleration: 0.1
 });
 ```
 
@@ -428,7 +429,7 @@ Triggered when a player sends a command (starts with `!`). Commands are not disp
 ```typescript
 room.onPlayerCommand((player, command) => {
   if (command === "!help") {
-    room.sendChat("Available commands: !help, !stats");
+    room.sendAnnouncement("Available commands: !help, !stats" , player.id);
   }
 });
 ```
@@ -440,6 +441,14 @@ Triggered when a player is active (moves, kicks, etc.).
 ```typescript
 room.onPlayerActivity((player) => {
   console.log(`${player.name} is active`);
+});
+```
+
+#### `onPlayerBallKick(callback: (player: Player) => void): void;`
+
+```typescript
+onPlayerBallKick(callback: (player: Player) => {
+  room.kickPlayer(player.id , "Haha!" , true);
 });
 ```
 
@@ -628,80 +637,8 @@ room.onRoomDeath(() => {
 
 ---
 
-## 💡 Examples
+## 🫩Other guides
 
-### Example 1: Complete Game Management
-
-```typescript
-import { HaxballHostSDK } from "haxball-host-sdk";
-
-const sdk = new HaxballHostSDK();
-
-const room = await sdk.launchRoom({
-  roomName: "My Awesome Room",
-  maxPlayers: 12,
-  public: true,
-  noPlayer: true,
-  token: "YOUR_TOKEN_HERE"
-});
-
-// Listen to room link
-room.onRoomLink((url) => {
-  console.log(`Room ready: ${url}`);
-});
-
-// Welcome players
-room.onPlayerJoin((player) => {
-  room.sendChat(`Welcome ${player.name}! Good luck!`);
-});
-
-// Handle commands
-room.onPlayerCommand((player, command) => {
-  if (command === "!start" && player.admin) {
-    room.startGame();
-  }
-  if (command === "!stop" && player.admin) {
-    room.stopGame();
-  }
-});
-
-// Track goals
-room.onTeamGoal((team) => {
-  room.sendAnnouncement(`${team.toUpperCase()} scored!`);
-});
-
-// Match end
-room.onTeamVictory((scores) => {
-  room.sendChat(`Match over! Red: ${scores.red} | Blue: ${scores.blue}`);
-});
-```
-
-### Example 2: Player Management
-
-```typescript
-room.onPlayerJoin((player) => {
-  if (player.id === 1) {
-    // Make first player admin
-    room.setPlayerAdmin(player.id, true);
-  }
-});
-
-// Handle players leaving
-room.onPlayerLeave((player) => {
-  room.sendChat(`${player.name} has left the room.`);
-});
-```
-
-### Example 3: Chat Moderation
-
-```typescript
-const bannedWords = ["badword1", "badword2"];
-
-room.onPlayerChat((player, message) => {
-  if (bannedWords.some(word => message.toLowerCase().includes(word))) {
-    room.sendChat(`${player.name}, please keep chat appropriate!`);
-    return false; // Block the message
-  }
-  return true; // Allow the message
-});
-```
+- [Haxball models](./haxball-models.md)
+- [Observability](./observability.md)
+- [First steps](./first-steps.md)

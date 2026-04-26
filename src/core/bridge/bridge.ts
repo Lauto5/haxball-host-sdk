@@ -2,7 +2,7 @@ import { ILogger, IMetrics, ITracer, Observability } from "../observability";
 import { RuntimeFactory, BrowserResponse, IRuntime, MethodRequest } from "./runtime";
 import { BridgeLaunchConfig } from "../../config";
 import { IBridge } from "./bridge.interface";
-import { EventEmitter } from "stream";
+import { EventEmitter } from "events";
 import { RoomConfig } from "../domain";
 
 export class Bridge implements IBridge {
