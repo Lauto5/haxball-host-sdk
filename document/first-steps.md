@@ -53,9 +53,8 @@ const room = await sdk.launchRoom({
 
 The SDK includes support for:
 
-- Structured logging
+- logging
 - Metrics
-- Traces
 
 # 🚀 Next Step
 
