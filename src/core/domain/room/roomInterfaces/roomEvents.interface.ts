@@ -106,11 +106,6 @@ export interface RoomEvents {
    * **RoomEvents** when the stadium changes.
    */
   onStadiumChange(callback: (stadiumName: string, byPlayer: Player | null) => void): void;
-
-  /**
-   * **RoomEvents** when the room link changes.
-   */
-  onRoomLink(callback: (url: string) => void): void;
   
   /**
    * **RoomEvents** when the teams lock changes.

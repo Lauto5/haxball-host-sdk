@@ -86,10 +86,6 @@ export class RoomAdapter {
           this.room.emit("stadiumChange", data.response[0], data.response[1]);
           break;
         
-        case "onRoomLink":
-          this.room.emit("roomLink", data.response);
-          break;
-        
         case "onTeamsLockChange":
           this.room.emit("teamsLockChange", data.response[0], data.response[1]);
           break;

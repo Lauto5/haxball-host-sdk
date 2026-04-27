@@ -200,6 +200,12 @@ export interface RoomMethods {
   /* ===== Game Control ===== */
 
   /**
+   * **RoomMethods** to get the room link.
+   * 
+   */
+  getRoomLink(): Promise<string | null>;
+
+  /**
    * **RoomMethods** to start the game.
    * 
    */

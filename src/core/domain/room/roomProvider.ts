@@ -123,6 +123,9 @@ export class RoomProvider implements Room {
     return this.execute<void>("setCustomStadium", [hbs]);
   }
 
+  getRoomLink(): Promise<string | null>{
+    return this.execute<string | null>("getRoomLink", []);
+  }
 
   startGame(): Promise<void>{
     return this.execute<void>("startGame", []);
@@ -259,10 +262,6 @@ export class RoomProvider implements Room {
   
   onStadiumChange(callback: (stadiumName: string, byPlayer: Player | null) => void): void {
     this.emitter.on("stadiumChange", callback);
-  }
-  
-  onRoomLink(callback: (url: string) => void): void {
-    this.emitter.on("roomLink", callback);
   }
   
   onTeamsLockChange(callback: (locked: boolean, byPlayer: Player | null) => void): void {
