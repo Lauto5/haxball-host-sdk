@@ -147,6 +147,7 @@ const sdk = new HaxballHostSDK(obsConfig);
 
 ## 🔗 Other guides
 
+- [Setup sdk config](./setup-sdk-config.md)
 - [Haxball models](./haxball-models.md)
 - [Room API](./room-api.md)
 - [First steps](./first-steps.md)

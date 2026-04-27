@@ -1,3 +1,3 @@
 
 export * from "./core"
-export { ObservabilityConfig, SetupEngineConfig } from "./config"
+export { ObservabilityConfig, SetupConfig } from "./config"

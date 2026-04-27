@@ -1,6 +1,6 @@
 import { Bridge, BrowserResponse} from "./bridge";
 import { ILogger, Observability } from "./observability";
-import { ObservabilityConfig, SetupEngineConfig } from "../config";
+import { ObservabilityConfig, SetupConfig } from "../config";
 import { IBridge } from "./bridge";
 import { RoomAdapter } from "./safe/roomAdapter";
 import { RoomExecutor } from "./safe";
@@ -36,11 +36,11 @@ export class HaxballHost {
    * 
    * @argument observabilityConfig The observability configuration. {@link ObservabilityConfig}
    * 
-   * @argument setupEngineConfig The setup engine configuration. {@link SetupEngineConfig}
+   * @argument setupConfig The setup configuration. {@link SetupConfig}
    */
   constructor(
     readonly observabilityConfig: ObservabilityConfig = new ObservabilityConfig(3),
-    readonly setupEngineConfig: SetupEngineConfig = new SetupEngineConfig("puppeteer"),
+    readonly setupConfig: SetupConfig = new SetupConfig("puppeteer"),
   ) {
     
     BannerPrinter.printBanner();
@@ -96,12 +96,12 @@ export class HaxballHost {
   async createRoom(config: RoomConfig) : Promise<Room> {
     
     if (!this.bridge.isInit()) {
-        await this.bridge.init(this.observability, this.setupEngineConfig.getBrowserConfig());
+        await this.bridge.init(this.observability, this.setupConfig.getBrowserConfig());
     }
     
     this.logger.debug(`Creating room: ${config.roomName}`);
     
-    await this.bridge.launchRoom(this.observability, config, this.setupEngineConfig.getUrlPath());
+    await this.bridge.launchRoom(this.observability, config, this.setupConfig.getUrlPath());
     
     this.logger.debug(`Room created: ${config.roomName}`);
     

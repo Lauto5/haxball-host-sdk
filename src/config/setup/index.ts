@@ -1,3 +1,3 @@
 
-export { SetupEngineConfig } from "./setupEngineConfig"
+export { SetupConfig } from "./setupConfig"
 export { BridgeLaunchConfig } from "./bridgeLaunchConfig.interface"

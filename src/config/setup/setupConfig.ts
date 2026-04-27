@@ -8,28 +8,28 @@ import { BridgeLaunchConfig } from "./bridgeLaunchConfig.interface"
  * @param runtime The runtime to use for the setup engine.
  * @example
  * ```ts
- * const config = new SetupEngineConfig("puppeteer");
+ * const config = new SetupConfig("puppeteer");
  * ```
  * @param browserPath The path to the browser executable.
  * @example
  * ```ts
- * const config = new SetupEngineConfig("puppeteer", "/path/to/chrome");
+ * const config = new SetupConfig("puppeteer", "/path/to/chrome");
  * ```
- * @param urlPath The URL path to use for the setup engine.
+ * @param urlApi The URL API (https://www.haxball.com/headless) to use for the setup engine.
  * @example
  * ```ts
- * const config = new SetupEngineConfig("puppeteer", "/path/to/chrome", "https://www.haxball.com/headless");
+ * const config = new SetupConfig("puppeteer", "/path/to/chrome", "https://www.haxball.com/headless");
  * ```
  */
-export class SetupEngineConfig {
+export class SetupConfig {
   
   private urlPath: string = "https://www.haxball.com/headless";
   
-  constructor(private runtime: "puppeteer" | "playwright",private browserPath?: string, urlPath?: string) {
+  constructor(private runtime: "puppeteer" | "playwright",private browserPath?: string, urlApi?: string) {
     
-    if (urlPath) {
+    if (urlApi) {
       
-      this.urlPath = urlPath;
+      this.urlPath = urlApi;
       
     }
     
