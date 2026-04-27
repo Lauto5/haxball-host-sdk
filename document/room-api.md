@@ -641,4 +641,5 @@ room.onRoomDeath(() => {
 
 - [Haxball models](./haxball-models.md)
 - [Observability](./observability.md)
+- [Setup sdk config](./setup-sdk-config.md)
 - [First steps](./first-steps.md)

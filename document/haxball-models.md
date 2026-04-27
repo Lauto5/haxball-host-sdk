@@ -127,5 +127,6 @@ interface DiscProperties {
 ## 📝Other guides
 
 - [first steps](./first-steps.md)
+- [Setup sdk config](./setup-sdk-config.md)
 - [Room API](./room-api.md)
 - [observability](./observability.md)

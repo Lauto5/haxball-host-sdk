@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="./HaxballHostSdk_Icono.png" width="220" />
+  <img src="https://raw.githubusercontent.com/Lauto5/haxball-host-sdk/main/HaxballHostSdk_Icono.png" width="220" />
 </p>
 
 [![npm version](https://img.shields.io/npm/v/haxball-host-sdk)](https://www.npmjs.com/package/haxball-host-sdk)
 [![npm downloads](https://img.shields.io/npm/dm/haxball-host-sdk)](https://www.npmjs.com/package/haxball-host-sdk)
-[![GitHub repository](https://img.shields.io/badge/GitHub-Repositorio-181717?logo=github&style=flat)](https://github.com/Lauto5/haxball-host-sdk)
+[![GitHub repository](https://img.shields.io/badge/GitHub-Repository-181717?logo=github&style=flat)](https://github.com/Lauto5/haxball-host-sdk)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 [![GitHub stars](https://img.shields.io/github/stars/Lauto5/haxball-host-sdk?style=social)](https://github.com/Lauto5/haxball-host-sdk)
 
@@ -67,7 +67,7 @@ The SDK follows rigorous engineering principles to ensure stability:
 
 To understand how the SDK is built, check out our detailed documentation:
 
-- [**First steps**](./document/first-steps.md): Learn how to use the SDK.
+- [**First steps**](https://github.com/Lauto5/haxball-host-sdk/blob/main/document/first-steps.md): Learn how to use the SDK.
 - *(Coming soon)* **Contribution Documentation:** Details on how you can contribute to the project.
 
 ---

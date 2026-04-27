@@ -29,12 +29,12 @@ npm i puppeteer-core # Alternatively, install as a library, without downloading 
 # ⚡ First Host
 
 ```typescript
-import { HaxballHostSDK } from "haxball-host-sdk";
+import { HaxballHost } from "haxball-host-sdk";
 
-const sdk = new HaxballHostSDK();
+const sdk = new HaxballHost();
 
 const room = await sdk.launchRoom({
-  roomName: "My Room",
+  roomName: "I like haxball :)",
   maxPlayers: 10,
   public: true,
   noPlayer: true,
@@ -53,9 +53,8 @@ const room = await sdk.launchRoom({
 
 The SDK includes support for:
 
-- Structured logging
+- logging
 - Metrics
-- Traces
 
 # 🚀 Next Step
 
@@ -63,6 +62,7 @@ Now that you have your first room up and running:
 
 👉 Review the complete documentation:
 
+- [Setup sdk config](./setup-sdk-config.md)
 - [Room API](./room-api.md)
 - [Haxball models](./haxball-models.md)
 - [Observability](./observability.md)
