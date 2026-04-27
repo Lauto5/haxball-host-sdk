@@ -452,6 +452,9 @@ room.onPlayerActivity((player) => {
 
 #### `onPlayerBallKick(callback: (player: Player) => void): void;`
 
+This method may be somewhat irregular due to the way the official Haxball
+API works; use it with caution.
+
 ```typescript
 onPlayerBallKick(callback: (player: Player) => {
   room.kickPlayer(player.id , "Haha!" , true);
