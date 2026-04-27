@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./HaxballHostSdk_Icono.png" width="220" />
+  <img src="https://raw.githubusercontent.com/Lauto5/haxball-host-sdk/main/HaxballHostSdk_Icono.png" width="220" />
 </p>
 
 [![npm version](https://img.shields.io/npm/v/haxball-host-sdk)](https://www.npmjs.com/package/haxball-host-sdk)
