@@ -10,6 +10,8 @@ export class HostEnvironmentBuilder {
 
         room: null,
         
+        linkRoom: null,
+        
         lastGameTick: Date.now(),
         
         isGameTickActive: false,
@@ -54,10 +56,12 @@ export class HostEnvironmentBuilder {
           try {
 
             const link = await this.waitForRoom(this.room);
+            
+            this.linkRoom = link;
 
             return { success: true, message: "Room initialized successfully", data: link };
 
-          } catch (error) {
+          } catch ( error) {
 
             return { success: false, message: error instanceof Error ? error.message : String(error) };
 
@@ -68,6 +72,11 @@ export class HostEnvironmentBuilder {
 
           if (!this.room) throw new Error("Room not initialized");
 
+          if (this.linkRoom && method === "getRoomLink") {
+
+            return this.linkRoom;
+          }
+          
           const fn = this.room[method];
 
           if (typeof fn !== "function") {
@@ -199,12 +208,6 @@ export class HostEnvironmentBuilder {
           this.room.onStadiumChange = (stadiumName: string, byPlayer: any) => {
 
             this.emitEvent("onStadiumChange", [stadiumName, byPlayer]);
-
-          };
-
-          this.room.onRoomLink = (link: string) => {
-
-            this.emitEvent("onRoomLink", link);
 
           };
 

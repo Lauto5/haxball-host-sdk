@@ -228,6 +228,12 @@ await room.setCustomStadium(hbsContent);
 
 ### Game Control Methods
 
+#### `getRoomLink(): Promise<string | null>`
+
+```typescript
+  const link_room1 = await room.getRoomLink();
+```
+
 #### `startGame(): Promise<void>`
 
 Starts the game.
@@ -446,6 +452,9 @@ room.onPlayerActivity((player) => {
 
 #### `onPlayerBallKick(callback: (player: Player) => void): void;`
 
+This method may be somewhat irregular due to the way the official Haxball
+API works; use it with caution.
+
 ```typescript
 onPlayerBallKick(callback: (player: Player) => {
   room.kickPlayer(player.id , "Haha!" , true);
@@ -590,16 +599,6 @@ Triggered when the stadium is changed.
 ```typescript
 room.onStadiumChange((stadiumName, byPlayer) => {
   console.log(`Stadium changed to ${stadiumName}`);
-});
-```
-
-#### `onRoomLink(callback: (url: string) => void): void`
-
-Triggered when the room link is generated (after room creation).
-
-```typescript
-room.onRoomLink((url) => {
-  console.log(`Join the room: ${url}`);
 });
 ```
 

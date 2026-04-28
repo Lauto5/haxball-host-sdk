@@ -45,10 +45,10 @@ export class Bridge implements IBridge {
         this.metrics?.increment("bridge.event.received", 1, {
           method: data.method,
         });
-      
-        this.eventEmitter.emit("onEvent", data);
           
       }
+      
+      this.eventEmitter.emit("onEvent", data);
     
     });
     

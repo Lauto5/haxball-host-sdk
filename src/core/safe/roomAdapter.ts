@@ -79,15 +79,11 @@ export class RoomAdapter {
           break;
         
         case "onPlayerBallKick":
-          this.room.emit("playerBallKick", data.response[0]);
+          this.room.emit("playerBallKick", data.response);
           break;
         
         case "onStadiumChange":
           this.room.emit("stadiumChange", data.response[0], data.response[1]);
-          break;
-        
-        case "onRoomLink":
-          this.room.emit("roomLink", data.response);
           break;
         
         case "onTeamsLockChange":
