@@ -2,8 +2,7 @@ import { Bridge, BrowserResponse} from "./bridge";
 import { ILogger, Observability } from "./observability";
 import { ObservabilityConfig, SetupConfig } from "../config";
 import { IBridge } from "./bridge";
-import { RoomAdapter } from "./safe/roomAdapter";
-import { RoomExecutor } from "./safe";
+import { RoomAdapter, RoomExecutor} from "./safe";
 import { Room, RoomProvider, RoomConfig } from "./domain";
 import { BannerPrinter } from "../org";
 

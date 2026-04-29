@@ -1,5 +1,5 @@
 import { ITrace } from "../../../../observability";
-import { BrowserResponse } from "../../responses/browserResponse.interface";
+import { BrowserResponse } from "../../responses";
 
 export interface IRequestProcess {
   

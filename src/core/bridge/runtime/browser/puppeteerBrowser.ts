@@ -1,6 +1,6 @@
 
 import { Browser } from 'puppeteer';
-import { BrowserConfigPuppeteer } from './config/browseConfigPuppeteer.interface';
+import { BrowserConfigPuppeteer } from './config';
 
 async function puppeteerBrowser(config: BrowserConfigPuppeteer): Promise<Browser> {
   

@@ -1,12 +1,11 @@
 import { Browser , Page} from "puppeteer";
 import { IRuntime } from "./runtime.interface";
-import { HostPagePuppeteer } from "../pages/hostPagePuppeteer";
-import { IHostPage } from "../pages/hostPage.interface";
+import { IHostPage , HostPagePuppeteer } from "../pages";
 import { ILogger, IMetrics, ITrace, Observability } from "../../../observability";
 import { RoomConfig } from "../../../domain";
 
-import { BrowserResponse } from "../responses/browserResponse.interface";
-import { MethodRequest } from "../requests/methodRequest.interface";
+import { BrowserResponse } from "../responses";
+import { MethodRequest } from "../requests";
 import { EventEmitter } from "events";
 
 

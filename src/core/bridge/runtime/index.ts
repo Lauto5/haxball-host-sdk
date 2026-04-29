@@ -1,5 +1,4 @@
-export { RuntimeFactory } from "./factories/runtimeFactory";
-export { RuntimePuppeteer } from "./runtimeBrowser/runtimePupperteer";
-export { IRuntime } from "./runtimeBrowser/runtime.interface";
-export { BrowserResponse } from "./responses/browserResponse.interface";
-export { MethodRequest } from "./requests/methodRequest.interface";
+export { RuntimeFactory } from "./factories";
+export { IRuntime , RuntimePuppeteer } from "./runtimeBrowser";
+export { BrowserResponse } from "./responses";
+export { MethodRequest } from "./requests";

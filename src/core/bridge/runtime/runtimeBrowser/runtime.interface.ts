@@ -1,8 +1,7 @@
 import { Observability, ITrace } from "../../../observability";
 import { RoomConfig } from "../../../domain";
-import { BrowserResponse } from "../responses/browserResponse.interface";
-import { MethodRequest } from "../requests/methodRequest.interface";
-
+import { BrowserResponse } from "../responses";
+import { MethodRequest } from "../requests";
 
 export interface IRuntime {
   

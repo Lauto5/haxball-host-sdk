@@ -1,7 +1,5 @@
-import { BrowserResponse } from "../../responses/browserResponse.interface";
-
+import { BrowserResponse } from "../../responses";
 import { IRequestProcess } from "./requestProcess.interface";
-
 import { ILogger , IMetrics, ITrace, Observability } from "../../../../observability";
 
 export class SimpleRequestQueue implements IRequestProcess {

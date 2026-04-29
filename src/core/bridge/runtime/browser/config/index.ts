@@ -1,0 +1,1 @@
+export { chooseBrowserConfig , BrowserConfigPuppeteer} from "./browseConfigPuppeteer.interface";

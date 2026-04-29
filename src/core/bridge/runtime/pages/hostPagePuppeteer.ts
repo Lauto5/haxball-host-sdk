@@ -1,17 +1,12 @@
 import { ILogger, Observability , IMetrics, ITrace, ITracer } from "../../../observability";
 import { Page } from "puppeteer-core";
-import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
+import { HostEnvironmentBuilder } from "../APIInjector";
 import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../domain";
-import { BrowserResponse } from "../responses/browserResponse.interface";
-import { LiveRoomResponse } from "../responses/liveRoomResponse.interface";
-import { ErrorResponse } from "../responses/errorResponse.interface";
+import { BrowserResponse , ErrorResponse , HostInitResponse , LiveRoomResponse } from "../responses";
+import { MethodRequest } from "../requests";
+import { IRequestProcess , SimpleRequestQueue } from "./requestProcess";
 import { EventEmitter } from "events";
-import { HostInitResponse } from "../responses/hostInitResponse.interface";
-import { MethodRequest } from "../requests/methodRequest.interface";
-import { SimpleRequestQueue } from "./requestProcess/simpleRequestProcess";
-import { IRequestProcess } from "./requestProcess/requestProcess.interface";
-
 
 export class HostPagePuppeteer implements IHostPage {
   

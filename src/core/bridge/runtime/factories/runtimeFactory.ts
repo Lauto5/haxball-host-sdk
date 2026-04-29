@@ -1,8 +1,6 @@
-import { RuntimePuppeteer } from "../runtimeBrowser/runtimePupperteer";
+import { IRuntime , RuntimePuppeteer } from "../runtimeBrowser";
 import { Observability } from "../../../observability"
-import { puppeteerBrowser } from "../browser/puppeteerBrowser"
-import { BrowserConfigPuppeteer, chooseBrowserConfig } from "../browser/config/browseConfigPuppeteer.interface"
-import { IRuntime } from "../runtimeBrowser/runtime.interface";
+import { BrowserConfigPuppeteer, chooseBrowserConfig, puppeteerBrowser } from "../browser"
 import { BridgeLaunchConfig } from "../../../../config";
 import { Browser } from "puppeteer";
 
