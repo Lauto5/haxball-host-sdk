@@ -4,6 +4,8 @@ import { HostEnvironmentBuilder } from "../APIInjector/hostEnvironmentBuilder";
 import { IHostPage } from "./hostPage.interface";
 import { RoomConfig } from "../../../domain";
 import { BrowserResponse } from "../responses/browserResponse.interface";
+import { LiveRoomResponse } from "../responses/liveRoomResponse.interface";
+import { ErrorResponse } from "../responses/errorResponse.interface";
 import { EventEmitter } from "events";
 import { HostInitResponse } from "../responses/hostInitResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
@@ -288,25 +290,33 @@ export class HostPagePuppeteer implements IHostPage {
   
   async handleAlive(): Promise<void> {
     
-    const isAlive = await this.isAlive();
-    
-    this.metrics?.gauge("host.alive", isAlive ? 1 : 0);
-    
-    if (!isAlive) {
+    try {
       
-      this.isActive = false;
+      const isAlive: ErrorResponse | LiveRoomResponse = await this.isAlive();
       
-      this.logger.warn("Host is dead, closing page : ", this.id);
+      this.metrics?.gauge("host.alive", isAlive ? 1 : 0);
       
-      await this.close();
+      if ("error" in isAlive) {
+        
+        this.isActive = false;
+        
+        this.logger.warn("Host is dead, closing page : ", {id: this.id, error: isAlive.error, theLastStatus: isAlive.theLastStatus });
+        
+        await this.close();
+        
+        this.eventEmitter.emit("onDeath", this.id);
+        
+      }
       
-      this.eventEmitter.emit("onDeath", this.id);
+    } catch (error) {
+      
+      this.logger.error("Error while checking host alive : ", error);
       
     }
     
   }
   
-  async isAlive(): Promise<boolean> {
+  async isAlive(): Promise<ErrorResponse | LiveRoomResponse> {
     
     if (!this.page) {
       
@@ -314,18 +324,16 @@ export class HostPagePuppeteer implements IHostPage {
       
     }
     
-    return this.page.evaluate(() => {
+    const response: ErrorResponse | LiveRoomResponse = await this.page.evaluate(() => {
       
-      if (!navigator.onLine) {
-        
-        return false;
-        
-      }
+      const isAlive: ErrorResponse | LiveRoomResponse = (window as any).__headless.isAlive();
       
-      return (window as any).__headless.isAlive();
+      return isAlive;
       
     });
     
+    return response;
+
   }
 
   private connectLogger(): void {

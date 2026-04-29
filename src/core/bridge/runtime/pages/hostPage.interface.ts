@@ -3,6 +3,8 @@ import { BrowserResponse } from "../responses/browserResponse.interface";
 import { MethodRequest } from "../requests/methodRequest.interface";
 import { IRequestProcess } from "./requestProcess/requestProcess.interface"
 import { ITrace } from "../../../observability";
+import { ErrorResponse } from "../responses/errorResponse.interface";
+import { LiveRoomResponse } from "../responses/liveRoomResponse.interface";
 
 
 export interface IHostPage {
@@ -24,5 +26,5 @@ export interface IHostPage {
   getUrlHost(): string;
   handleAlive(): Promise<void>;
   onHostDeath(callback: (pageId: string) => void): void;
-  isAlive(): Promise<boolean>;
+  isAlive(): Promise<ErrorResponse | LiveRoomResponse>;
 }
