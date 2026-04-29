@@ -10,11 +10,9 @@ export class HostEnvironmentBuilder {
 
         room: null,
         
+        state: "notInitialized",
+        
         linkRoom: null,
-        
-        lastGameTick: Date.now(),
-        
-        isGameTickActive: false,
 
         async waitForRoom(room: any, timeout = 8000): Promise<any> {
 
@@ -58,6 +56,8 @@ export class HostEnvironmentBuilder {
             const link = await this.waitForRoom(this.room);
             
             this.linkRoom = link;
+            
+            this.state = "isAlive";
 
             return { success: true, message: "Room initialized successfully", data: link };
 
@@ -94,8 +94,6 @@ export class HostEnvironmentBuilder {
           if (!this.room) throw new Error("Room not initialized");
           
           this.room.onGameTick = () => {
-
-            this.lastGameTick = Date.now();
             
             this.emitEvent("onGameTick", []);
 
@@ -142,10 +140,8 @@ export class HostEnvironmentBuilder {
           };
 
           this.room.onGameStart = (byPlayer: any) => {
-
-            if (!this.isGameTickActive) {
-              this.isGameTickActive = true;
-            }
+            
+            this.state = "inGame";
             
             this.emitEvent("onGameStart", byPlayer);
 
@@ -153,18 +149,24 @@ export class HostEnvironmentBuilder {
 
           this.room.onGameStop = (byPlayer: any) => {
 
+            this.state = "isAlive";
+            
             this.emitEvent("onGameStop", byPlayer);
 
           };
 
           this.room.onGamePause = (byPlayer: any) => {
 
+            this.state = "inGame";
+            
             this.emitEvent("onGamePause", byPlayer);
 
           };
 
           this.room.onGameUnpause = (byPlayer: any) => {
 
+            this.state = "inGame";
+            
             this.emitEvent("onGameUnpause", byPlayer);
 
           };
@@ -243,11 +245,24 @@ export class HostEnvironmentBuilder {
           }
         },
         
-        isAlive(): boolean {
-          if (!this.isGameTickActive) {
-            return true;
+        isAlive() {
+          
+          try {
+            
+            if (!navigator.onLine) return { error: "Offline", theLastStatus: this.state };
+            
+            const room = this.room;
+            
+            if (!room) return { error: "No room", theLastStatus: this.state };
+            
+            room.getPlayerList();
+            
+            return { success: true, theLastStatus: this.state };
+            
+          } catch {
+            return { error: "Unknown error", theLastStatus: this.state };
           }
-          return Date.now() - this.lastGameTick < 6000;
+          
         },
         
       };
